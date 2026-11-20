@@ -256,6 +256,13 @@ const SAISON_SPRUECHE = {
 const ANTIPPEN = ["Hey! Nicht anfassen, ich bin 5.500 Grad heiß! 🔥","Autsch. Nochmal! 😄","Kitzelt! 🙈","Was willst du? Ich arbeite hier!","Du bist ja anhänglich heute. 😏","Wenn du mich so anstarrst, werd ich rot. Oh, warte …","Noch einmal und ich geh unter!","Ich hab dich lieb. Jetzt lass mich hüpfen. 💛"];
 // Besondere Tage: "MM-TT": "Nachricht"  (Monat-Tag, mit führender Null)
 const BESONDERE_TAGE = {
+  "12-01": { szene:[
+               "<big>Überraschung!!! 🎉</big>Ab heute wohne ich in deinem Handy.",
+               "Ach ja … und ich hab jemanden mitgebracht. 👀",
+               "BEA",
+               "<big>Hallooo! 👋💛</big>Ich bin Mini-Bea! Ab jetzt passen wir zwei auf dich auf.",
+               "Wir kommen ab und zu vorbei. Also benimm dich! 😏"
+             ], beaReveal:true, konfetti:["🎉","💛","✨","🎄"] },
   "12-06": { text:"Lausi Lausi Lausi, ohhhh – heute ist Nikolausi! 🎅<br>Einen wunderschönen Nikolaustag wünsche ich dir! 👢🍫",
              outfit:["weihnachtsmuetze"], stiefel:true, beaKostuem:"nikolaus", konfetti:["🎅","👢","🍫","🍬","🎁"] },
   "12-24": "Frohe Weihnachten! 🎄",
@@ -271,12 +278,12 @@ const NS='http://www.w3.org/2000/svg';
 const now=new Date();
 const hash=location.hash.slice(1);   // Testmodus: #nikolaus #winter #weihnachten #fruehling #sommer #herbst #abend #besonders
 let month=now.getMonth(), hour=now.getHours();
-const testMonat={winter:0,weihnachten:11,nikolaus:11,fruehling:3,sommer:6,herbst:9}[hash];
+const testMonat={winter:0,weihnachten:11,nikolaus:11,dez1:11,fruehling:3,sommer:6,herbst:9}[hash];
 if(testMonat!==undefined) month=testMonat;
 if(hash==='abend') hour=20;
 const saison = [11,0,1].includes(month)?'winter':[2,3,4].includes(month)?'fruehling':[5,6,7].includes(month)?'sommer':'herbst';
 const mmdd=String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
-const heuteKey = hash==='nikolaus' ? '12-06' : mmdd;
+const heuteKey = hash==='nikolaus' ? '12-06' : hash==='dez1' ? '12-01' : mmdd;
 let besondersRaw = hash==='besonders' ? "Heute ist ein besonderer Tag! 💛" : BESONDERE_TAGE[heuteKey];
 const besonders = besondersRaw && (typeof besondersRaw==='string' ? {text:besondersRaw} : besondersRaw);
 const pick=a=>a[Math.floor(Math.random()*a.length)];
@@ -434,6 +441,7 @@ const groundY=()=>H()*.80;
 const bea=document.getElementById('bea');
 updateSize();
 const spur=[];
+if(besonders && besonders.beaReveal) bea.style.opacity='0';
 if(besonders && besonders.beaKostuem==='nikolaus'){
   document.getElementById('bea-nikolaus').style.display='';
   bea.querySelectorAll('.reif').forEach(e=>e.style.display='none');
@@ -511,6 +519,20 @@ async function auftritt(){
   const gruss = hour<11?'Guten Morgen':hour<14?'Mahlzeit':hour<18?'Hallo':'Guten Abend';
   const slot  = hour<11?'morgen':hour<14?'mittag':hour<18?'nachmittag':'abend';
   const name  = KOSENAME?', '+KOSENAME:'';
+  if(besonders && besonders.szene){
+    for(const zeile of besonders.szene){
+      if(zeile==='BEA'){
+        bubble.classList.remove('show'); await sleep(300);
+        bea.style.transition='opacity .3s'; bea.style.opacity='1';
+        bea.classList.remove('jump'); void bea.offsetWidth; bea.classList.add('jump');
+        sparks(x-size*.3,y-size*.5,16,['🎉','💛','✨']);
+        await sleep(700); continue;
+      }
+      say(zeile,0); AKTIONEN.konfetti(); await sleep(3200);
+    }
+    setTimeout(()=>tap.classList.add('show'),1000);
+    planeUntergang(4000); return;
+  }
   if(besonders){
     say(`<big>${gruss}${name}! ☀️</big>${besonders.text}`,0);
     AKTIONEN.konfetti(); setTimeout(()=>AKTIONEN.herzen(),900);
