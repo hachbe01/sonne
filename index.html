@@ -152,6 +152,19 @@
   <rect x="51" y="141" width="18" height="7" rx="1.5" fill="#8a5a2b"/>
   <rect x="55.5" y="140" width="9" height="9" rx="1.5" fill="none" stroke="#c9a46a" stroke-width="2"/>
   <path d="M50 99 L46 150 M70 99 L74 150" stroke="#2a1d17" stroke-width="2"/>
+  <!-- Ski / Schlittschuhe -->
+  <g id="bea-ski" style="display:none">
+    <path d="M14 196 L96 196 Q106 196 108 188" stroke="#1f6fd1" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M22 200 L104 200 Q114 200 116 192" stroke="#e2483d" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M30 142 L20 198" stroke="#888" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="21" cy="194" r="3.5" fill="none" stroke="#888" stroke-width="1.5"/>
+  </g>
+  <g id="bea-skates" style="display:none">
+    <rect x="40" y="176" width="20" height="14" rx="5" fill="#fff" stroke="#ddd"/>
+    <rect x="60" y="176" width="20" height="14" rx="5" fill="#fff" stroke="#ddd"/>
+    <path d="M38 196 L62 196 M58 196 L82 196" stroke="#9aa6b2" stroke-width="3" stroke-linecap="round"/>
+    <path d="M44 190 L44 196 M56 190 L56 196 M64 190 L64 196 M76 190 L76 196" stroke="#9aa6b2" stroke-width="2"/>
+  </g>
   <!-- Hals & Kopf -->
   <rect x="54" y="88" width="12" height="10" fill="#f3cdb0"/>
   <circle cx="60" cy="60" r="32" fill="#f6d6bc"/>
@@ -163,10 +176,23 @@
   <path class="reif" d="M30 50 Q34 22 60 21 Q86 22 90 50" stroke="#1d1a1a" stroke-width="8" fill="none" stroke-linecap="round"/>
   <path class="reif" d="M30 50 Q34 22 60 21 Q86 22 90 50" stroke="#4a4444" stroke-width="3" fill="none" stroke-dasharray="4 4" stroke-linecap="round"/>
   <!-- Nikolaus-Kostüm -->
-  <g id="bea-nikolaus" style="display:none">
+  <g id="bea-hut" style="display:none">
     <path d="M30 46 C30 20 50 6 70 7 C90 8 104 22 110 50 C104 40 98 35 90 34 C96 40 98 46 98 52 Z" fill="#e2483d"/>
     <path d="M26 48 Q60 28 94 48" stroke="#fff" stroke-width="11" fill="none" stroke-linecap="round"/>
     <circle cx="110" cy="54" r="7" fill="#fff"/>
+  </g>
+  <g id="bea-beanie" style="display:none">
+    <path d="M27 50 C26 20 44 10 60 10 C76 10 94 20 93 50 Z" fill="#d64545"/>
+    <path d="M31 34 Q60 20 89 34" stroke="#fff" stroke-width="5" fill="none"/>
+    <path d="M26 50 Q60 36 94 50" stroke="#a83232" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <circle cx="60" cy="9" r="8" fill="#fff"/><circle cx="55" cy="6" r="4" fill="#fff"/><circle cx="65" cy="6" r="4" fill="#fff"/>
+    <g id="bea-brille-ski" style="display:none">
+      <path d="M30 40 Q60 30 90 40" stroke="#222" stroke-width="5" fill="none"/>
+      <rect x="40" y="31" width="40" height="13" rx="6.5" fill="#ff9f1c" stroke="#333" stroke-width="2"/>
+      <path d="M46 35 L56 35" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+    </g>
+  </g>
+  <g id="bea-nikolaus" style="display:none">
     <path d="M36 80 Q34 104 60 110 Q86 104 84 80 Q74 92 60 90 Q46 92 36 80 Z" fill="#fff" stroke="#e9e9e9" stroke-width="1.5"/>
     <path d="M44 84 Q52 88 60 86 Q68 88 76 84" stroke="#e5e5e5" stroke-width="2" fill="none"/>
     <path d="M30 91 Q12 96 22 84" stroke="#ddd" stroke-width="1.2" fill="none"/>
@@ -272,20 +298,61 @@ const BESONDERE_TAGE = {
   // "06-15": "Happy Jahrestag! 💛",      ← eigene Daten hier eintragen
   // "03-08": "Alles Gute zum Geburtstag! 🎂",
 };
+// Dezember: jeden Tag eine andere Kulisse 🎄
+// kulisse: berge, gondel, piste, see, geschenke, keksglas, sturm
+// bea: hut (Weihnachtsmütze), beanie, ski, schlittschuh  ·  sonne: Outfit(s) der Sonne
+const DEZ_THEMEN = {
+   1:{},
+   2:{kulisse:['geschenke'], sonne:['weihnachtsmuetze'], bea:'hut', spruch:["So viele Geschenke … sind die etwa alle für dich?! 🎁"]},
+   3:{kulisse:['berge','gondel'], bea:'beanie', spruch:["Heute geht's in die Berge! 🏔️","Gondel-Wetter! Ich fahr mit. 🚠"]},
+   4:{kulisse:['keksglas'], sonne:['schal'], bea:'hut', spruch:["Wer hat die Kekse gegessen?! 🍪👀","Ein Keks am Morgen vertreibt Kummer und Sorgen. 🍪"]},
+   5:{kulisse:['sturm'], sonne:['ohren','schal'], bea:'beanie', spruch:["SCHNEESTURM! Ich bin heute nur zu 20 % Sonne. 🥶","Bleib drinnen und kuschel dich ein! ❄️"]},
+   6:{},
+   7:{kulisse:['berge','piste','gondel'], bea:'ski', spruch:["Bahn frei! Mini-Bea auf der Piste! ⛷️","Après-Ski heute Abend? 😏"]},
+   8:{kulisse:['see'], bea:'schlittschuh', sonne:['ohren'], spruch:["Mini-Bea übt für Olympia! ⛸️","Glatteis-Warnung: Bea ist unterwegs! ⛸️"]},
+   9:{kulisse:['geschenke','keksglas'], sonne:['weihnachtsmuetze','schal'], bea:'hut', spruch:["Geschenke UND Kekse? Bester Tag! 🎁🍪"]},
+  10:{kulisse:['berge','sturm'], sonne:['bommelmuetze','schal'], bea:'beanie', spruch:["Sturm in den Bergen – ich halt mich an meiner Mütze fest! 🌬️"]},
+  11:{kulisse:['berge','piste'], bea:'ski', spruch:["Schwarze Piste? Für Mini-Bea kein Problem! ⛷️"]},
+  12:{kulisse:['see'], bea:'schlittschuh', sonne:['weihnachtsmuetze'], spruch:["Pirouette! Hast du das gesehen?! ⛸️✨"]},
+  13:{kulisse:['keksglas'], bea:'hut', sonne:['bommelmuetze'], spruch:["Plätzchen-Kontrolle: Glas noch voll? 🍪"]},
+  14:{kulisse:['berge','gondel'], sonne:['ohren','schal'], bea:'beanie', spruch:["Ab in die Gondel – nicht runtergucken! 🚠"]},
+  15:{kulisse:['geschenke'], sonne:['weihnachtsmuetze'], bea:'hut', spruch:["Der Geschenkestapel wird immer größer … 🎁👀"]},
+  16:{kulisse:['sturm'], sonne:['bommelmuetze','schal'], bea:'beanie', spruch:["Heute ist Schneesturm-Kuscheltag! ❄️"]},
+  17:{kulisse:['berge','piste','gondel'], bea:'ski', spruch:["Ski-Ass Mini-Bea im Anflug! ⛷️💨"]},
+  18:{kulisse:['see'], bea:'schlittschuh', sonne:['schal'], spruch:["Eiskunstlauf-Finale! Punktrichter? 10/10! ⛸️"]},
+  19:{kulisse:['keksglas','geschenke'], sonne:['weihnachtsmuetze'], bea:'hut', spruch:["Nur noch 5 Tage bis Weihnachten! 🎄"]},
+  20:{kulisse:['berge','gondel'], sonne:['ohren'], bea:'beanie', spruch:["Bergluft macht glücklich! 🏔️"]},
+  21:{kulisse:['sturm'], sonne:['bommelmuetze','schal'], bea:'beanie', spruch:["Längste Nacht des Jahres – ab morgen wird's wieder heller. Dank mir. ☀️"]},
+  22:{kulisse:['berge','piste'], bea:'ski', spruch:["Letzte Abfahrt vor Weihnachten! ⛷️"]},
+  23:{kulisse:['geschenke','keksglas'], sonne:['weihnachtsmuetze','schal'], bea:'hut', spruch:["Morgen ist es soweit!!! 🎄🎁"]},
+  24:{kulisse:['geschenke','keksglas'], sonne:['weihnachtsmuetze'], bea:'hut'},
+  25:{kulisse:['geschenke'], sonne:['weihnachtsmuetze'], bea:'hut', spruch:["Frohe Weihnachten, Teil 2! 🎄"]},
+  26:{kulisse:['keksglas'], sonne:['schal'], bea:'hut', spruch:["Weihnachtskekse-Resteessen! 🍪"]},
+  27:{kulisse:['berge','piste'], bea:'ski', spruch:["Wintersport gegen die Weihnachtskilos! ⛷️😂"]},
+  28:{kulisse:['see'], bea:'schlittschuh', spruch:["Ein Runde Eislaufen? ⛸️"]},
+  29:{kulisse:['berge','gondel'], bea:'beanie', spruch:["Noch zwei Tage im alten Jahr! 🏔️"]},
+  30:{kulisse:['sturm'], sonne:['ohren','schal'], bea:'beanie', spruch:["Ich halte die Stellung, egal wie viel es schneit! ❄️"]},
+  31:{kulisse:['geschenke'], sonne:['weihnachtsmuetze'], bea:'hut'}
+};
 /* ===================================================== */
 
 const NS='http://www.w3.org/2000/svg';
 const now=new Date();
 const hash=location.hash.slice(1);   // Testmodus: #nikolaus #winter #weihnachten #fruehling #sommer #herbst #abend #besonders
 let month=now.getMonth(), hour=now.getHours();
-const testMonat={winter:0,weihnachten:11,nikolaus:11,dez1:11,fruehling:3,sommer:6,herbst:9}[hash];
+const dezTest=hash.match(/^dez-?(\d{1,2})$/);
+const testMonat={winter:0,weihnachten:11,nikolaus:11,fruehling:3,sommer:6,herbst:9}[hash];
 if(testMonat!==undefined) month=testMonat;
+if(dezTest) month=11;
 if(hash==='abend') hour=20;
 const saison = [11,0,1].includes(month)?'winter':[2,3,4].includes(month)?'fruehling':[5,6,7].includes(month)?'sommer':'herbst';
 const mmdd=String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
-const heuteKey = hash==='nikolaus' ? '12-06' : hash==='dez1' ? '12-01' : mmdd;
+const dezTag = dezTest ? +dezTest[1] : hash==='nikolaus' ? 6 : (now.getMonth()===11 && testMonat===undefined ? now.getDate() : null);
+const heuteKey = dezTest ? '12-'+String(dezTag).padStart(2,'0') : hash==='nikolaus' ? '12-06' : mmdd;
 let besondersRaw = hash==='besonders' ? "Heute ist ein besonderer Tag! 💛" : BESONDERE_TAGE[heuteKey];
 const besonders = besondersRaw && (typeof besondersRaw==='string' ? {text:besondersRaw} : besondersRaw);
+const thema = (month===11 && dezTag) ? (DEZ_THEMEN[dezTag]||{}) : {};
+const hat = k => (thema.kulisse||[]).includes(k);
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 const rnd=(a,b)=>a+Math.random()*(b-a);
 
@@ -325,6 +392,54 @@ function stiefel(x,y,s){
   add('rect',{x:x-14*s,y:y-50*s,width:24*s,height:10*s,rx:5*s,fill:'#fff'});
   add('ellipse',{cx:x+9*s,cy:y+1*s,rx:24*s,ry:3*s,fill:'#000',opacity:.06});
 }
+function berge(){
+  add('path',{d:'M-20 120 L60 28 L118 92 L182 16 L252 98 L322 32 L420 112 V240 H-20Z',fill:'#a9bed8'});
+  [[60,28],[182,16],[322,32]].forEach(([px,py])=>add('path',{d:`M${px-19} ${py+22} L${px} ${py} L${px+19} ${py+22} L${px+9} ${py+17} L${px+2} ${py+25} L${px-7} ${py+17} Z`,fill:'#fff'}));
+  add('path',{d:'M-20 130 L30 80 L80 120 L140 70 L200 118 L270 72 L330 120 L400 82 L420 130 V240 H-20Z',fill:'#c3d4e8'});
+}
+function piste(){
+  add('path',{d:'M320 36 Q302 58 284 70 Q262 84 250 100 L272 100 Q282 86 296 76 Q312 62 326 42 Z',fill:'#f6faff'});
+  [[300,62,'#e2483d'],[283,76,'#1f6fd1'],[268,88,'#e2483d']].forEach(([fx,fy,c])=>{
+    add('path',{d:`M${fx} ${fy} L${fx} ${fy-9}`,stroke:'#555','stroke-width':.8});
+    add('path',{d:`M${fx} ${fy-9} L${fx+6} ${fy-7} L${fx} ${fy-5} Z`,fill:c});
+  });
+}
+function gondel(){
+  add('path',{d:'M-10 22 L410 64',stroke:'#4b5563','stroke-width':.9});
+  [0,-9].forEach(begin=>{
+    const g=add('g',{});
+    add('path',{d:'M0 0 L0 6',stroke:'#4b5563','stroke-width':1},g);
+    add('rect',{x:-7,y:6,width:14,height:11,rx:2.5,fill:'#e2483d'},g);
+    add('rect',{x:-5,y:8,width:10,height:5,rx:1,fill:'#cfe8ff'},g);
+    const am=add('animateMotion',{path:'M-10 22 L410 64',dur:'20s',begin:begin+'s',repeatCount:'indefinite'},g);
+  });
+}
+function see(){
+  add('ellipse',{cx:200,cy:150,rx:150,ry:24,fill:'#cfe9f7',stroke:'#b2d6ec','stroke-width':2});
+  add('path',{d:'M110 146 L150 141 M230 158 L280 153 M90 156 L108 154',stroke:'#fff','stroke-width':2,'stroke-linecap':'round',opacity:.9});
+  add('path',{d:'M130 152 Q200 132 270 148',stroke:'#a5cbe3','stroke-width':1,fill:'none','stroke-dasharray':'3 3'});
+}
+function geschenke(x,y,s){
+  const box=(bx,by,w,h,c,r)=>{add('rect',{x:bx,y:by,width:w,height:h,rx:1.5,fill:c});
+    add('rect',{x:bx+w/2-2,y:by,width:4,height:h,fill:r});add('rect',{x:bx,y:by+h/2-2,width:w,height:4,fill:r});};
+  box(x-22*s,y-20*s,34*s,20*s,'#e2483d','#ffd84a');
+  box(x+14*s,y-14*s,18*s,14*s,'#3f9b6b','#fff');
+  box(x-17*s,y-36*s,24*s,16*s,'#4a7bd0','#ffd84a');
+  box(x-12*s,y-48*s,14*s,12*s,'#b48cff','#fff');
+  add('path',{d:`M${x-5*s} ${y-48*s} q-6 -7 -1 -8 q3 0 1 8 q2 -8 5 -8 q5 1 -5 8`,fill:'none',stroke:'#fff','stroke-width':1.8*s});
+}
+function keksglas(x,y,s){
+  add('rect',{x:x-16*s,y:y-38*s,width:32*s,height:38*s,rx:8*s,fill:'rgba(225,242,255,.7)',stroke:'#9fc3dd','stroke-width':1.8});
+  [[-7,-8],[6,-9],[0,-18],[-8,-26],[7,-27]].forEach(([dx,dy])=>{
+    add('circle',{cx:x+dx*s,cy:y+dy*s,r:6.5*s,fill:'#d99a5a',stroke:'#b8783e','stroke-width':1});
+    add('circle',{cx:x+(dx-2)*s,cy:y+(dy-1)*s,r:1.2*s,fill:'#5a3014'});add('circle',{cx:x+(dx+2)*s,cy:y+(dy+2)*s,r:1.2*s,fill:'#5a3014'});
+  });
+  add('rect',{x:x-18*s,y:y-44*s,width:36*s,height:8*s,rx:3*s,fill:'#c0562b'});
+  add('rect',{x:x-10*s,y:y-16*s-12*s,width:20*s,height:0,fill:'none'});
+  add('path',{d:`M${x-11*s} ${y-34*s} L${x-11*s} ${y-12*s}`,stroke:'#fff','stroke-width':2.5*s,'stroke-linecap':'round',opacity:.7});
+  add('circle',{cx:x+26*s,cy:y-4*s,r:6*s,fill:'#d99a5a',stroke:'#b8783e','stroke-width':1});
+  add('circle',{cx:x+31*s,cy:y-8*s,r:3*s,fill:'#f7fbff'}); // angebissen
+}
 function hillY(x,cx,cy,rx,ry){const t=(x-cx)/rx;return cy-ry*Math.sqrt(Math.max(0,1-t*t));}
 function baum(x,y,s,farben){
   add('rect',{x:x-3*s,y:y-22*s,width:6*s,height:24*s,fill:'#7a4a2a'});
@@ -347,12 +462,16 @@ function palme(x,y,s){
 if(saison==='winter'){
   const deko = month===11;
   const B1=[90,175,210,100], B2=[330,180,170,98], F=[200,300,330,165];
+  if(hat('berge')||hat('piste')||hat('gondel')) berge();
+  if(hat('piste')) piste();
+  if(hat('gondel')) gondel();
   add('ellipse',{cx:B1[0],cy:B1[1],rx:B1[2],ry:B1[3],fill:'#d6e4f4'});
   add('ellipse',{cx:B2[0],cy:B2[1],rx:B2[2],ry:B2[3],fill:'#dde9f6'});
   [[78,.55],[100,.45],[122,.6],[300,.5],[322,.6]].forEach(([x,sc])=>{
     const H=x<200?B1:B2; tanne(x,hillY(x,...H)+2,sc,false,'#7aa79a');
   });
   add('ellipse',{cx:F[0],cy:F[1],rx:F[2],ry:F[3],fill:'#f7fbff'});
+  if(hat('see')) see();
   tanne(92,hillY(92,...F)+12,1.15,deko);
   tanne(312,hillY(312,...F)+10,.95,false);
   tanne(334,hillY(334,...F)+18,.7,false);
@@ -364,6 +483,8 @@ if(saison==='winter'){
   add('circle',{cx:sx-3.5,cy:sy-24,r:1.3,fill:'#333'});add('circle',{cx:sx+3.5,cy:sy-24,r:1.3,fill:'#333'});
   add('path',{d:`M${sx-9} ${sy-13} Q${sx} ${sy-9} ${sx+9} ${sy-13}`,stroke:'#d64545','stroke-width':3,fill:'none','stroke-linecap':'round'});
   if(besonders && besonders.stiefel) stiefel(140,hillY(140,...F)+42,1.15);
+  if(hat('geschenke')) geschenke(112,172,1.6);
+  if(hat('keksglas')) keksglas(268,166,1.5);
 }
 if(saison==='fruehling'){
   add('path',{d:'M0 90 Q100 55 210 85 T400 75 V240 H0Z',fill:'#9fd66d'});
@@ -392,12 +513,14 @@ if(saison==='herbst'){
 
 // Partikel & Wolken
 const W=()=>innerWidth, H=()=>innerHeight;
-for(let i=0;i<(saison==='winter'?36:T.particles.length?12:0);i++){
+const sturm=hat('sturm');
+if(sturm) document.body.style.background='linear-gradient(180deg,#9fb3c8 0%,#c9d6e3 60%,#e9eff5 100%)';
+for(let i=0;i<(sturm?140:saison==='winter'?36:T.particles.length?12:0);i++){
   const p=document.createElement('div');p.className='particle';p.textContent=pick(T.particles);
   if(T.pcolor)p.style.color=T.pcolor;
   p.style.left=rnd(0,100)+'vw';p.style.fontSize=rnd(T.psize[0],T.psize[1])+'px';
-  p.style.animationDuration=rnd(7,16)+'s';p.style.animationDelay=(-rnd(0,16))+'s';
-  p.style.setProperty('--drift',rnd(-60,60)+'px');p.style.setProperty('--rot',rnd(-200,200)+'deg');
+  p.style.animationDuration=(sturm?rnd(1.6,3.2):rnd(7,16))+'s';p.style.animationDelay=(-rnd(0,16))+'s';
+  p.style.setProperty('--drift',(sturm?rnd(-320,-160):rnd(-60,60))+'px');p.style.setProperty('--rot',rnd(-200,200)+'deg');
   p.style.opacity=rnd(.6,.95);document.body.appendChild(p);
 }
 [[10,.22,30],[30,.16,38]].forEach(([top,w,dur])=>{
@@ -424,7 +547,7 @@ const OUTFITS={
 };
 const schalFarbe={winter:'#d64545',fruehling:'#7cc35a',sommer:'#36b3e3',herbst:'#c0562b'}[saison];
 document.documentElement.style.setProperty('--schal',schalFarbe);
-((besonders&&besonders.outfit)||pick(OUTFITS[saison])).forEach(o=>document.getElementById('o-'+o).style.display='');
+((besonders&&besonders.outfit)||thema.sonne||pick(OUTFITS[saison])).forEach(o=>document.getElementById('o-'+o).style.display='');
 
 /* ---------- Bewegung ---------- */
 let size=190, beaH=0, beaW=0;
@@ -444,16 +567,28 @@ const spur=[];
 if(besonders && besonders.beaReveal) bea.style.opacity='0';
 if(besonders && besonders.beaKostuem==='nikolaus'){
   document.getElementById('bea-nikolaus').style.display='';
+  document.getElementById('bea-hut').style.display='';
   bea.querySelectorAll('.reif').forEach(e=>e.style.display='none');
   bea.querySelectorAll('.jacke').forEach(e=>e.setAttribute('fill','#e2483d'));
   bea.querySelectorAll('.aermel').forEach(e=>e.setAttribute('stroke','#e2483d'));
   bea.querySelectorAll('.cardigan').forEach(e=>e.setAttribute('fill','#fff'));
   document.getElementById('bea-mund').style.display='none';
 }
+const zeige=id=>document.getElementById(id).style.display='';
+const ohneReif=()=>bea.querySelectorAll('.reif').forEach(e=>e.style.display='none');
+if(!(besonders&&besonders.beaKostuem)){
+  if(thema.bea==='hut'){zeige('bea-hut');ohneReif();}
+  if(['beanie','ski','schlittschuh'].includes(thema.bea)){zeige('bea-beanie');ohneReif();}
+  if(thema.bea==='ski'){zeige('bea-ski');zeige('bea-brille-ski');}
+  if(thema.bea==='schlittschuh') zeige('bea-skates');
+}
+let beaModus = (thema.bea==='ski'||thema.bea==='schlittschuh') ? 'auftritt' : 'folgen';
+if(beaModus==='auftritt') bea.style.opacity='0';
+let beaRot=0;
 function folgen(now){
   spur.push({t:now,x,y}); while(spur.length>2&&spur[1].t<now-260) spur.shift();
   const p=spur[0];
-  bea.style.transform=`translate(${p.x-beaW*.78}px,${p.y-beaH}px)`;
+  if(beaModus==='folgen') bea.style.transform=`translate(${p.x-beaW*.78}px,${p.y-beaH}px)`;
   requestAnimationFrame(folgen);
 }
 requestAnimationFrame(folgen);
@@ -543,14 +678,46 @@ async function auftritt(){
   }
   if(besonders){
     say(`<big>${gruss}${name}! ☀️</big>${besonders.text}`,0);
+    if(beaModus==='auftritt'){ beaAuftritt(); }
     AKTIONEN.konfetti(); setTimeout(()=>AKTIONEN.herzen(),900);
   } else {
-    const zeile = Math.random()<.35 ? pick(SAISON_SPRUECHE[saison]) : pick(SPRUECHE[slot]);
+    const zeile = (thema.spruch && Math.random()<.75) ? pick(thema.spruch) : Math.random()<.35 ? pick(SAISON_SPRUECHE[saison]) : pick(SPRUECHE[slot]);
     say(`<big>${gruss}${name}! ☀️</big>${zeile}`,0);
-    await sleep(900); await pick(Object.values(AKTIONEN))();
+    await sleep(900);
+    if(beaModus==='auftritt'){ await sleep(1500); await beaAuftritt(); }
+    await pick(Object.values(AKTIONEN))();
   }
   setTimeout(()=>tap.classList.add('show'),2500);
   planeUntergang(7000);
+}
+async function beaAuftritt(){
+  const zx=()=>x-beaW*.78, zy=()=>y;
+  bea.style.opacity='1';
+  if(thema.bea==='ski'){
+    const sx=-beaW*1.2, sy=groundY()-H()*.32;
+    await new Promise(res=>{const t0=performance.now();(function st(n){
+      const t=Math.min(1,(n-t0)/2300), e=1-Math.pow(1-t,2);
+      const bx=sx+(zx()-sx)*e, by=sy+(zy()-sy)*e - Math.sin(t*Math.PI*3)*8*(1-t);
+      bea.style.transform=`translate(${bx}px,${by-beaH}px) rotate(${14*(1-t)}deg)`;
+      if(Math.random()<.25) sparks(bx+beaW*.2,by,1,['❄️','💨'],.5);
+      t<1?requestAnimationFrame(st):res();})(t0);});
+    sprecher='bea'; say('Bahn freeei! ⛷️',1800); setTimeout(()=>sprecher='sonne',1900);
+  } else {
+    const sx=-beaW*1.2;
+    await new Promise(res=>{const t0=performance.now();(function st(n){
+      const t=Math.min(1,(n-t0)/2600), e=1-Math.pow(1-t,3);
+      const bx=sx+(zx()-sx)*e, rot=Math.sin(t*Math.PI*4)*8*(1-t);
+      bea.style.transform=`translate(${bx}px,${zy()-beaH}px) rotate(${rot}deg)`;
+      t<1?requestAnimationFrame(st):res();})(t0);});
+    // Pirouette
+    await new Promise(res=>{const t0=performance.now();(function st(n){
+      const t=Math.min(1,(n-t0)/900);
+      bea.style.transform=`translate(${zx()}px,${zy()-beaH}px) scaleX(${Math.cos(t*Math.PI*4)})`;
+      t<1?requestAnimationFrame(st):res();})(t0);});
+    sparks(zx()+beaW/2,zy()-beaH/2,8,['✨','⛸️','⭐']);
+    sprecher='bea'; say('Pirouette! ✨',1800); setTimeout(()=>sprecher='sonne',1900);
+  }
+  beaModus='folgen';
 }
 let untergegangen=false, untergangTimer;
 function planeUntergang(ms){ clearTimeout(untergangTimer); untergangTimer=setTimeout(untergehen,ms); }
