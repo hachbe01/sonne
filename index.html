@@ -257,11 +257,11 @@ const ANTIPPEN = ["Hey! Nicht anfassen, ich bin 5.500 Grad heiß! 🔥","Autsch.
 // Besondere Tage: "MM-TT": "Nachricht"  (Monat-Tag, mit führender Null)
 const BESONDERE_TAGE = {
   "12-01": { szene:[
-               "<big>Überraschung!!! 🎉</big>Ab heute wohne ich in deinem Handy.",
-               "Ach ja … und ich hab jemanden mitgebracht. 👀",
+               "<big>Überrrrasssschung!! 🎉</big>",
+               "Ich hab dir jemanden mitgebracht!! 👀",
                "BEA",
-               "<big>Hallooo! 👋💛</big>Ich bin Mini-Bea! Ab jetzt passen wir zwei auf dich auf.",
-               "Wir kommen ab und zu vorbei. Also benimm dich! 😏"
+               "BEA:<big>Hallo! 👋</big>Wunderst du dich etwa, was hier los ist? 😏",
+               "BEA:Für die nächsten Tage bin ich als treue Weihnachtsbegleiterin auf deinem Handy dabei – natürlich mit meiner besten Freundin Sonni!!! ☀️💛"
              ], beaReveal:true, konfetti:["🎉","💛","✨","🎄"] },
   "12-06": { text:"Lausi Lausi Lausi, ohhhh – heute ist Nikolausi! 🎅<br>Einen wunderschönen Nikolaustag wünsche ich dir! 👢🍫",
              outfit:["weihnachtsmuetze"], stiefel:true, beaKostuem:"nikolaus", konfetti:["🎅","👢","🍫","🍬","🎁"] },
@@ -460,17 +460,20 @@ requestAnimationFrame(folgen);
 bea.addEventListener('pointerdown',()=>{
   if(untergegangen) return;
   bea.classList.remove('jump'); void bea.offsetWidth; bea.classList.add('jump');
+  sprecher='bea'; setTimeout(()=>sprecher='sonne',2300);
   say(pick(['Hehe, das bin ich! 💛','Mini-Bea sagt Hallo! 👋','Ich hab dich lieb! 💛','Ich bin immer bei dir – in klein. 🤏']),2200);
   planeUntergang(5000);
 });
-let x=-size, y=groundY(), hopping=false, rot=0, bubbleTimer;
+let x=-size, y=groundY(), hopping=false, rot=0, bubbleTimer, sprecher='sonne';
 
 function place(){
   actor.style.transform=`translate(${x}px,${y-size}px) rotate(${rot}deg)`;
   const bw=bubble.offsetWidth,bh=bubble.offsetHeight;
-  let bx=Math.max(10,Math.min(W()-bw-10,x+size/2-bw/2));
-  bubble.style.left=bx+'px'; bubble.style.top=Math.max(10,y-size-bh-8)+'px';
-  bubble.style.setProperty('--tail',Math.max(24,Math.min(bw-24,x+size/2-bx))+'px');
+  const ax = sprecher==='bea' ? x-beaW*.78+beaW/2 : x+size/2;
+  const top = sprecher==='bea' ? y-beaH : y-size;
+  let bx=Math.max(10,Math.min(W()-bw-10,ax-bw/2));
+  bubble.style.left=bx+'px'; bubble.style.top=Math.max(10,top-bh-8)+'px';
+  bubble.style.setProperty('--tail',Math.max(24,Math.min(bw-24,ax-bx))+'px');
 }
 function hop(toX,height=H()*.2,dur=620,salto=false){
   return new Promise(res=>{
@@ -528,10 +531,15 @@ async function auftritt(){
         sparks(x-size*.3,y-size*.5,16,['🎉','💛','✨']);
         await sleep(700); continue;
       }
-      say(zeile,0); AKTIONEN.konfetti(); await sleep(3200);
+      const istBea=zeile.startsWith('BEA:');
+      sprecher = istBea ? 'bea' : 'sonne';
+      say(istBea?zeile.slice(4):zeile,0);
+      if(istBea){ bea.classList.remove('jump'); void bea.offsetWidth; bea.classList.add('jump'); } else AKTIONEN.konfetti();
+      await sleep(Math.max(2600, zeile.length*55));
     }
+    sprecher='sonne';
     setTimeout(()=>tap.classList.add('show'),1000);
-    planeUntergang(4000); return;
+    planeUntergang(3000); return;
   }
   if(besonders){
     say(`<big>${gruss}${name}! ☀️</big>${besonders.text}`,0);
