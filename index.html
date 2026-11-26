@@ -218,6 +218,9 @@
     <circle cx="80" cy="92" r="14" fill="#fff" stroke="#3b2416" stroke-width="2"/><circle cx="120" cy="92" r="14" fill="#fff" stroke="#3b2416" stroke-width="2"/>
     <circle cx="80" cy="92" r="4" fill="#3b2416"/><circle cx="120" cy="92" r="4" fill="#3b2416"/>
   </g>
+  <g class="acc" id="o-armseite" style="display:none">
+    <path d="M146 122 Q166 132 172 150" stroke="#ffb13d" stroke-width="10" fill="none" stroke-linecap="round"/><circle cx="174" cy="156" r="7.5" fill="#ffb13d"/>
+  </g>
   <g class="acc" id="o-strohhut" style="display:none">
     <ellipse cx="100" cy="58" rx="66" ry="13" fill="#e9c46a"/>
     <path d="M66 58 Q66 22 100 22 Q134 22 134 58 Z" fill="#f2d07a"/>
@@ -473,7 +476,7 @@ let month=now.getMonth(), hour=now.getHours();
 const PROPS_SVG = {
   koriander:`<svg viewBox="0 0 60 74"><rect x="8" y="16" width="44" height="54" rx="10" fill="#dff3e2" stroke="#9cc9a6" stroke-width="2"/><rect x="11" y="30" width="38" height="37" rx="7" fill="#6cbf62"/><rect x="6" y="6" width="48" height="13" rx="4" fill="#3f8f3f"/><rect x="13" y="36" width="34" height="20" rx="3" fill="#fff"/><text x="30" y="49" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="8.5" fill="#2f7d3a">Koriander</text><path d="M24 62 q6 -8 12 0 q-6 6 -12 0" fill="#2f7d3a"/></svg>`,
   riegel:`<svg viewBox="0 0 100 34"><rect x="2" y="4" width="96" height="26" rx="6" fill="#fbf6ea" stroke="#d9cfb8" stroke-width="2"/><rect x="2" y="12" width="96" height="10" fill="#6b3f22"/><path d="M2 8 l4 -4 M98 8 l-4 -4 M2 26 l4 4 M98 26 l-4 4" stroke="#d9cfb8" stroke-width="2"/><text x="50" y="20.5" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="9" fill="#fff">KOKOS</text><circle cx="16" cy="17" r="6" fill="#8a5a33"/><circle cx="16" cy="17" r="3.5" fill="#fff"/></svg>`,
-  schneemann:`<svg viewBox="0 0 100 140"><circle cx="50" cy="108" r="30" fill="#fff" stroke="#dfe9f5" stroke-width="2"/><circle cx="50" cy="64" r="22" fill="#fff" stroke="#dfe9f5" stroke-width="2"/><circle cx="50" cy="28" r="17" fill="#fff" stroke="#dfe9f5" stroke-width="2"/><circle cx="44" cy="24" r="2.4" fill="#333"/><circle cx="56" cy="24" r="2.4" fill="#333"/><path class="sm-mund" d="M44 34 Q50 36 56 34" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/><path class="sm-grinsen" d="M41 32 Q50 42 59 32" stroke="#333" stroke-width="2.4" fill="none" stroke-linecap="round" style="display:none"/><circle cx="50" cy="58" r="2.4" fill="#333"/><circle cx="50" cy="68" r="2.4" fill="#333"/><path d="M28 60 L6 46 M72 60 L94 46 M12 50 l-6 -2 M88 50 l6 -2" stroke="#7a4a2a" stroke-width="3" stroke-linecap="round"/><path d="M34 44 Q50 52 66 44 L66 48 Q50 56 34 48 Z" fill="#e2483d"/><path d="M60 47 L64 62 L57 62 Z" fill="#e2483d"/></svg>`,
+  schneemann:`<svg viewBox="0 0 100 140"><circle cx="50" cy="108" r="30" fill="#fff" stroke="#dfe9f5" stroke-width="2"/><circle cx="50" cy="64" r="22" fill="#fff" stroke="#dfe9f5" stroke-width="2"/><circle cx="50" cy="28" r="17" fill="#fff" stroke="#dfe9f5" stroke-width="2"/><circle cx="44" cy="24" r="2.4" fill="#333"/><circle cx="56" cy="24" r="2.4" fill="#333"/><path d="M50 27 L66 30 L50 32 Z" fill="#ff8a3c"/><path class="sm-mund" d="M44 34 Q50 36 56 34" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/><path class="sm-grinsen" d="M41 32 Q50 42 59 32" stroke="#333" stroke-width="2.4" fill="none" stroke-linecap="round" style="display:none"/><circle cx="50" cy="58" r="2.4" fill="#333"/><circle cx="50" cy="68" r="2.4" fill="#333"/><path d="M28 60 L6 46 M72 60 L94 46 M12 50 l-6 -2 M88 50 l6 -2" stroke="#7a4a2a" stroke-width="3" stroke-linecap="round"/><path d="M34 44 Q50 52 66 44 L66 48 Q50 56 34 48 Z" fill="#e2483d"/><path d="M60 47 L64 62 L57 62 Z" fill="#e2483d"/></svg>`,
   baum:`<svg viewBox="0 0 120 170"><rect x="52" y="148" width="16" height="20" fill="#6b4226"/><path d="M60 8 L104 150 L16 150 Z" fill="#2e7d5b" stroke="#2e7d5b" stroke-width="6" stroke-linejoin="round"/><path d="M60 8 L92 108 L28 108 Z" fill="#3a8f62"/><path d="M60 8 L80 66 L40 66 Z" fill="#46a06f"/><path d="M34 120 Q62 132 92 116 M40 82 Q62 92 84 78" stroke="#ffd84a" stroke-width="2.5" fill="none"/><circle cx="44" cy="96" r="5" fill="#e2483d"/><circle cx="74" cy="128" r="5.5" fill="#4a7bd0"/><circle cx="66" cy="58" r="4" fill="#ffd84a"/><circle cx="34" cy="136" r="5" fill="#ffd84a"/><circle cx="80" cy="100" r="4.5" fill="#ff8ad8"/><path d="M60 0 l3.5 7 7.5.8-5.6 5.1 1.5 7.4-6.9-3.9-6.9 3.9 1.5-7.4-5.6-5.1 7.5-.8z" fill="#ffd84a" stroke="#f0b400"/></svg>`,
   struempfe:`<svg viewBox="0 0 60 60"><path d="M12 2 L22 2 L22 40 Q22 50 14 52 L6 52 Q2 50 4 46 L12 40 Z" fill="#1d1a1f"/><path d="M12 2 L22 2 L22 9 L12 9 Z" fill="#555" stroke="#888" stroke-dasharray="2 1.5"/><path d="M38 6 L48 6 L48 44 Q48 54 40 56 L32 56 Q28 54 30 50 L38 44 Z" fill="#1d1a1f"/><path d="M38 6 L48 6 L48 13 L38 13 Z" fill="#555" stroke="#888" stroke-dasharray="2 1.5"/></svg>`,
   haufen:`<svg viewBox="0 0 140 100"><g class="winke-l"><path d="M44 52 L30 22" stroke="#ffb13d" stroke-width="8" stroke-linecap="round"/><circle cx="29" cy="19" r="6" fill="#ffb13d"/></g><g class="winke-r"><path d="M96 52 L110 22" stroke="#ffb13d" stroke-width="8" stroke-linecap="round"/><circle cx="111" cy="19" r="6" fill="#ffb13d"/></g><path d="M4 98 Q10 46 50 44 Q70 30 92 46 Q132 50 136 98 Z" fill="#fff" stroke="#dbe7f4" stroke-width="2"/><circle cx="40" cy="70" r="5" fill="#eef4fb"/><circle cx="90" cy="62" r="7" fill="#eef4fb"/></svg>`,
@@ -497,6 +500,7 @@ const PROPS_SVG = {
   teller:`<svg viewBox="0 0 130 44"><ellipse cx="65" cy="32" rx="62" ry="11" fill="#fff" stroke="#e3e3e3" stroke-width="2"/><g class="keks"><rect x="16" y="14" width="26" height="16" rx="3" fill="#c9843f"/><path d="M20 18 h18 M20 22 h18 M20 26 h18" stroke="#a86a2c" stroke-width="1"/></g><g class="keks"><rect x="38" y="8" width="26" height="16" rx="3" fill="#d4914a" transform="rotate(-8 51 16)"/></g><g class="keks"><rect x="58" y="14" width="26" height="16" rx="3" fill="#c9843f"/><path d="M62 18 h18 M62 22 h18 M62 26 h18" stroke="#a86a2c" stroke-width="1"/></g><g class="keks"><rect x="78" y="8" width="26" height="16" rx="3" fill="#d4914a" transform="rotate(10 91 16)"/></g><g class="keks"><rect x="92" y="16" width="24" height="14" rx="3" fill="#c9843f"/></g><circle class="kruemel" cx="64" cy="30" r="2" fill="#a86a2c" style="display:none"/></svg>`,
   kiste:`<svg viewBox="0 0 100 80"><path d="M10 30 L-4 14 L28 14 L36 30 Z" fill="#d9a96a"/><path d="M90 30 L104 14 L72 14 L64 30 Z" fill="#d9a96a"/><rect x="10" y="30" width="80" height="48" fill="#c8924f"/><path d="M10 30 h80" stroke="#a87436" stroke-width="3"/><path d="M42 46 h16" stroke="#8a5a2b" stroke-width="3" stroke-linecap="round"/><text x="50" y="66" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="10" fill="#7a4a1e">KREMPEL</text></svg>`,
   flasche:`<svg viewBox="0 0 30 60"><rect x="11" y="0" width="8" height="10" fill="#3f9b6b"/><path d="M6 20 Q6 10 15 10 Q24 10 24 20 L24 54 Q24 58 15 58 Q6 58 6 54 Z" fill="#e2483d"/><rect x="8" y="28" width="14" height="14" rx="2" fill="#fff"/></svg>`,
+  schluesselbund:`<svg viewBox="0 0 40 50"><circle cx="20" cy="8" r="7" fill="none" stroke="#b8b8b8" stroke-width="3"/><g transform="rotate(-15 20 14)"><rect x="10" y="14" width="6" height="22" rx="2" fill="#d4a017"/><circle cx="13" cy="16" r="6" fill="#d4a017"/><path d="M16 28 h4 M16 32 h3" stroke="#d4a017" stroke-width="2"/></g><g transform="rotate(18 20 14)"><rect x="23" y="14" width="6" height="24" rx="2" fill="#9aa6b2"/><circle cx="26" cy="16" r="6" fill="#9aa6b2"/><path d="M29 30 h4 M29 34 h3" stroke="#9aa6b2" stroke-width="2"/></g></svg>`,
   lebkuchen:`<svg viewBox="0 0 80 70"><defs><mask id="biss"><rect width="80" height="70" fill="#fff"/><circle id="bisskreis" cx="62" cy="14" r="0" fill="#000"/></mask></defs><g mask="url(#biss)"><path d="M40 64 C10 44 4 26 14 14 C24 2 38 8 40 18 C42 8 56 2 66 14 C76 26 70 44 40 64 Z" fill="#b5713a"/><path d="M40 58 C16 42 10 28 18 18 C26 9 37 14 40 22 C43 14 54 9 62 18 C70 28 64 42 40 58 Z" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="3 3"/><path id="srirachaherz" d="M40 48 C26 38 24 30 29 25 C34 20 39 24 40 28 C41 24 46 20 51 25 C56 30 54 38 40 48 Z" fill="none" stroke="#e2231a" stroke-width="4" stroke-linejoin="round" stroke-dasharray="90" stroke-dashoffset="90"/></g></svg>`
 };
 // Eigene HTML-Requisiten (Schilder, Stände, Vorhänge)
@@ -571,89 +575,111 @@ async function szeneEnde(){
 /* ----------------------- Die 24 Abenteuer ----------------------- */
 const SZENEN = {
  1:{ort:'draussen', kulisse:['dorf'], himmel:'morgenrot', sonne:['bommelmuetze','schal'], async lauf(){
-    bea.style.opacity='0'; x=W()+20; place();
-    await hop((W()+R())/2,H()*.1,420); await hop(R(),H()*.1,420);
-    await S('<big>Überrrrasssschung!! 🎉</big>');
-    await S('Ich hab dir jemanden mitgebracht!! 👀');
-    still(); beaX=L(); beaY=bodenBea(); setBea(); bea.style.transition='opacity .3s'; bea.style.opacity='1'; beaJump();
-    funken(beaMx(),beaY-beaH*.5,16,['🎉','💛','✨']); await sleep(800);
-    await B('<big>Hallo! 👋</big>Wunderst du dich etwa, was hier los ist? 😏');
-    await B('Für die nächsten Tage bin ich als treue Weihnachtsbegleiterin auf deinem Handy dabei, natürlich mit meiner besten Freundin Sonni!!! ☀️💛');
-    still(); const sch=Prop('schild','schild',size*1.15,size*.95,M(),groundY()+size*.08,2); await pop(sch); funken(M(),groundY()-size*.7,10,['✨','🎄']);
-    await S('Und was gibt\'s heute?');
-    const k=Prop('kor','koriander',size*.55,size*.68,beaMx()+beaW*.55,groundY()-beaH*.28,5); await pop(k); beaJump();
-    await S('… Wir haben ein ganzes Dorf gebaut. Für einen Aufstrich?! 😳');
-    await B('SONNI! Das ist erst der Anfang!');
-    await S('Ohje. 😅');
+    x=W()+20; place(); bea.style.opacity='0';
+    await hop((W()+R())/2,H()*.12,400); await hop(R(),H()*.12,400);
+    beaX=-beaW-30; beaY=bodenBea(); setBea(); bea.style.opacity='1';
+    beaTo((L()-beaW-30)/2,H()*.08,420).then(()=>beaTo(L(),H()*.08,420));
+    await S('<big>SALMIIII! 🎉</big>GUCK MAL, WEN ICH DABEI HAB!!');
+    beaJump(); funken(beaMx(),beaY-beaH*.8,6,['👋','💛']);
+    await B('Halloooo! 🥹');
+    const sch=Prop('schild','schild',size*1.15,size*.95,M(),groundY()+size*.08,2); pop(sch);
+    await S('Wir wohnen jetzt übrigens hier.');
+    await B('Also … für 24 Tage.');
+    await hop(R(),H()*.15,450); funken(W()*.8,H()*.6,6,['🏠','✨']);
+    await S('ICH HAB SCHON EIN HAUS AUSGESUCHT!! 🏠');
+    await B('Sonni, das ist ein Adventskalender.');
+    await S('Ja. Und jetzt?');
+    still(); await sleep(700); await hop(R(),H()*.14,420); await hop(R(),H()*.14,420);
+    beaJump(); await B('HAHAHA okay, wir bleiben. 😂');
+    const k=Prop('kor','koriander',size*.55,size*.68,M(),groundY()-size*.02,5); await pop(k); funken(M(),groundY()-size*.5,6,['✨','🌿']);
+    await S('Und was ist das?');
+    await B('Ein Willkommensgeschenk für Salmi! 💛');
+    await S('Kann man das Haus damit einstreichen? 🤔');
+    beaJump(); await B('SONNI HAHAHAHA. 😂');
     await szeneEnde();
  }},
  2:{ort:'draussen', kulisse:['wald'], ohneSchneemann:true, bea:'hut', sonne:['schal'], async lauf(){
     const sm=Prop('sm','schneemann',size*.72,size*1.0,M(),groundY()+4,3);
     await reinBeide(); await gruss();
-    await beaTo(M()-size*.36-beaW*.75);
-    const r=Prop('rg','riegel',size*.5,size*.17,beaMx()+beaW*.3,beaY-beaH*.25,5); await pop(r);
-    await propTo(r,M()+size*.17,groundY()-size*.69,500,size*.15);
-    funken(M(),groundY()-size*.75,5,['✨']);
-    await S('Beaaaa! Das ist doch kein Karottenersatz! 🥕');
+    await S('Beaaa, der Schneemann hat Hunger. 🥺');
+    await B('Der hat doch eine Karottennase.');
+    await S('Ja, aber davon wird man doch nicht satt!');
+    still(); await hop(M()+size*.25-size*.1,H()*.06,450);
+    const r=Prop('rg','riegel',size*.5,size*.17,sunMx()-size*.3,y-size*.45,5); await pop(r);
+    await propTo(r,M()+size*.04,groundY()-size*.7,450,size*.12); funken(M(),groundY()-size*.75,5,['😋','✨']);
+    beaJump(); await B('SONNI! DER IST FÜR SALMI!!');
     sm.el.querySelector('.sm-mund').style.display='none'; sm.el.querySelector('.sm-grinsen').style.display='';
-    funken(M(),groundY()-size*.8,6,['✨','💛']);
-    await B('Aber schau, wie glücklich er aussieht!');
+    funken(M(),groundY()-size*.8,6,['✨','💛']); await sleep(500);
+    await S('… Aber guck mal, wie glücklich der ist. 🥹');
     still(); sm.el.style.transformOrigin='50% 100%';
-    await Promise.all([tw(700,t=>{sm.rot=80*t; setP(sm);},rein3), propTo(r,beaMx()+beaW*.35,beaY-beaH*.35,800,size*.6,360)]);
-    funken(M()+size*.5,groundY()-10,8,['❄️','💨']); beaJump();
-    await B('Okay … den kriegt doch lieber Salmi. 💛');
-    funken(beaMx(),beaY-beaH*.6,8,['💛','❤️']);
+    await Promise.all([tw(800,t=>{sm.rot=-85*t; setP(sm);},rein3), propTo(r,M()-size*.5,groundY()-6,800,size*.1,-200)]);
+    funken(M()-size*.4,groundY()-10,10,['❄️','💨']);
+    await B('Okay. Ich glaube, er hatte genug. 😂');
+    await hop(R(),H()*.06,450);
     await szeneEnde();
  }},
  3:{ort:'draussen', kulisse:['berge','gondel'], bea:'hut', sonne:['weihnachtsmuetze'], async lauf(){
     const bm=Prop('baum','baum',size*.95,size*1.35,M(),groundY()+6,2);
     const st=Prop('st','struempfe',size*.34,size*.34,M()+size*.14,groundY()-size*.5,3);
     await reinBeide(); await gruss();
+    await S('Bea?');
+    await B('Mhm?');
     wackel(st,4,10);
-    await S('BEAAA! Was hängt denn da am Baum?! 😳');
-    beaJump(); await B('Oh! Die hab ich schon gesucht!');
-    await S('Die gehören doch nicht an den Weihnachtsbaum!');
-    still(); await beaTo(M()-size*.2-beaW*.6);
-    await propTo(st,beaMx(),beaY-beaH*.4,450,size*.1); weg(st,250); await beaTo(L());
-    await B('Stimmt. Die sind ja für später. 🤭');
-    zs('o-haende'); funken(sunMx(),y-size*.7,6,['😂','🙈']);
-    await S('<big>🙈</big>'); zs('o-haende',false);
+    await S('Sind das die Weihnachtsstrümpfe? 🧦');
+    beaJump(); await B('HAHAHAHA NEIN!!');
+    await S('Ach so. Ich dachte schon.');
+    await B('Die sind für Salmi. 🤭');
+    wackel(st,3,8);
+    await S('… Soll ich sie dann dranlassen? 👀');
+    beaJump(); funken(beaMx(),beaY-beaH*.8,6,['😂']);
+    await B('SONNI! 😂');
     await szeneEnde();
  }},
  4:{ort:'draussen', kulisse:['berge','piste'], bea:'beanie', sonne:['ohren','schal'], async lauf(){
     await reinBeide(); await gruss();
     still(); const sb=Prop('sb','⚪',size*.18,size*.18,sunMx()-size*.3,y-size*.4,5);
-    await propTo(sb,beaMx(),beaY-beaH*.65,550,size*.4); weg(sb,100); funken(beaMx(),beaY-beaH*.65,10,['❄️','💥']); beaJump();
-    await B('HEY!');
-    await S('HAHAHA! Getroffen! 😆');
-    still(); const gb=Prop('gb','⚪',size*.8,size*.8,beaMx()+beaW*.3,beaY-beaH*.3,5); gb.el.querySelector('.emo').style.filter='drop-shadow(0 4px 0 #dbe7f4)';
-    await propTo(gb,sunMx(),y+size*.1,700,size*.7,-120);
+    await propTo(sb,beaMx(),beaY-beaH*.82,550,size*.4); weg(sb,100); funken(beaMx(),beaY-beaH*.82,10,['❄️','💥']); beaJump();
+    await B('HEY!!');
+    await S('Hihihi. 🤭');
+    still(); const gb=Prop('gb','⚪',size*.8,size*.8,beaMx()+beaW*.45,beaY-beaH*.35,5); gb.el.querySelector('.emo').style.filter='drop-shadow(0 4px 0 #dbe7f4)';
+    gb.s=.2; setP(gb); await tw(900,t=>{gb.s=.2+.8*t; setP(gb);}); funken(gb.x,gb.y-size*.5,6,['❄️']);
+    await S('Bea?');
+    await B('Jaaaa? 😇');
+    await S('Der ist aber groß. 😳');
+    await B('Findest du?');
+    still(); await propTo(gb,sunMx(),y+size*.1,700,size*.7,-120);
     actor.style.opacity='0'; weg(gb,150);
     const hf=Prop('hf','haufen',size*1.15,size*.85,sunMx(),groundY()+4,4); hf.el.classList.add('wink');
-    funken(sunMx(),groundY()-size*.4,14,['❄️','💨'],1.4);
-    await B('Sonni? 😳');
-    await S('ICH BIN HIER!!');
-    still(); await beaTo(R()-beaW*.6);
-    await weg(hf,300); actor.style.opacity='1'; funken(sunMx(),y-size*.5,10,['❄️','✨']);
-    await hop(R(),H()*.15,450); await beaTo(L());
-    await B('Okay … ich glaube, wir brauchen eine warme Dusche. 🚿😂');
+    funken(sunMx(),groundY()-size*.4,14,['❄️','💨'],1.4); await sleep(600);
+    await S('… BEAAAA!');
+    beaJump(); await B('HAHAHAHAHA. 😂');
+    still(); await weg(hf,300); actor.style.opacity='1'; funken(sunMx(),y-size*.5,10,['❄️','✨']);
+    await hop(R(),H()*.15,450);
+    await S('Ich glaube, ich brauche eine Dusche. 🥶');
+    await B('Was für ein Zufall! 🚿');
     await szeneEnde();
  }},
  5:{ort:'drinnen', raum:'wohnzimmer', bea:'hut', sonne:[], async lauf(){
     const ti=Prop('ti','tisch',size*1.05,size*.52,M(),groundY()+2,2);
-    const sch=Prop('sch','schuessel',size*.6,size*.34,M(),groundY()-size*.47,3);
     await reinBeide(); await gruss();
-    await B('Sonni, Finger weg! Die sind für Salmi! 🥜');
-    await S('Jaaa, ich weiß!');
-    still(); beaFlip=-1; setBea(); await sleep(500);
-    await hop(M()-size*.2,H()*.1,420); funken(M(),groundY()-size*.6,4,['🥜']); zs('o-kruemel');
-    await hop(R(),H()*.1,420);
-    beaFlip=1; setBea(); beaJump();
-    await B('SONNI!');
-    await S('WAS?! 😇');
-    await B('Du hast da was.');
-    await S('Wo? 😳');
-    zs('o-kruemel',false); await szeneEnde();
+    await beaTo(M()-size*.35-beaW*.6);
+    const sch=Prop('sch','schuessel',size*.6,size*.34,M(),groundY()-size*.47,3); await pop(sch);
+    await B('So. Die sind für Salmi. 🥜');
+    await S('Okay!');
+    still(); beaFlip=-1; setBea(); await beaTo(L(),H()*.03,500); beaFlip=-1; setBea(); await sleep(300);
+    await hop(M()+size*.1,H()*.08,400); funken(M(),groundY()-size*.6,4,['🥜']); zs('o-kruemel'); await sleep(300);
+    await hop(R(),H()*.08,400);
+    beaFlip=1; setBea();
+    await B('Sonni?');
+    await S('Hm? 😇');
+    await B('Hast du gerade einen gegessen?');
+    await S('Nein.');
+    still(); zs('o-kruemel',false); const kr=Prop('kr','🟤',size*.06,size*.06,sunMx()-size*.05,y-size*.35,6);
+    await propTo(kr,sunMx()-size*.05,groundY(),500); await sleep(300);
+    await B('Aha. 🤨');
+    await S('… Der war schon da.');
+    funken(beaMx(),beaY-beaH*.8,4,['😂']);
+    await szeneEnde();
  }},
  6:{ort:'draussen', kulisse:['dorf'], himmel:'morgenrot', bea:'hut', sonne:['weihnachtsmuetze'], async lauf(){
     const sf=Prop('sf','stiefel',size*.75,size*.45,M(),groundY()+2,3);
@@ -678,7 +704,9 @@ const SZENEN = {
     await B('Ohaaaa! Eine Waffel bitte!');
     still(); const wf=Prop('wf','🧇',size*.34,size*.34,M()+size*.4,groundY()-size*.65,4);
     await propTo(wf,M()-size*.1,groundY()-size*.47,600,size*.2); funken(M()-size*.1,groundY()-size*.6,6,['✨']);
-    await B('Sonni … du hast die doch gar nicht gebacken!');
+    await B('Sonni …');
+    await S('Ja?');
+    await B('Du hast die doch gar nicht gebacken!');
     await S('Psssst! Betriebsgeheimnis! 🤫');
     await szeneEnde();
  }},
@@ -841,7 +869,6 @@ const SZENEN = {
     for(let i=0;i<4;i++){ funken(sunMx(),y-size*.4,3,['🔥','🌶️'],.8); await sleep(180); }
     await hop(W()+size,H()*.15,550); await sleep(400); funken(W()-20,y-size*.5,6,['💦','💧']); await sleep(500);
     actor.style.filter=''; await hop(R(),H()*.1,500);
-    await S('Puh. 💦');
     await szeneEnde();
  }},
  18:{ort:'drinnen', raum:'wohnzimmer', bea:'hut', sonne:[], async lauf(){
@@ -868,21 +895,32 @@ const SZENEN = {
     await S('Ich wollte vorbereitet sein! 🎤');
     await szeneEnde();
  }},
- 20:{ort:'drinnen', raum:'werkstatt', bea:'hut', sonne:['schutzbrille'], async lauf(){
+ 20:{ort:'drinnen', raum:'werkstatt', bea:'hut', sonne:['schutzbrille','armseite'], async lauf(){
     const wb=Prop('wb','werkbank',size*1.0,size*.55,M(),groundY()+2,2);
     await reinBeide();
+    // Schlüsselbund in Sonnis Hand
+    const hand=(th=0)=>{ const dx=size*.37, dy=-size*.22, c=Math.cos(th*Math.PI/180), sn=Math.sin(th*Math.PI/180);
+      return [x+size/2+dx*c-dy*sn, y+dx*sn+dy*c]; };
+    const sb=Prop('sb','schluesselbund',size*.24,size*.3,...hand(),6); const setzSB=(th)=>{const [hx,hy]=hand(th); sb.x=hx; sb.y=hy+size*.26; setP(sb);}; setzSB(0); const sbFolgt=setInterval(()=>{ if(!hopping) return; setzSB(0); },16);
     funken(M(),groundY()-size*.6,6,['⚙️','🔧','✨']);
     beaJump(); await B('FERTIG!! 🛠️');
     await S('Was hast du gebaut?');
-    const an=Prop('an','anhaenger',size*.2,size*.34,beaMx()+beaW*.3,beaY-beaH*.95,6); await pop(an); beaJump();
+    const an=Prop('an','anhaenger',size*.16,size*.27,beaMx()+beaW*.4,beaY-beaH*.55,6); await pop(an); beaJump();
     await S('So klein?!');
     await B('Praktisch, oder? 🌶️🔑');
-    still(); await propTo(an,sunMx()-size*.1,y-size*.5,550,size*.3);
-    actor.style.transformOrigin='70% 100%';
-    await tw(500,t=>{rot=75*t; place(); an.x=sunMx()-size*.1+size*.3*t; an.y=y-size*.5+size*.3*t; setP(an);},rein3);
-    funken(sunMx()+size*.3,groundY()-10,6,['💥','⭐']);
+    still();
+    await Promise.all([ (async()=>{ await hop(W()*.3-size*.2,H()*.1,500); })(), (async()=>{ await beaTo(W()*.62,H()*.1,600); })() ]);
+    setzSB(0); propTo(an,beaMx()-beaW*.2,beaY-beaH*.5,300);
+    const [hx,hy]=hand(0); await propTo(an,hx+size*.02,hy+size*.3,450,size*.05);
+    funken(hx,hy+size*.15,3,['✨']); await beaTo(W()-beaW-6,H()*.04,450);
+    const setzAn=(th)=>{const [qx,qy]=hand(th); an.x=qx+size*.02; an.y=qy+size*.3; setP(an);};
+    // langsam kippen … wackeln … umfallen
+    actor.style.transformOrigin='50% 100%';
+    const kipp=async(von,bis,ms,ease=t=>t)=>tw(ms,t=>{rot=von+(bis-von)*t; place(); setzSB(rot); setzAn(rot);},ease);
+    await kipp(0,10,500); await kipp(10,4,300); await kipp(4,18,500); await kipp(18,12,250); await kipp(12,88,650,rein3);
+    clearInterval(sbFolgt); funken(x+size*.9,groundY()-10,8,['💥','⭐','💫']);
     beaJump(); await B('SONNIIII!');
-    await tw(400,t=>{rot=75*(1-t); place();}); actor.style.transformOrigin='50% 100%'; weg(an);
+    await sleep(400); await kipp(88,0,500);
     await szeneEnde();
  }},
  21:{ort:'drinnen', raum:'wohnzimmer', bea:null, sonne:['pads'], async lauf(){
@@ -1637,8 +1675,8 @@ function planeUntergang(ms){ clearTimeout(untergangTimer); untergangTimer=setTim
 async function untergehen(){
   if(hopping){ return planeUntergang(800); }
   untergegangen=true; tap.classList.remove('show');
-  say(pick(['Tschüss! Bis bald 👋','So, ich muss weiter. 👋','Ich geh dann mal unter. Byeee! 👋']),1800);
-  await sleep(1900);
+  say(pick(['Bis morgen, Salmi! 💛','Hab einen wunderschönen Tag! ☀️','Wir sehen uns morgen! 👋💛','Hab dich lieb! Bis morgen! 💛']),2200);
+  await sleep(2300);
   await hop(mitte(),H()*.12,520);
   actor.style.zIndex='0'; bea.style.zIndex='0'; document.getElementById('scene').style.zIndex='3';
   const rbd=document.getElementById('raumboden'); if(rbd) rbd.style.zIndex='3';
