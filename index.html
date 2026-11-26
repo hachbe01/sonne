@@ -120,6 +120,7 @@
   #endkarte.show{opacity:1;transform:none}
   #raum,#raumboden{position:fixed;left:0;top:0;pointer-events:none}
   #raum{z-index:0} #raumboden{z-index:1}
+  .rauch{animation:rauch 2.4s ease-in-out infinite} @keyframes rauch{50%{transform:translateY(-4px);opacity:.2}}
   .birne{animation:birne 1.8s ease-in-out infinite} @keyframes birne{50%{opacity:.15}}
   .flocke{animation:flocke linear infinite} @keyframes flocke{to{transform:translateY(var(--fh))}}
   .flamme{transform-box:fill-box;transform-origin:50% 100%;animation:flamme .6s ease-in-out infinite alternate} @keyframes flamme{to{transform:scale(.85,1.12) rotate(4deg)}}
@@ -231,7 +232,8 @@
   <!-- Beine & Schuhe -->
   <rect x="44" y="150" width="14" height="36" rx="5" fill="#2a2522"/>
   <rect x="62" y="150" width="14" height="36" rx="5" fill="#2a2522"/>
-  <ellipse cx="50" cy="188" rx="11" ry="6" fill="#151212"/><ellipse cx="70" cy="188" rx="11" ry="6" fill="#151212"/>
+  <ellipse class="schuh" cx="50" cy="188" rx="11" ry="6" fill="#151212"/><ellipse class="schuh" cx="70" cy="188" rx="11" ry="6" fill="#151212"/>
+  <g id="bea-sohle" style="display:none"><path d="M40 191 H60 M60 191 H80" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><path d="M45 186 l5 -3 M66 186 l5 -3" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".8"/></g>
   <!-- linker Arm -->
   <path d="M34 104 Q24 126 30 144" class="aermel" stroke="#3b2a22" stroke-width="13" fill="none" stroke-linecap="round"/>
   <circle cx="30" cy="147" r="6" fill="#f3cdb0"/>
@@ -243,6 +245,26 @@
   <rect x="51" y="141" width="18" height="7" rx="1.5" fill="#8a5a2b"/>
   <rect x="55.5" y="140" width="9" height="9" rx="1.5" fill="none" stroke="#c9a46a" stroke-width="2"/>
   <path d="M50 99 L46 150 M70 99 L74 150" stroke="#2a1d17" stroke-width="2"/>
+  <g id="bea-top-hoodie" style="display:none">
+    <path class="top-farbe" d="M33 100 Q60 92 87 100 L90 152 Q60 158 30 152 Z"/>
+    <path class="top-dunkel" d="M38 98 Q60 112 82 98 Q78 90 60 92 Q42 90 38 98 Z"/>
+    <path d="M55 104 L54 118 M65 104 L66 118" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+    <path class="top-dunkel" d="M44 130 H76 L80 146 H40 Z" opacity=".6"/>
+    <path class="top-dunkel" d="M31 146 Q60 152 89 146 L90 152 Q60 158 30 152 Z"/>
+  </g>
+  <g id="bea-top-teddy" style="display:none">
+    <path d="M33 100 Q60 92 87 100 L90 152 Q60 158 30 152 Z" fill="#f4efe6"/>
+    <g fill="#e7dfd1"><circle cx="40" cy="110" r="2.2"/><circle cx="48" cy="122" r="2"/><circle cx="38" cy="134" r="2.2"/><circle cx="46" cy="144" r="2"/><circle cx="74" cy="112" r="2.2"/><circle cx="80" cy="126" r="2"/><circle cx="72" cy="138" r="2.2"/><circle cx="82" cy="144" r="2"/><circle cx="56" cy="130" r="1.8"/><circle cx="66" cy="118" r="1.8"/></g>
+    <path d="M60 98 V152" stroke="#cfc6b6" stroke-width="2"/>
+    <path d="M42 96 Q50 104 60 100 Q70 104 78 96 Q70 92 60 94 Q50 92 42 96 Z" fill="#e7dfd1"/>
+  </g>
+  <g id="bea-top-puffer" style="display:none">
+    <path d="M31 100 Q60 90 89 100 L92 152 Q60 159 28 152 Z" fill="#1f1f22"/>
+    <path d="M30 112 Q60 118 90 112 M29 124 Q60 130 91 124 M29 136 Q60 142 91 136" stroke="#3a3a40" stroke-width="2.4" fill="none"/>
+    <path d="M60 96 V154" stroke="#555" stroke-width="1.6"/>
+    <path d="M44 88 Q60 96 76 88 L78 100 Q60 108 42 100 Z" fill="#2a2a2e"/>
+    <path d="M36 106 q4 -2 8 0" stroke="#fff" stroke-width="1.5" opacity=".25" fill="none"/>
+  </g>
   <g id="bea-mode" style="display:none">
     <g id="bea-mode-brille"></g>
     <path d="M30 98 Q60 90 90 98 L98 188 Q60 196 22 188 Z" fill="#f7a8c8"/>
@@ -548,7 +570,7 @@ async function szeneEnde(){
 
 /* ----------------------- Die 24 Abenteuer ----------------------- */
 const SZENEN = {
- 1:{ort:'draussen', sonne:['bommelmuetze','schal'], async lauf(){
+ 1:{ort:'draussen', kulisse:['dorf'], himmel:'morgenrot', sonne:['bommelmuetze','schal'], async lauf(){
     bea.style.opacity='0'; x=W()+20; place();
     await hop((W()+R())/2,H()*.1,420); await hop(R(),H()*.1,420);
     await S('<big>Überrrrasssschung!! 🎉</big>');
@@ -565,7 +587,7 @@ const SZENEN = {
     await S('Ohje. 😅');
     await szeneEnde();
  }},
- 2:{ort:'draussen', bea:'hut', sonne:['schal'], async lauf(){
+ 2:{ort:'draussen', kulisse:['wald'], ohneSchneemann:true, bea:'hut', sonne:['schal'], async lauf(){
     const sm=Prop('sm','schneemann',size*.72,size*1.0,M(),groundY()+4,3);
     await reinBeide(); await gruss();
     await beaTo(M()-size*.36-beaW*.75);
@@ -583,7 +605,7 @@ const SZENEN = {
     funken(beaMx(),beaY-beaH*.6,8,['💛','❤️']);
     await szeneEnde();
  }},
- 3:{ort:'draussen', bea:'hut', sonne:['weihnachtsmuetze'], async lauf(){
+ 3:{ort:'draussen', kulisse:['berge','gondel'], bea:'hut', sonne:['weihnachtsmuetze'], async lauf(){
     const bm=Prop('baum','baum',size*.95,size*1.35,M(),groundY()+6,2);
     const st=Prop('st','struempfe',size*.34,size*.34,M()+size*.14,groundY()-size*.5,3);
     await reinBeide(); await gruss();
@@ -598,7 +620,7 @@ const SZENEN = {
     await S('<big>🙈</big>'); zs('o-haende',false);
     await szeneEnde();
  }},
- 4:{ort:'draussen', bea:'beanie', sonne:['ohren','schal'], async lauf(){
+ 4:{ort:'draussen', kulisse:['berge','piste'], bea:'beanie', sonne:['ohren','schal'], async lauf(){
     await reinBeide(); await gruss();
     still(); const sb=Prop('sb','⚪',size*.18,size*.18,sunMx()-size*.3,y-size*.4,5);
     await propTo(sb,beaMx(),beaY-beaH*.65,550,size*.4); weg(sb,100); funken(beaMx(),beaY-beaH*.65,10,['❄️','💥']); beaJump();
@@ -633,7 +655,7 @@ const SZENEN = {
     await S('Wo? 😳');
     zs('o-kruemel',false); await szeneEnde();
  }},
- 6:{ort:'draussen', bea:'hut', sonne:['weihnachtsmuetze'], async lauf(){
+ 6:{ort:'draussen', kulisse:['dorf'], himmel:'morgenrot', bea:'hut', sonne:['weihnachtsmuetze'], async lauf(){
     const sf=Prop('sf','stiefel',size*.75,size*.45,M(),groundY()+2,3);
     const sk=Prop('sk','schokomann',size*.3,size*.4,M()-size*.18,groundY()-size*.22,2); sk.o=0; setP(sk);
     await reinBeide();
@@ -649,7 +671,7 @@ const SZENEN = {
     funken(M()-size*.18,groundY()-size*.7,6,['👋','💛']);
     await szeneEnde();
  }},
- 7:{ort:'draussen', bea:'beanie', sonne:['kochmuetze'], async lauf(){
+ 7:{ort:'draussen', kulisse:['markt'], ohneSchneemann:true, bea:'beanie', sonne:['kochmuetze'], async lauf(){
     const st=Prop('stand','waffelstand',size*1.25,size*1.05,M()+size*.1,groundY()+4,2);
     await reinBeide(); await hop(M()+size*.15,H()*.08,420);
     await S('Willkommen in Sonnis Waffelstube! 🧇');
@@ -724,7 +746,7 @@ const SZENEN = {
     await beaTo(L(),H()*.05); zs('bea-mode',false); zs('bea-sonnenbrille',false);
     await szeneEnde();
  }},
- 12:{ort:'draussen', bea:'beanie', sonne:['kochmuetze'], async lauf(){
+ 12:{ort:'draussen', kulisse:['see','wald'], ohneSchneemann:true, bea:'beanie', sonne:['kochmuetze'], async lauf(){
     const st=Prop('stand','restaurant',size*1.3,size*1.05,M()+size*.1,groundY()+4,2);
     await reinBeide(); await hop(M()+size*.15,H()*.08,420);
     await B('Ohaaaa, was gibt\'s denn hier?');
@@ -940,7 +962,7 @@ const dezTest = vorschauTag ? [null,String(vorschauTag)] : hash.match(/^dez-?(\d
 const testMonat={winter:0,weihnachten:11,nikolaus:11,fruehling:3,sommer:6,herbst:9}[hash];
 if(testMonat!==undefined) month=testMonat;
 if(dezTest) month=11;
-if(hash==='abend') hour=20;
+hour = hash==='abend' ? 20 : 8;   // Die Sonne kommt morgens – also immer „Guten Morgen“
 const saison = [11,0,1].includes(month)?'winter':[2,3,4].includes(month)?'fruehling':[5,6,7].includes(month)?'sommer':'herbst';
 const mmdd=String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
 const dezTag = dezTest ? +dezTest[1] : hash==='nikolaus' ? 6 : (now.getMonth()===11 && testMonat===undefined ? now.getDate() : null);
@@ -950,6 +972,7 @@ let besonders = besondersRaw && (typeof besondersRaw==='string' ? {text:besonder
 let thema = (month===11 && dezTag) ? (DEZ_THEMEN[dezTag]||{}) : {};
 const SZ = (month===11 && dezTag && hash!=='diabetes') ? (SZENEN[dezTag]||null) : null;
 if(SZ){ besonders=null; thema={sonne:SZ.sonne, bea:SZ.bea, kulisse:SZ.kulisse||[]}; }
+if(SZ && SZ.himmel==='morgenrot') document.addEventListener('DOMContentLoaded',()=>{});
 const hat = k => (thema.kulisse||[]).includes(k);
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 const rnd=(a,b)=>a+Math.random()*(b-a);
@@ -1038,6 +1061,38 @@ function keksglas(x,y,s){
   add('circle',{cx:x+26*s,cy:y-4*s,r:6*s,fill:'#d99a5a',stroke:'#b8783e','stroke-width':1});
   add('circle',{cx:x+31*s,cy:y-8*s,r:3*s,fill:'#f7fbff'}); // angebissen
 }
+function dorf(B1,B2){
+  [[70,'#e2483d'],[104,'#4a7bd0'],[140,'#ffb13d'],[262,'#3f9b6b'],[298,'#b48cff'],[334,'#e2483d']].forEach(([hx,c],i)=>{
+    const Hh=hx<200?B1:B2, base=hillY(hx,...Hh)+8, w=22+(i%2)*6, h=16+(i%3)*3;
+    add('rect',{x:hx-w/2,y:base-h,width:w,height:h,fill:c});
+    add('rect',{x:hx+w*.18,y:base-h-12,width:5,height:10,fill:'#7a4a2a'});
+    [0,1,2].forEach(k=>add('circle',{cx:hx+w*.18+2.5+k*2,cy:base-h-16-k*6,r:2.5+k,fill:'#fff',opacity:.7-k*.2,class:'rauch',style:`animation-delay:${-k*.6}s`}));
+    add('path',{d:`M${hx-w/2-4} ${base-h} L${hx} ${base-h-14} L${hx+w/2+4} ${base-h} Z`,fill:'#f7fbff',stroke:'#dfe9f5'});
+    add('rect',{x:hx-w*.32,y:base-h+5,width:6,height:6,fill:'#ffd84a',rx:1});add('rect',{x:hx+w*.08,y:base-h+5,width:6,height:6,fill:'#ffd84a',rx:1});
+    add('rect',{x:hx-3,y:base-8,width:6,height:8,fill:'#5a3014'});
+  });
+  // Kirche
+  const kx=200, kb=hillY(kx,...B1)+4;
+  add('rect',{x:kx-9,y:kb-40,width:18,height:40,fill:'#f2e6d6'}); add('path',{d:`M${kx-12} ${kb-40} L${kx} ${kb-62} L${kx+12} ${kb-40}Z`,fill:'#c0392b'});
+  add('path',{d:`M${kx} ${kb-62} v-8 M${kx-3} ${kb-67} h6`,stroke:'#ffd84a','stroke-width':1.6});
+  add('circle',{cx:kx,cy:kb-30,r:4,fill:'#ffd84a'}); add('path',{d:`M${kx-4} ${kb} v-9 a4 4 0 0 1 8 0 v9`,fill:'#7a4a2a'});
+  add('path',{d:`M${kx-12} ${kb-40} L${kx} ${kb-62} L${kx+12} ${kb-40}`,stroke:'#fff','stroke-width':2,fill:'none'});
+}
+function wald(B1,B2){
+  for(let i=0;i<16;i++){ const tx=62+i*18+Math.sin(i*2.1)*6, Hh=tx<200?B1:B2;
+    tanne(tx,hillY(tx,...Hh)+6,.45+((i*37)%10)/28,false,i%2?'#4f8f74':'#5f9a86'); }
+}
+function markt(B1,B2){
+  [[82,'#e2483d'],[132,'#3f9b6b'],[268,'#4a7bd0'],[318,'#e2483d']].forEach(([mx,c],i)=>{
+    const Hh=mx<200?B1:B2, base=hillY(mx,...Hh)+10;
+    add('rect',{x:mx-18,y:base-20,width:36,height:20,fill:'#a8693a'}); add('rect',{x:mx-18,y:base-12,width:36,height:4,fill:'#8a542c'});
+    add('path',{d:`M${mx-23} ${base-20} L${mx} ${base-36} L${mx+23} ${base-20} Z`,fill:c});
+    add('path',{d:`M${mx-23} ${base-20} L${mx} ${base-36} L${mx+23} ${base-20}`,stroke:'#fff','stroke-width':2.5,fill:'none'});
+    for(let k=0;k<6;k++) add('circle',{cx:mx-16+k*6.4,cy:base-18+Math.sin(k)*1.5,r:1.4,fill:['#ffd84a','#ff5a5a','#fff'][k%3],class:'birne',style:`animation-delay:${-k*.3}s`});
+    add('text',{x:mx,y:base-2,'font-size':9,'text-anchor':'middle'}).textContent=['🥨','🍷','🍪','🎁'][i];
+  });
+  tanne(200,hillY(200,...B1)+6,.9,true);
+}
 function hillY(x,cx,cy,rx,ry){const t=(x-cx)/rx;return cy-ry*Math.sqrt(Math.max(0,1-t*t));}
 function baum(x,y,s,farben){
   add('rect',{x:x-3*s,y:y-22*s,width:6*s,height:24*s,fill:'#7a4a2a'});
@@ -1068,18 +1123,21 @@ if(saison==='winter' && !(SZ && SZ.ort!=='draussen' && SZ.ort!=='nacht')){
   [[78,.55],[100,.45],[122,.6],[300,.5],[322,.6]].forEach(([x,sc])=>{
     const H=x<200?B1:B2; tanne(x,hillY(x,...H)+2,sc,false,'#7aa79a');
   });
+  if(hat('dorf')) dorf(B1,B2); if(hat('wald')) wald(B1,B2); if(hat('markt')) markt(B1,B2);
   add('ellipse',{cx:F[0],cy:F[1],rx:F[2],ry:F[3],fill:(SZ&&SZ.ort==='nacht')?'#c9d3ee':'#f7fbff'});
   if(hat('see')) see();
   tanne(92,hillY(92,...F)+12,1.15,deko);
   tanne(312,hillY(312,...F)+10,.95,false);
   tanne(334,hillY(334,...F)+18,.7,false);
   // Schneemann
+  if(!(SZ&&SZ.ohneSchneemann)){
   const sx=262, sy=hillY(262,...F)+30;
   add('ellipse',{cx:sx,cy:sy,rx:15,ry:13,fill:'#fff',stroke:'#dfe9f5','stroke-width':1.5});
   add('circle',{cx:sx,cy:sy-21,r:10,fill:'#fff',stroke:'#dfe9f5','stroke-width':1.5});
   add('path',{d:`M${sx} ${sy-21} l9 2 -9 2z`,fill:'#ff8a3c'});
   add('circle',{cx:sx-3.5,cy:sy-24,r:1.3,fill:'#333'});add('circle',{cx:sx+3.5,cy:sy-24,r:1.3,fill:'#333'});
   add('path',{d:`M${sx-9} ${sy-13} Q${sx} ${sy-9} ${sx+9} ${sy-13}`,stroke:'#d64545','stroke-width':3,fill:'none','stroke-linecap':'round'});
+  }
   if(besonders && besonders.stiefel) stiefel(140,hillY(140,...F)+42,1.15);
   if(hat('geschenke')) geschenke(112,172,1.6);
   if(hat('keksglas')) keksglas(268,166,1.5);
@@ -1350,6 +1408,7 @@ if(SZ && SZ.ort==='nacht'){
   add('path',{d:'M30 70 Q200 90 380 70',stroke:'#333','stroke-width':.6,fill:'none'});
 }
 const drinnen = SZ && (SZ.ort==='drinnen'||SZ.ort==='buehne');
+if(SZ && SZ.himmel==='morgenrot') document.body.style.background='linear-gradient(180deg,#ffa98a 0%,#ffcfae 40%,#fde9dc 75%,#f3f6fb 100%)';
 const sturm=hat('sturm');
 if(sturm) document.body.style.background='linear-gradient(180deg,#9fb3c8 0%,#c9d6e3 60%,#e9eff5 100%)';
 for(let i=0;i<(drinnen?0:sturm?140:saison==='winter'?36:T.particles.length?12:0);i++){
@@ -1419,6 +1478,22 @@ if(!(besonders&&besonders.beaKostuem)){
   if(thema.bea==='ski'){zeige('bea-ski');zeige('bea-brille-ski');}
   if(thema.bea==='schlittschuh') zeige('bea-skates');
 }
+// Beas Klamotten wechseln jeden Tag 👕
+const BEA_DRAUSSEN=['leder','puffer','teddy','hoodie-rot','puffer','teddy','hoodie-gruen'];
+const BEA_DRINNEN=['hoodie-rot','hoodie-gruen','teddy','hoodie-rot','hoodie-gruen'];
+function beaOutfit(tag, drinnen){
+  const liste = drinnen?BEA_DRINNEN:BEA_DRAUSSEN;
+  const o = tag===1 ? 'leder' : liste[tag%liste.length];
+  const sleeve={ 'hoodie-rot':'#d64545','hoodie-gruen':'#3f8f5a','teddy':'#f4efe6','puffer':'#1f1f22' }[o];
+  if(o.startsWith('hoodie')){ zeige('bea-top-hoodie'); const c=o==='hoodie-rot'?['#d64545','#a83232']:['#3f8f5a','#2e6b43'];
+    bea.querySelectorAll('.top-farbe').forEach(e=>e.setAttribute('fill',c[0])); bea.querySelectorAll('.top-dunkel').forEach(e=>e.setAttribute('fill',c[1])); }
+  if(o==='teddy') zeige('bea-top-teddy');
+  if(o==='puffer') zeige('bea-top-puffer');
+  if(sleeve) bea.querySelectorAll('.aermel').forEach(e=>e.setAttribute('stroke',sleeve));
+  const schuh = tag%2 ? '#6b4226' : '#151212';
+  bea.querySelectorAll('.schuh').forEach(e=>e.setAttribute('fill',schuh)); zeige('bea-sohle');
+}
+if(month===11 && dezTag && !(besonders&&besonders.beaKostuem)) beaOutfit(dezTag, !!(SZ && SZ.ort!=='draussen' && SZ.ort!=='nacht'));
 let beaModus = (thema.bea==='ski'||thema.bea==='schlittschuh') ? 'auftritt' : 'folgen';
 if(beaModus==='auftritt') bea.style.opacity='0';
 let beaRot=0;
