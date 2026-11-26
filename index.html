@@ -388,7 +388,7 @@
   <path d="M41.5 57 Q44 54.5 47.5 54.2 M65.5 57 Q68 54.5 71.5 54.2" stroke="#fff" stroke-width="1.2" fill="none" opacity=".7" stroke-linecap="round"/>
   <path d="M58.5 62 Q60 60.4 61.5 62" stroke="#7a4a2a" stroke-width="1.8" fill="none"/>
   <path d="M58.8 70 Q60.5 71.8 62.2 70" stroke="#e0a98a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-  <g id="bea-pads" style="display:none"><ellipse cx="47" cy="75" rx="8" ry="4.5" fill="#bff3d4" stroke="#9ad9b5"/><ellipse cx="73" cy="75" rx="8" ry="4.5" fill="#bff3d4" stroke="#9ad9b5"/></g>
+  <g id="bea-pads" style="display:none"><path d="M38 74 Q47 82 56 74 Q47 77 38 74 Z" fill="#9ee6bd" stroke="#7ccfa1"/><path d="M64 74 Q73 82 82 74 Q73 77 64 74 Z" fill="#9ee6bd" stroke="#7ccfa1"/></g>
   <g id="bea-zu" style="display:none"><circle cx="48" cy="62" r="8.5" fill="#f8dcc4"/><circle cx="72" cy="62" r="8.5" fill="#f8dcc4"/>
     <path d="M43 64 Q48 68 53 64 M67 64 Q72 68 77 64" stroke="#3b2416" stroke-width="2" fill="none" stroke-linecap="round"/></g>
   <g id="bea-creme" style="display:none"><path d="M30 60 Q28 34 50 32 Q62 26 74 32 Q94 36 90 62 Q94 84 74 90 Q60 96 46 90 Q26 84 30 60 Z" fill="#fffdf8" stroke="#eee6da" stroke-width="2"/>
@@ -837,21 +837,22 @@ const SZENEN = {
     zs('o-nudeln',false); await szeneEnde();
  }},
  9:{ort:'drinnen', raum:'bad', bea:null, sonne:[], async lauf(){
-    zs('bea-creme');
-    const ct=Prop('ct','cremetiegel',size*.32,size*.22,L()+beaW+size*.1,groundY()+2,3);
     await reinBeide(); await gruss();
-    await S('Bea, warum bist du so weiß 😳');
-    await B('Gesichtspflege halt 🧴');
-    await S('Darf ich helfen?');
-    await B('Jaaa');
-    still(); await hop(L()+beaW*.45,H()*.08,450); funken(beaMx(),beaY-beaH*.72,5,['✍️','✨']);
-    zs('bea-schnurrbart'); await sleep(600); await hop(R(),H()*.08,450);
-    await B('Was machst du?');
-    await S('Beauty 💅');
-    still(); await beaTo(W()*.42-beaW/2,H()*.05,500); beaFlip=-1; setBea(); funken(W()*.5,H()*.25,4,['🪞','✨']); await sleep(700); beaFlip=1; setBea();
-    await B('HAHAHA ICH SEH AUS WIE MEIN PAPA');
-    await S('Steht dir aber 😌');
-    zs('bea-creme',false); zs('bea-schnurrbart',false); funken(beaMx(),beaY-beaH*.7,8,['✨','🫧']);
+    const pk=Prop('pk','🫧',size*.24,size*.24,beaX+beaW+size*.15,groundY()+2,4); 
+    still(); zs('bea-pads'); funken(beaMx(),beaY-beaH*.9,4,['✨','💚'],.6); await sleep(500);
+    await S('Was hast du da für grüne Dinger? 🤨');
+    await B('Augenpads');
+    await S('Ich will auch 🥺');
+    still(); await hop(L()+beaW*.9,H()*.06,450); funken(sunMx(),y-size*1.0,4,['✨','💚'],.6); zs('o-pads'); await hop(R(),H()*.06,450);
+    await S('Und jetzt?');
+    await B('Jetzt chillen wir zehn Minuten 😌');
+    still(); zs('o-schlaf'); zs('bea-zu'); await sleep(1300); zs('o-schlaf',false);
+    await S('Sind die zehn Minuten rum?');
+    await B('Sonni, das waren drei Sekunden');
+    zs('bea-zu',false);
+    await S('Ich fühl mich aber schon voll frisch ✨');
+    await B('HAHAHA');
+    zs('bea-pads',false); zs('o-pads',false); weg(pk,100);
     await szeneEnde();
  }},
  10:{ort:'drinnen', raum:'bad', bea:null, sonne:[], async lauf(){
