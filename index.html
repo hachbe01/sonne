@@ -9,6 +9,8 @@
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%;overflow:hidden}
+  html{background:#232846}
+  body.stage{width:60vh;margin:0 auto;position:relative;transform:translateZ(0);box-shadow:0 0 80px rgba(0,0,0,.45)}
   body{font-family:'Fredoka',system-ui,sans-serif;min-height:100dvh;touch-action:manipulation;
     user-select:none;-webkit-user-select:none;transition:background 1s}
   #scene{position:fixed;left:0;right:0;bottom:0;height:42vh;width:100%;z-index:1}
@@ -34,7 +36,7 @@
 
   #bubble{position:fixed;left:0;top:0;z-index:5;background:#fff;color:#4a2a14;border-radius:24px;
     padding:14px 18px;font-weight:600;font-size:1.2rem;line-height:1.25;text-align:center;
-    box-shadow:0 8px 24px rgba(80,40,0,.18);max-width:82vw;width:max-content;
+    box-shadow:0 8px 24px rgba(80,40,0,.18);max-width:82%;width:max-content;
     transform:scale(0);transform-origin:50% 100%;transition:transform .35s cubic-bezier(.3,1.6,.5,1)}
   #bubble.show{transform:scale(1)}
   #bubble::after{content:"";position:absolute;left:var(--tail,50%);bottom:-12px;transform:translateX(-50%);
@@ -119,7 +121,7 @@
   .fenster::before{left:50%;top:0;bottom:0;width:6px;transform:translateX(-50%)} .fenster::after{top:50%;left:0;right:0;height:6px;transform:translateY(-50%)}
   .lichterkette{position:fixed;z-index:0;top:4%;left:0;right:0;height:30px;text-align:center;font-size:16px;letter-spacing:6px;white-space:nowrap;overflow:hidden}
   .kranz{position:fixed;z-index:0;top:14%;left:10%;font-size:12vw;max-font-size:80px}
-  .vorhang-seite{position:fixed;top:0;bottom:0;width:13vw;z-index:7;pointer-events:none;background:repeating-linear-gradient(90deg,#b3202a 0 25%,#d6333d 25% 50%)}
+  .vorhang-seite{position:fixed;top:0;bottom:0;width:13%;z-index:7;pointer-events:none;background:repeating-linear-gradient(90deg,#b3202a 0 25%,#d6333d 25% 50%)}
   .vorhang-oben{position:fixed;top:0;left:0;right:0;height:7vh;z-index:7;pointer-events:none;background:#b3202a;border-bottom:6px solid #d4a017;border-radius:0 0 40% 40%/0 0 30px 30px}
   .stern{position:fixed;width:3px;height:3px;border-radius:50%;background:#fff;z-index:0;animation:funkel 2.4s ease-in-out infinite}
   @keyframes funkel{50%{opacity:.2}}
@@ -590,7 +592,7 @@ const SZENEN = {
     await S('<big>SALMIIII! 🎉</big>GUCK MAL, WEN ICH DABEI HAB!!');
     beaJump(); funken(beaMx(),beaY-beaH*.8,6,['👋','💛']);
     await B('Halloooo! 🥹');
-    const sch=Prop('schild','schild',size*1.35,size*1.15,M(),groundY()+size*.06,3); pop(sch);
+    const sch=Prop('schild','schild',size*1.1,size*.95,M(),groundY()-size*.32,2); pop(sch);
     await S('Wir wohnen jetzt übrigens hier.');
     await B('Also … für 24 Tage.');
     await hop(R(),H()*.15,450); funken(W()*.8,H()*.6,6,['🏠','✨']);
@@ -599,7 +601,7 @@ const SZENEN = {
     await S('Ja. Und jetzt?');
     still(); await sleep(700); await hop(R(),H()*.14,420); await hop(R(),H()*.14,420);
     beaJump(); await B('HAHAHA okay, wir bleiben. 😂');
-    const k=Prop('kor','koriander',size*.55,size*.68,M(),groundY()-size*.02,5); await pop(k); funken(M(),groundY()-size*.5,6,['✨','🌿']);
+    const k=Prop('kor','koriander',size*.42,size*.52,beaMx()+beaW*.48,beaY-beaH*.28,5); await pop(k); beaJump(); funken(k.x,k.y-size*.3,6,['✨','🌿']);
     await S('Und was ist das?');
     await B('Ein Willkommensgeschenk für Salmi! 💛');
     await S('Kann man das Haus damit einstreichen? 🤔');
@@ -814,11 +816,11 @@ const SZENEN = {
     await S('Beaaa! Guck mal, wie viel Schaum das macht! 🫧');
     const sch=document.createElement('div'); sch.className='schaum'; document.body.appendChild(sch);
     for(let i=0;i<10;i++) funken(rnd(0,W()),groundY()-rnd(0,40),2,['🫧'],.6);
-    sch.style.height='11vh';
+    const schaumH=f=>(H()-groundY()+size*.45)*f+'px'; sch.style.height=schaumH(.45);
     await B('SONNI! DAS REICHT!');
-    sch.style.height='17vh';
+    sch.style.height=schaumH(.75);
     await S('ICH KRIEG\'S NICHT MEHR AUS!! 😱');
-    still(); sch.style.height='24vh'; for(let i=0;i<8;i++){ funken(rnd(0,W()),H()*.7,2,['🫧'],.8); await sleep(150); }
+    still(); sch.style.height=schaumH(1); for(let i=0;i<8;i++){ funken(rnd(0,W()),H()*.7,2,['🫧'],.8); await sleep(150); }
     await sleep(800);
     await B('Wir reden nachher darüber. 😐');
     sch.style.height='0'; await sleep(900);
@@ -933,9 +935,12 @@ const SZENEN = {
  }},
  21:{ort:'drinnen', raum:'wohnzimmer', bea:null, sonne:['pads'], async lauf(){
     zs('bea-pads');
-    const sf=Prop('sf','sofa',Math.min(W()*.95,size*2.6),size*1.1,W()/2,groundY()+6,2);
-    beaHub=size*.42; sunHub=size*.42;
+    const sfW=Math.min(W()*.95,size*2.6);
+    const sf=Prop('sf','sofa',sfW,size*1.1,W()/2,groundY()+6,2);
     await reinBeide();
+    // beide hüpfen aufs Sofa und kuscheln sich rein
+    beaHub=size*.42; sunHub=size*.42;
+    await Promise.all([ beaTo(W()/2-sfW*.36,H()*.12,550), hop(W()/2+sfW*.36-size,H()*.12,550) ]);
     const de=Prop('de','decke',Math.min(W()*.82,size*2.2),size*.5,W()/2,groundY()-size*.1,6);
     await S('Beaaa?');
     await B('Mhm?');
@@ -948,7 +953,8 @@ const SZENEN = {
     await propTo(r,W()/2,groundY()+size*.12,700,0,720);
     await S('OH! 😮');
     await B('Perfekt. 🥥');
-    weg(de); beaHub=0; sunHub=0; zs('bea-pads',false);
+    weg(de); zs('bea-pads',false);
+    beaHub=0; sunHub=0; await Promise.all([ beaTo(L(),H()*.08,500), hop(R(),H()*.08,500) ]);
     await szeneEnde();
  }},
  22:{ort:'drinnen', raum:'wohnzimmer', bea:'hut', sonne:[], async lauf(){
@@ -1257,10 +1263,13 @@ if(saison==='herbst'){
 }
 
 // Partikel & Wolken
-const W=()=>innerWidth, H=()=>innerHeight;
+// Auf breiten Bildschirmen (Laptop, iPad quer) zeigen wir die Szene wie ein Handybild in der Mitte
+const BREIT = innerWidth > innerHeight*0.75;
+if(BREIT) document.body.classList.add('stage');
+const W=()=> BREIT ? Math.round(innerHeight*0.6) : innerWidth, H=()=>innerHeight;
 /* ---------- Liebevolle Innenräume ---------- */
 function raumZeichnen(typ){
-  const W0=innerWidth, H0=innerHeight, G=H0*.8, U=Math.min(W0,560)/400;
+  const W0=W(), H0=H(), G=H0*.8, U=Math.min(W0,560)/400;
   const sv=document.createElementNS(NS,'svg'); sv.id='raum';
   sv.setAttribute('viewBox',`0 0 ${W0} ${H0}`); sv.setAttribute('width',W0); sv.setAttribute('height',H0);
   document.body.appendChild(sv);
@@ -1486,7 +1495,7 @@ if(SZ && (SZ.ort==='drinnen'||SZ.ort==='buehne')){
 }
 if(SZ && SZ.ort==='nacht'){
   document.body.style.background='linear-gradient(180deg,#0c1638 0%,#1f2a66 60%,#3b3f86 100%)';
-  for(let i=0;i<40;i++){const st=document.createElement('div');st.className='stern';st.style.left=rnd(0,100)+'vw';st.style.top=rnd(0,45)+'vh';st.style.animationDelay=(-rnd(0,3))+'s';document.body.appendChild(st);}
+  for(let i=0;i<40;i++){const st=document.createElement('div');st.className='stern';st.style.left=rnd(0,100)+'%';st.style.top=rnd(0,45)+'vh';st.style.animationDelay=(-rnd(0,3))+'s';document.body.appendChild(st);}
 }
 const drinnen = SZ && (SZ.ort==='drinnen'||SZ.ort==='buehne');
 if(SZ && SZ.himmel==='morgenrot') document.body.style.background='linear-gradient(180deg,#ffa98a 0%,#ffcfae 40%,#fde9dc 75%,#f3f6fb 100%)';
@@ -1495,7 +1504,7 @@ if(sturm) document.body.style.background='linear-gradient(180deg,#9fb3c8 0%,#c9d
 for(let i=0;i<(drinnen?0:sturm?140:saison==='winter'?36:T.particles.length?12:0);i++){
   const p=document.createElement('div');p.className='particle';p.textContent=pick(T.particles);
   if(T.pcolor)p.style.color=T.pcolor;
-  p.style.left=rnd(0,100)+'vw';p.style.fontSize=rnd(T.psize[0],T.psize[1])+'px';
+  p.style.left=rnd(0,100)+'%';p.style.fontSize=rnd(T.psize[0],T.psize[1])+'px';
   p.style.animationDuration=(sturm?rnd(1.6,3.2):rnd(7,16))+'s';p.style.animationDelay=(-rnd(0,16))+'s';
   p.style.setProperty('--drift',(sturm?rnd(-320,-160):rnd(-60,60))+'px');p.style.setProperty('--rot',rnd(-200,200)+'deg');
   p.style.opacity=rnd(.6,.95);document.body.appendChild(p);
