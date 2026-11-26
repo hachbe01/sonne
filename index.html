@@ -58,6 +58,7 @@
   #bea svg{width:100%;height:100%;display:block;transform-origin:50% 100%}
   #bea.jump svg{animation:beajump .55s cubic-bezier(.3,1.4,.5,1)}
   @keyframes beajump{40%{transform:translateY(-24%) scale(.95,1.08)}80%{transform:scale(1.08,.92)}}
+  .hack{animation:hack .16s ease-in-out infinite alternate !important} @keyframes hack{from{transform:rotate(-10deg)}to{transform:rotate(55deg)}}
   .wave{transform-origin:86px 106px;animation:wave 1s ease-in-out infinite}
   @keyframes wave{50%{transform:rotate(-16deg)}}
   #dusk{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity 2.6s;
@@ -638,7 +639,8 @@ async function reinBeide(beaAuch=true){
 }
 function spitzname(){ const d=dezTag||new Date().getDate(); return d%7===3 ? 'Michael J Jackson 🕺' : d%3===0 ? 'Salmönchen' : 'Salmi'; }
 async function gruss(){
-  await S(`<big>Guten Morgen, ${spitzname()} ☀️</big>`);
+  const d=dezTag||new Date().getDate();
+  await S(d%4===2 ? `<big>Salami Aluminium, ${spitzname()} ☀️</big>` : `<big>Guten Morgen, ${spitzname()} ☀️</big>`);
 }
 async function szeneEnde(){
   still(); await sleep(400);
@@ -656,6 +658,9 @@ const SZENEN = {
     beaTo((L()-beaW-30)/2,H()*.08,400).then(()=>beaTo(L(),H()*.08,400));
     await S('<big>SALMIIII 🎉</big>');
     await B('Halloooo 🥹');
+    for(const t of ['Also ich hab die Häuser gebastelt','und die Lichterkette und die Schleife','und das Schild und','und dann hab ich gedacht','und und und']){ sprecher='bea'; say(t,0); place(); beaJump(); await sleep(820); }
+    await S('Bea. Atmen. 😮‍💨');
+    await B('HAHAHA sorry');
     const bw=W()*.78; document.documentElement.style.setProperty('--bw',bw+'px');
     const sch=Prop('schild','banner',bw,bw*.52,W()/2,-bw,2); propTo(sch,W()/2,H()*.42,900,0);
     await S('Wir wohnen jetzt hier!');
@@ -799,6 +804,11 @@ const SZENEN = {
     const tp=Prop('tp','topf',size*.5,size*.4,L()+beaW+size*.12,groundY()+2,3); tp.el.classList.add('dampfend');
     const sp=Prop('sp','spaghetti',size*.8,size*.36,M()+size*.25,groundY()+2,5);
     await reinBeide(); await gruss();
+    const to=Prop('to','🍅',size*.26,size*.26,beaX+beaW+size*.12,groundY()-size*.02,5); await pop(to);
+    document.getElementById('arm-winkt').style.display=''; document.getElementById('arm-unten').style.display='none'; document.getElementById('arm-winkt').classList.add('hack');
+    for(const t of ['Tomate','Tomate','TOMATE 🔪']){ sprecher='bea'; say(t,0); place(); funken(to.x,to.y-size*.15,4,['🍅','💦'],.7); await sleep(750); }
+    document.getElementById('arm-winkt').classList.remove('hack'); document.getElementById('arm-winkt').style.display='none'; document.getElementById('arm-unten').style.display='';
+    weg(to,200);
     await S('OMG Spaghetti 🍝');
     await S('Darf ich probieren?');
     await B('Ja, warte kurz');
@@ -858,7 +868,7 @@ const SZENEN = {
     const vh=Prop('vh','vorhang',size*.75,size*1.3,M()-size*.3,groundY()+2,4);
     x=W()+20; place(); await hop((W()+R())/2,H()*.1,400); await hop(R(),H()*.1,400);
     beaX=M()-size*.3-beaW/2; beaY=bodenBea(); bea.style.opacity='0'; setBea();
-    await S('Bea, was wird das? 🤨');
+    for(const t of ['🎶 Was zieht Bea heute an? 🎶','🎶 Was zieht Bea heute annnn? 🎶']){ sprecher='sonne'; say(t,0); place(); for(let i=0;i<4;i++){ funken(sunMx(),y-size*.9,2,['🎵','🎶'],.8); hop(x,H()*.03,200); await sleep(380);} }
     sprecher='bea'; say('MODENSCHAUUU 💃',0); funken(M()-size*.3,groundY()-size*1.1,6,['✨','💃']); await sleep(1800);
     still(); for(let i=0;i<4;i++){ funken(sunMx(),y-size*.8,2,['🎵','🎶'],.8); await sleep(250); }
     zs('bea-mode'); zs('bea-sonnenbrille'); bea.style.opacity='1';
@@ -1061,6 +1071,7 @@ const SZENEN = {
     await B('Nö');
     still(); const r=Prop('rg','riegel',size*.45,size*.15,W()/2,-60,7); await propTo(r,W()/2,groundY()-size*.35,700,0,540); funken(W()/2,groundY()-size*.5,6,['✨','🥥']);
     await S('DOCH 🤩');
+    for(let i=0;i<4;i++){ beaJump(); funken(beaMx(),beaY-beaH*1.05,2,['🎶','✨'],.7); if(i===0){ sprecher='bea'; say('chip chip chippi chip 🎶',0); place(); } await sleep(450); }
     weg(de); zs('bea-pads',false);
     beaHub=0; sunHub=0; await Promise.all([ beaTo(L(),H()*.08,500), hop(R(),H()*.08,500) ]);
     await szeneEnde();
@@ -1102,7 +1113,7 @@ const SZENEN = {
       const fx=rnd(0,100), fy=Math.pow(rnd(0,1),.7); e.style.left=fx+'%'; e.style.bottom=(fy*(100-Math.abs(fx-50)*1.4))+'%'; e.style.fontSize=rnd(20,38)+'px'; e.style.transform=`rotate(${rnd(-40,40)}deg)`;
       e.style.animationDelay=(i*12)+'ms'; berg.appendChild(e); }
     await sleep(1600);
-    await B('Ich kündige 😩');
+    await B('MARCEL BITTE 😩');
     const r=Prop('rg','riegel',size*.45,size*.15,W()*.6,H()*.45,8); await pop(r); await propTo(r,sunMx(),y-size*.6,600,size*.2);
     await S('Oh guck, ein Riegel 🥥');
     weg(r,200); await szeneEnde();
