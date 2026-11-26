@@ -118,6 +118,12 @@
   #endkarte{position:fixed;left:0;right:0;top:16%;z-index:8;text-align:center;color:#fff;font-weight:600;font-size:2.1rem;line-height:1.2;
     text-shadow:0 2px 16px rgba(255,200,120,.8);opacity:0;transform:scale(.8);transition:all 1.6s ease-out;pointer-events:none;padding:0 20px}
   #endkarte.show{opacity:1;transform:none}
+  #raum,#raumboden{position:fixed;left:0;top:0;pointer-events:none}
+  #raum{z-index:0} #raumboden{z-index:1}
+  .birne{animation:birne 1.8s ease-in-out infinite} @keyframes birne{50%{opacity:.15}}
+  .flocke{animation:flocke linear infinite} @keyframes flocke{to{transform:translateY(var(--fh))}}
+  .flamme{transform-box:fill-box;transform-origin:50% 100%;animation:flamme .6s ease-in-out infinite alternate} @keyframes flamme{to{transform:scale(.85,1.12) rotate(4deg)}}
+  .pendel{animation:pendel 3s ease-in-out infinite} @keyframes pendel{50%{transform:rotate(8deg)}}
   #bye{position:fixed;left:0;right:0;top:38%;text-align:center;z-index:5;font-size:1.8rem;font-weight:600;color:#fff;
     text-shadow:0 2px 12px rgba(120,60,40,.35);opacity:0;transition:opacity 1.2s;pointer-events:none}
   #bye.show{opacity:1;pointer-events:auto}
@@ -611,7 +617,7 @@ const SZENEN = {
     await B('Okay … ich glaube, wir brauchen eine warme Dusche. 🚿😂');
     await szeneEnde();
  }},
- 5:{ort:'drinnen', bea:'hut', sonne:[], async lauf(){
+ 5:{ort:'drinnen', raum:'wohnzimmer', bea:'hut', sonne:[], async lauf(){
     const ti=Prop('ti','tisch',size*1.05,size*.52,M(),groundY()+2,2);
     const sch=Prop('sch','schuessel',size*.6,size*.34,M(),groundY()-size*.47,3);
     await reinBeide(); await gruss();
@@ -654,7 +660,7 @@ const SZENEN = {
     await S('Psssst! Betriebsgeheimnis! 🤫');
     await szeneEnde();
  }},
- 8:{ort:'drinnen', bea:'hut', sonne:[], async lauf(){
+ 8:{ort:'drinnen', raum:'kueche', bea:'hut', sonne:[], async lauf(){
     const tp=Prop('tp','topf',size*.5,size*.4,L()+beaW+size*.12,groundY()+2,3); tp.el.classList.add('dampfend');
     const sp=Prop('sp','spaghetti',size*.75,size*.34,M()+size*.25,groundY()+2,5);
     await reinBeide(); await gruss();
@@ -670,7 +676,7 @@ const SZENEN = {
     await tw(250,t=>{sunS=.65+.35*t; place();}); sunHub=0; await hop(R(),H()*.12,450); await beaTo(L());
     zs('o-nudeln',false); await szeneEnde();
  }},
- 9:{ort:'drinnen', bea:null, sonne:[], async lauf(){
+ 9:{ort:'drinnen', raum:'bad', bea:null, sonne:[], async lauf(){
     zs('bea-creme');
     const ct=Prop('ct','cremetiegel',size*.32,size*.22,L()+beaW+size*.1,groundY()+2,3);
     await reinBeide(); await gruss();
@@ -683,7 +689,7 @@ const SZENEN = {
     zs('bea-creme',false); zs('bea-cremegesicht',false); funken(beaMx(),beaY-beaH*.7,8,['✨','🫧']);
     await szeneEnde();
  }},
- 10:{ort:'drinnen', bea:null, sonne:[], async lauf(){
+ 10:{ort:'drinnen', raum:'bad', bea:null, sonne:[], async lauf(){
     zs('bea-pads');
     const lg=Prop('lg','liege',size*1.25,size*.48,M()-size*.05,groundY()+2,2);
     await reinBeide(); await gruss();
@@ -701,7 +707,7 @@ const SZENEN = {
     await hop(R(),H()*.06,450); zs('bea-zu',false); zs('bea-pads',false);
     await szeneEnde();
  }},
- 11:{ort:'drinnen', bea:null, sonne:[], async lauf(){
+ 11:{ort:'drinnen', raum:'wohnzimmer', bea:null, sonne:[], async lauf(){
     const ls=Prop('ls','laufsteg',size*1.6,size*.12,M(),groundY()+6,1);
     const vh=Prop('vh','vorhang',size*.75,size*1.3,M()-size*.3,groundY()+2,4);
     await reinBeide(); await gruss();
@@ -731,7 +737,7 @@ const SZENEN = {
     await S('Wir schließen für heute. 😌');
     await szeneEnde();
  }},
- 13:{ort:'drinnen', bea:'hut', sonne:[], async lauf(){
+ 13:{ort:'drinnen', raum:'kueche', bea:'hut', sonne:[], async lauf(){
     const hs=Prop('hs','schokohaus',size*.8,size*.8,M(),groundY()+2,2);
     await reinBeide(); await gruss();
     await S('Bea, das Dach ist schief! 🧐');
@@ -744,7 +750,7 @@ const SZENEN = {
     await B('Na ja. Schmeckt trotzdem. 😋');
     await szeneEnde();
  }},
- 14:{ort:'drinnen', bea:null, sonne:[], async lauf(){
+ 14:{ort:'drinnen', raum:'bad', bea:null, sonne:[], async lauf(){
     const dg=Prop('dg','duschgel',size*.28,size*.6,R()-size*.08,groundY()+2,5);
     await reinBeide(); await gruss();
     await S('Beaaa! Guck mal, wie viel Schaum das macht! 🫧');
@@ -760,7 +766,7 @@ const SZENEN = {
     sch.style.height='0'; await sleep(900);
     await szeneEnde();
  }},
- 15:{ort:'drinnen', bea:'hut', sonne:[], async lauf(){
+ 15:{ort:'drinnen', raum:'kueche', bea:'hut', sonne:[], async lauf(){
     const ti=Prop('ti','tisch',size*1.05,size*.52,M(),groundY()+2,2);
     const sp=Prop('sp','spinat',size*.6,size*.27,M(),groundY()-size*.47,3);
     await reinBeide(); await gruss();
@@ -776,7 +782,7 @@ const SZENEN = {
     await Promise.all([propTo(ti,M(),groundY()+2,500), propTo(sp,M(),groundY()-size*.47,500)]);
     zs('o-muskeln',false); await szeneEnde();
  }},
- 16:{ort:'drinnen', bea:null, sonne:['arme'], async lauf(){
+ 16:{ort:'drinnen', raum:'gym', bea:null, sonne:['arme'], async lauf(){
     const ht=Prop('ht','hantel',size*.55,size*.2,0,0,6);
     const hoch=()=>{ ht.x=x+size/2; ht.y=y-size*.92; setP(ht); };
     await reinBeide(); hoch(); await gruss();
@@ -791,7 +797,7 @@ const SZENEN = {
     await hop(R(),H()*.08,450);
     await szeneEnde();
  }},
- 17:{ort:'drinnen', bea:'hut', sonne:[], async lauf(){
+ 17:{ort:'drinnen', raum:'kueche', bea:'hut', sonne:[], async lauf(){
     const ti=Prop('ti','tisch',size*1.05,size*.52,M(),groundY()+2,2);
     const lk=Prop('lk','lebkuchen',size*.45,size*.4,M()+size*.08,groundY()-size*.47,3);
     await reinBeide(); await gruss();
@@ -816,7 +822,7 @@ const SZENEN = {
     await S('Puh. 💦');
     await szeneEnde();
  }},
- 18:{ort:'drinnen', bea:'hut', sonne:[], async lauf(){
+ 18:{ort:'drinnen', raum:'wohnzimmer', bea:'hut', sonne:[], async lauf(){
     const ms=Prop('ms','mistel',size*.5,size*1.0,M(),groundY()-beaH*.9,6);
     await reinBeide(); await gruss();
     await S('Bea! Weißt du, was das ist? 🌿');
@@ -840,7 +846,7 @@ const SZENEN = {
     await S('Ich wollte vorbereitet sein! 🎤');
     await szeneEnde();
  }},
- 20:{ort:'drinnen', bea:'hut', sonne:['schutzbrille'], async lauf(){
+ 20:{ort:'drinnen', raum:'werkstatt', bea:'hut', sonne:['schutzbrille'], async lauf(){
     const wb=Prop('wb','werkbank',size*1.0,size*.55,M(),groundY()+2,2);
     await reinBeide();
     funken(M(),groundY()-size*.6,6,['⚙️','🔧','✨']);
@@ -857,7 +863,7 @@ const SZENEN = {
     await tw(400,t=>{rot=75*(1-t); place();}); actor.style.transformOrigin='50% 100%'; weg(an);
     await szeneEnde();
  }},
- 21:{ort:'drinnen', bea:null, sonne:['pads'], async lauf(){
+ 21:{ort:'drinnen', raum:'wohnzimmer', bea:null, sonne:['pads'], async lauf(){
     zs('bea-pads');
     const sf=Prop('sf','sofa',Math.min(W()*.95,size*2.6),size*1.1,W()/2,groundY()+6,2);
     beaHub=size*.42; sunHub=size*.42;
@@ -877,7 +883,7 @@ const SZENEN = {
     weg(de); beaHub=0; sunHub=0; zs('bea-pads',false);
     await szeneEnde();
  }},
- 22:{ort:'drinnen', bea:'hut', sonne:[], async lauf(){
+ 22:{ort:'drinnen', raum:'wohnzimmer', bea:'hut', sonne:[], async lauf(){
     const ti=Prop('ti','tisch',size*1.05,size*.52,M(),groundY()+2,2);
     const tl=Prop('tl','teller',size*.8,size*.28,M(),groundY()-size*.47,3);
     await reinBeide(); await gruss();
@@ -893,7 +899,7 @@ const SZENEN = {
     funken(M(),groundY()-size*.55,3,['👀']);
     await szeneEnde();
  }},
- 23:{ort:'drinnen', bea:'hut', sonne:[], async lauf(){
+ 23:{ort:'drinnen', raum:'wohnzimmer', bea:'hut', sonne:[], async lauf(){
     const dinge=['🧦','🔋','📎','🧸','🔑','🧩','🪀','🖊️','🧤','🎧'];
     const it=dinge.map((d,i)=>Prop('k'+i,d,size*.2,size*.2,M()+rnd(-size*.35,size*.35),groundY()-(i%4)*size*.12,3));
     await reinBeide(); await gruss();
@@ -1105,20 +1111,230 @@ if(saison==='herbst'){
 
 // Partikel & Wolken
 const W=()=>innerWidth, H=()=>innerHeight;
-if(SZ && (SZ.ort==='drinnen'||SZ.ort==='buehne')){
-  document.body.style.background='linear-gradient(180deg,#f6e4cf 0%,#efd3b6 100%)';
-  add('rect',{x:-50,y:112,width:500,height:8,fill:'#e7c7a2'});
-  add('rect',{x:-50,y:118,width:500,height:140,fill:'#c58a57'});
-  for(let i=0;i<14;i++) add('path',{d:`M${-40+i*34} 118 L${-40+i*34-20} 240`,stroke:'#b07546','stroke-width':2});
-  add('path',{d:'M-50 150 H450 M-50 190 H450',stroke:'#b07546','stroke-width':1.5});
-  if(SZ.ort==='drinnen'){
-    const f=document.createElement('div'); f.className='fenster'; document.body.appendChild(f);
-    const lk=document.createElement('div'); lk.className='lichterkette'; lk.textContent='💡'.repeat(0)+'🔴🟡🟢🔵'.repeat(8); document.body.appendChild(lk);
-    const kz=document.createElement('div'); kz.className='kranz'; kz.textContent='🎄'; document.body.appendChild(kz);
+/* ---------- Liebevolle Innenräume ---------- */
+function raumZeichnen(typ){
+  const W0=innerWidth, H0=innerHeight, G=H0*.8, U=Math.min(W0,560)/400;
+  const sv=document.createElementNS(NS,'svg'); sv.id='raum';
+  sv.setAttribute('viewBox',`0 0 ${W0} ${H0}`); sv.setAttribute('width',W0); sv.setAttribute('height',H0);
+  document.body.appendChild(sv);
+  const bd=document.createElementNS(NS,'svg'); bd.id='raumboden'; bd.setAttribute('viewBox',`0 0 ${W0} ${H0}`); bd.setAttribute('width',W0); bd.setAttribute('height',H0); document.body.appendChild(bd);
+  let P=sv; const r=(tag,a,par)=>add(tag,a,par||P);
+  const defs=r('defs',{});
+  const grad=(id,stops,x2=0,y2=1)=>{const g=r('linearGradient',{id,x1:0,y1:0,x2,y2},defs);stops.forEach(([o,c])=>r('stop',{offset:o,'stop-color':c},g));};
+  const pat=(id,w,h,fn)=>{const p=r('pattern',{id,width:w,height:h,patternUnits:'userSpaceOnUse'},defs);fn(p);};
+  const glow=r('filter',{id:'glow',x:'-50%',y:'-50%',width:'200%',height:'200%'},defs); r('feGaussianBlur',{stdDeviation:3*U},glow);
+
+  // ---- Grundfarben je Raum ----
+  const wand={wohnzimmer:['#f9e3c9','#f0cfae'],kueche:['#fbeedd','#f4dcc0'],bad:['#dff1f6','#c9e6ee'],gym:['#e8eef6','#d4dde9'],werkstatt:['#e6cfae','#d4b58c'],buehne:['#5a1d24','#2d0d12']}[typ];
+  grad('wandG',[[0,wand[0]],[1,wand[1]]]); r('rect',{x:0,y:0,width:W0,height:G,fill:'url(#wandG)'});
+
+  if(typ==='wohnzimmer'){
+    pat('tapete',44*U,44*U,p=>{ r('path',{d:`M${22*U} ${8*U} l${2.4*U} ${5*U} ${5.4*U} ${.6*U} -${4*U} ${3.7*U} ${1*U} ${5.3*U} -${4.8*U} -${2.7*U} -${4.8*U} ${2.7*U} ${1*U} -${5.3*U} -${4*U} -${3.7*U} ${5.4*U} -${.6*U}z`,fill:'#fff',opacity:.35},p);
+      r('circle',{cx:4*U,cy:34*U,r:1.6*U,fill:'#fff',opacity:.4},p); });
+    r('rect',{x:0,y:0,width:W0,height:G,fill:'url(#tapete)'});
+  }
+  if(typ==='werkstatt'){ for(let i=0;i<W0/(36*U);i++) r('rect',{x:i*36*U,y:0,width:34*U,height:G,fill:i%2?'#dcbf97':'#d2b285'}); }
+  if(typ==='bad'||typ==='kueche'){
+    pat('kachel',28*U,28*U,p=>{ r('rect',{x:0,y:0,width:28*U,height:28*U,fill:typ==='bad'?'#bfe3ee':'#ffffff'},p);
+      r('rect',{x:1*U,y:1*U,width:26*U,height:26*U,rx:2*U,fill:typ==='bad'?'#d6f0f6':'#eef7f6'},p);
+      if(typ==='kueche') r('path',{d:`M${8*U} ${14*U} q${6*U} -${6*U} ${12*U} 0`,stroke:'#7cc4bd','stroke-width':1.5*U,fill:'none'},p); });
+    const kTop = typ==='bad' ? G-H0*.42 : G-H0*.2;
+    r('rect',{x:0,y:kTop,width:W0,height:G-kTop,fill:'url(#kachel)'});
+  }
+
+  // ---- Lichterkette oben (alle Innenräume außer Bühne) ----
+  if(typ!=='buehne'){
+    const yk=H0*.05, n=Math.round(W0/(30*U));
+    r('path',{d:`M-10 ${yk} `+[...Array(4)].map((_,i)=>`Q${W0*(i*.25+.125)} ${yk+26*U} ${W0*(i+1)*.25} ${yk}`).join(' '),stroke:'#2f5a3a','stroke-width':2*U,fill:'none'});
+    for(let i=0;i<n;i++){ const t=(i+.5)/n, seg=t*4%1, cx=t*W0, cy=yk+26*U*2*seg*(1-seg)*2*.5+2*U;
+      const c=['#ff5a5a','#ffd84a','#5ab0ff','#7be07b','#ff8ad8'][i%5];
+      r('circle',{cx,cy:cy+6*U,r:7*U,fill:c,opacity:.45,filter:'url(#glow)',class:'birne',style:`animation-delay:${-(i%5)*.4}s`});
+      r('ellipse',{cx,cy:cy+6*U,rx:3.6*U,ry:5*U,fill:c});
+      r('rect',{x:cx-2*U,y:cy-1*U,width:4*U,height:3*U,fill:'#2f5a3a'}); }
+  }
+
+  // ---- Fenster mit Vorhängen & Schneefall ----
+  const fenster=(fx,fy,fw,fh,nacht=false)=>{
+    const cid='fclip'+Math.round(fx);
+    const cp=r('clipPath',{id:cid},defs); r('rect',{x:fx,y:fy,width:fw,height:fh,rx:4*U},cp);
+    grad('himmel'+cid,nacht?[[0,'#1f2a66'],[1,'#5a63a8']]:[[0,'#8fc3ee'],[1,'#dbeefb']]);
+    const g=r('g',{'clip-path':`url(#${cid})`});
+    r('rect',{x:fx,y:fy,width:fw,height:fh,fill:`url(#himmel${cid})`},g);
+    r('ellipse',{cx:fx+fw*.3,cy:fy+fh*1.05,rx:fw*.7,ry:fh*.35,fill:'#f4f8ff'},g);
+    r('ellipse',{cx:fx+fw*.85,cy:fy+fh*1.1,rx:fw*.5,ry:fh*.3,fill:'#e6eef9'},g);
+    [[.2,.78],[.62,.72],[.82,.8]].forEach(([a,b])=>{ const tx=fx+fw*a, ty=fy+fh*b;
+      r('path',{d:`M${tx} ${ty-fh*.22} L${tx+fw*.07} ${ty} L${tx-fw*.07} ${ty} Z`,fill:'#4f8f74'},g); });
+    for(let i=0;i<14;i++) r('circle',{cx:fx+Math.random()*fw,cy:fy,r:(1+Math.random()*1.5)*U,fill:'#fff',class:'flocke',style:`--fh:${fh}px;animation-duration:${3+Math.random()*4}s;animation-delay:${-Math.random()*6}s`},g);
+    r('rect',{x:fx,y:fy,width:fw,height:fh,rx:4*U,fill:'none',stroke:'#fff','stroke-width':7*U});
+    r('path',{d:`M${fx+fw/2} ${fy} V${fy+fh} M${fx} ${fy+fh*.45} H${fx+fw}`,stroke:'#fff','stroke-width':5*U});
+    r('rect',{x:fx-10*U,y:fy+fh,width:fw+20*U,height:9*U,rx:3*U,fill:'#fff'});
+    // Vorhänge
+    const vc=typ==='bad'?'#7fc6d6':'#c0392b';
+    r('path',{d:`M${fx-16*U} ${fy-14*U} Q${fx+fw*.12} ${fy+fh*.5} ${fx-4*U} ${fy+fh+30*U} L${fx-26*U} ${fy+fh+30*U} L${fx-26*U} ${fy-14*U} Z`,fill:vc});
+    r('path',{d:`M${fx+fw+16*U} ${fy-14*U} Q${fx+fw*.88} ${fy+fh*.5} ${fx+fw+4*U} ${fy+fh+30*U} L${fx+fw+26*U} ${fy+fh+30*U} L${fx+fw+26*U} ${fy-14*U} Z`,fill:vc});
+    r('rect',{x:fx-34*U,y:fy-20*U,width:fw+68*U,height:7*U,rx:3.5*U,fill:'#8a542c'});
+    r('circle',{cx:fx-34*U,cy:fy-16.5*U,r:6*U,fill:'#8a542c'}); r('circle',{cx:fx+fw+34*U,cy:fy-16.5*U,r:6*U,fill:'#8a542c'});
+    return {fx,fy,fw,fh};
+  };
+
+  // ---- Tannenbaum mit Lichtern & Geschenken ----
+  const tanne=(tx,base,th)=>{
+    r('rect',{x:tx-th*.05,y:base-th*.1,width:th*.1,height:th*.1,fill:'#6b4226'});
+    r('path',{d:`M${tx-th*.1} ${base-th*.02} L${tx+th*.1} ${base-th*.02} L${tx+th*.08} ${base+th*.05} L${tx-th*.08} ${base+th*.05}Z`,fill:'#c0392b'});
+    [[.36,.08,.42],[.3,.36,.34],[.22,.6,.3]].forEach(([w,b,h],i)=>{
+      const bb=base-th*b, tp=bb-th*h;
+      r('path',{d:`M${tx} ${tp} L${tx+th*w} ${bb} Q${tx} ${bb+th*.05} ${tx-th*w} ${bb} Z`,fill:['#2e7d5b','#3a8f62','#46a06f'][i]});
+    });
+    for(let i=0;i<16;i++){ const f=Math.random(), yy=base-th*(.12+f*.76), ww=th*.34*(1-f*.8)*(Math.random()*1.6-.8);
+      const c=['#ff5a5a','#ffd84a','#5ab0ff','#ff8ad8','#fff'][i%5];
+      r('circle',{cx:tx+ww,cy:yy,r:4*U,fill:c,opacity:.5,filter:'url(#glow)',class:'birne',style:`animation-delay:${-i*.3}s`}); r('circle',{cx:tx+ww,cy:yy,r:2.4*U,fill:c}); }
+    [[.42,.27],[.66,.17]].forEach(([f,w])=>r('path',{d:`M${tx-th*w} ${base-th*f+th*.03} Q${tx} ${base-th*f+th*.09} ${tx+th*w} ${base-th*f-th*.01}`,stroke:'#ffd84a','stroke-width':2*U,fill:'none'}));
+    r('path',{d:`M${tx} ${base-th*.98} l${th*.03} ${th*.06} ${th*.065} ${th*.006}-${th*.048} ${th*.044} ${th*.013} ${th*.064}-${th*.06} -${th*.033}-${th*.06} ${th*.033} ${th*.013} -${th*.064}-${th*.048} -${th*.044} ${th*.065} -${th*.006}z`,fill:'#ffd84a',filter:'url(#glow)'});
+    r('path',{d:`M${tx} ${base-th*.98} l${th*.03} ${th*.06} ${th*.065} ${th*.006}-${th*.048} ${th*.044} ${th*.013} ${th*.064}-${th*.06} -${th*.033}-${th*.06} ${th*.033} ${th*.013} -${th*.064}-${th*.048} -${th*.044} ${th*.065} -${th*.006}z`,fill:'#ffe680'});
+    const gesch=(gx,gw,gh,c,b)=>{ r('rect',{x:gx,y:base-gh,width:gw,height:gh,rx:2*U,fill:c}); r('rect',{x:gx+gw/2-2*U,y:base-gh,width:4*U,height:gh,fill:b}); r('rect',{x:gx,y:base-gh*.6,width:gw,height:4*U,fill:b}); };
+    gesch(tx-th*.3,th*.16,th*.11,'#4a7bd0','#ffd84a'); gesch(tx+th*.12,th*.14,th*.09,'#e2483d','#fff'); gesch(tx-th*.1,th*.1,th*.07,'#b48cff','#fff');
+  };
+
+  // ---- Boden ----
+  P=bd;
+  if(typ==='kueche'||typ==='bad'){
+    pat('boden',30*U,30*U,p=>{ r('rect',{x:0,y:0,width:30*U,height:30*U,fill:typ==='bad'?'#e9f2f5':'#f3ead8'},p);
+      r('rect',{x:0,y:0,width:15*U,height:15*U,fill:typ==='bad'?'#cfe2e8':'#d9c7a8'},p); r('rect',{x:15*U,y:15*U,width:15*U,height:15*U,fill:typ==='bad'?'#cfe2e8':'#d9c7a8'},p); });
+    r('rect',{x:0,y:G,width:W0,height:H0-G,fill:'url(#boden)'});
+  } else if(typ==='gym'){
+    r('rect',{x:0,y:G,width:W0,height:H0-G,fill:'#5b6b82'});
+    r('rect',{x:W0*.08,y:G+8*U,width:W0*.84,height:H0*.08,rx:6*U,fill:'#3f7bd1'}); r('rect',{x:W0*.08,y:G+8*U,width:W0*.84,height:5*U,rx:2*U,fill:'#5b95e6'});
   } else {
-    ['l','r'].forEach(s=>{const v=document.createElement('div'); v.className='vorhang-seite'; v.style[s==='l'?'left':'right']=0; document.body.appendChild(v);});
+    grad('dieleG',[[0,typ==='buehne'?'#7a4426':'#c98d5a'],[1,typ==='buehne'?'#4a2614':'#a86f40']]);
+    r('rect',{x:0,y:G,width:W0,height:H0-G,fill:'url(#dieleG)'});
+    for(let i=0;i<6;i++) r('path',{d:`M0 ${G+(H0-G)*(i/6)} H${W0}`,stroke:'rgba(0,0,0,.08)','stroke-width':1.5*U});
+    for(let i=0;i<20;i++){ const row=i%6; r('path',{d:`M${(i*97)%W0} ${G+(H0-G)*(row/6)} v${(H0-G)/6}`,stroke:'rgba(0,0,0,.08)','stroke-width':1.5*U}); }
+  }
+  // Fußleiste
+  if(typ!=='buehne') r('rect',{x:0,y:G-7*U,width:W0,height:9*U,fill:typ==='bad'?'#fff':'#fff6ea',stroke:'rgba(0,0,0,.06)'});
+
+  P=sv;
+  // ---- Räume ----
+  if(typ==='wohnzimmer'){
+    // Wandvertäfelung
+    r('rect',{x:0,y:G-H0*.12,width:W0,height:H0*.12-7*U,fill:'#f6dcbf'});
+    r('rect',{x:0,y:G-H0*.12-5*U,width:W0,height:5*U,fill:'#fff6ea'});
+    for(let i=0;i<W0/(70*U);i++) r('rect',{x:i*70*U+8*U,y:G-H0*.12+8*U,width:54*U,height:H0*.12-24*U,rx:4*U,fill:'none',stroke:'#ecc9a3','stroke-width':2*U});
+    fenster(W0*.56,H0*.13,W0*.34,H0*.17);
+    // Kerzen & Pflanze auf dem Fensterbrett
+    const fb=H0*.30; 
+    [[W0*.6,'#fff3c4'],[W0*.64,'#ffe0e0']].forEach(([kx,c],i)=>{ r('rect',{x:kx,y:fb-16*U+i*4*U,width:9*U,height:16*U-i*4*U,rx:2*U,fill:c});
+      r('ellipse',{cx:kx+4.5*U,cy:fb-21*U+i*4*U,rx:5*U,ry:8*U,fill:'#ffb347',opacity:.5,filter:'url(#glow)',class:'flamme'}); r('ellipse',{cx:kx+4.5*U,cy:fb-20*U+i*4*U,rx:2.2*U,ry:4*U,fill:'#ffcf4a',class:'flamme'}); });
+    r('path',{d:`M${W0*.84} ${fb} l${4*U} -${14*U} h${12*U} l${4*U} ${14*U}z`,fill:'#c8692f'});
+    [-8,0,8].forEach(d=>r('ellipse',{cx:W0*.84+10*U+d*U,cy:fb-20*U-Math.abs(d)*-.3*U,rx:4*U,ry:9*U,fill:'#4f9a5b',transform:`rotate(${d*3} ${W0*.84+10*U} ${fb-14*U})`}));
+    // Bilderrahmen mit Herz & Sonne
+    const bx=W0*.12, by=H0*.15, bw=W0*.2, bh=W0*.16;
+    r('rect',{x:bx,y:by,width:bw,height:bh,rx:3*U,fill:'#fff8ee',stroke:'#b8860b','stroke-width':5*U});
+    r('circle',{cx:bx+bw*.32,cy:by+bh*.45,r:bw*.13,fill:'#ffc94a'}); 
+    for(let i=0;i<8;i++){const a=i*Math.PI/4; r('path',{d:`M${bx+bw*.32+Math.cos(a)*bw*.17} ${by+bh*.45+Math.sin(a)*bw*.17} l${Math.cos(a)*bw*.06} ${Math.sin(a)*bw*.06}`,stroke:'#ffb13d','stroke-width':2*U,'stroke-linecap':'round'});}
+    r('path',{d:`M${bx+bw*.7} ${by+bh*.68} c-${bw*.18} -${bh*.14} -${bw*.14} -${bh*.36} 0 -${bh*.24} c${bw*.14} -${bh*.12} ${bw*.18} ${bh*.1} 0 ${bh*.24}z`,fill:'#e2483d'});
+    r('path',{d:`M${bx+bw*.5} ${by-14*U} L${bx+bw*.15} ${by} M${bx+bw*.5} ${by-14*U} L${bx+bw*.85} ${by}`,stroke:'#b8860b','stroke-width':1.5*U});
+    // Regal mit Büchern & Schneekugel
+    const rx=W0*.1, ry=H0*.36, rw=W0*.3;
+    r('rect',{x:rx,y:ry,width:rw,height:6*U,rx:2*U,fill:'#8a542c'});
+    let bxx=rx+6*U; ['#e2483d','#3f9b6b','#4a7bd0','#ffd84a','#b48cff'].forEach((c,i)=>{const bh2=(22+i%3*5)*U; r('rect',{x:bxx,y:ry-bh2,width:7*U,height:bh2,rx:1.5*U,fill:c}); bxx+=8*U;});
+    r('circle',{cx:rx+rw*.75,cy:ry-12*U,r:11*U,fill:'#dff1ff',stroke:'#fff','stroke-width':1.5*U}); r('rect',{x:rx+rw*.75-10*U,y:ry-4*U,width:20*U,height:5*U,rx:2*U,fill:'#7a4a2a'});
+    r('path',{d:`M${rx+rw*.75} ${ry-19*U} l${5*U} ${10*U} h-${10*U}z`,fill:'#3f8f5f'});
+    // Papiersterne von der Decke
+    [[W0*.42,H0*.13,'#ffd84a'],[W0*.5,H0*.2,'#ff8ad8'],[W0*.36,H0*.24,'#fff']].forEach(([sx,sy,c])=>{ r('path',{d:`M${sx} 0 V${sy}`,stroke:'#c9a36a','stroke-width':1*U});
+      const s=9*U; r('path',{d:`M${sx} ${sy-s} L${sx+s*.3} ${sy-s*.3} L${sx+s} ${sy-s*.2} L${sx+s*.45} ${sy+s*.25} L${sx+s*.6} ${sy+s} L${sx} ${sy+s*.6} L${sx-s*.6} ${sy+s} L${sx-s*.45} ${sy+s*.25} L${sx-s} ${sy-s*.2} L${sx-s*.3} ${sy-s*.3}Z`,fill:c,class:'pendel',style:`transform-origin:${sx}px 0px`}); });
+    // Tannenbaum in der Ecke
+    tanne(W0*.88,G+2*U,Math.min(H0*.36,W0*.62));
+    // Teppich
+    P=bd;
+    r('ellipse',{cx:W0*.5,cy:G+H0*.07,rx:W0*.46,ry:H0*.055,fill:'#b83a3a'});
+    r('ellipse',{cx:W0*.5,cy:G+H0*.07,rx:W0*.4,ry:H0*.042,fill:'none',stroke:'#f3d27a','stroke-width':3*U,'stroke-dasharray':`${8*U} ${5*U}`});
+    r('ellipse',{cx:W0*.5,cy:G+H0*.07,rx:W0*.3,ry:H0*.028,fill:'#c95050'});
+  }
+  if(typ==='kueche'){
+    fenster(W0*.36,H0*.1,W0*.28,H0*.14);
+    // Hängeschränke
+    [[W0*.02,W0*.28],[W0*.7,W0*.28]].forEach(([sx,sw])=>{ r('rect',{x:sx,y:H0*.1,width:sw,height:H0*.15,rx:4*U,fill:'#7fb8a8'});
+      r('rect',{x:sx+6*U,y:H0*.1+6*U,width:sw/2-9*U,height:H0*.15-12*U,rx:3*U,fill:'none',stroke:'#a8d4c7','stroke-width':2*U});
+      r('rect',{x:sx+sw/2+3*U,y:H0*.1+6*U,width:sw/2-9*U,height:H0*.15-12*U,rx:3*U,fill:'none',stroke:'#a8d4c7','stroke-width':2*U});
+      r('circle',{cx:sx+sw/2-8*U,cy:H0*.24-14*U,r:2.5*U,fill:'#fff'}); r('circle',{cx:sx+sw/2+8*U,cy:H0*.24-14*U,r:2.5*U,fill:'#fff'}); });
+    // Regal mit Gläsern & Gewürzen
+    const ry=H0*.34; r('rect',{x:W0*.05,y:ry,width:W0*.9,height:6*U,rx:2*U,fill:'#a8693a'});
+    [['#e2483d','Paprika'],['#6cbf62','Koriander'],['#f2c94c','Curry'],['#8a542c','Zimt'],['#ff8a5c','Chili']].forEach(([c,l],i)=>{ const jx=W0*.08+i*W0*.18;
+      r('rect',{x:jx,y:ry-26*U,width:18*U,height:26*U,rx:4*U,fill:'#f4fbff',stroke:'#cde','stroke-width':1.5*U}); r('rect',{x:jx+2*U,y:ry-16*U,width:14*U,height:14*U,rx:2*U,fill:c}); r('rect',{x:jx-1*U,y:ry-30*U,width:20*U,height:6*U,rx:2*U,fill:'#a8693a'}); });
+    // Utensilien an der Leiste
+    r('rect',{x:W0*.3,y:H0*.42,width:W0*.4,height:4*U,rx:2*U,fill:'#9aa6b2'});
+    [['🥄',.35],['🍴',.45],['🧁',.55],['🥣',.65]].forEach(([e,f])=>{const t=r('text',{x:W0*f,y:H0*.42+20*U,'font-size':18*U,'text-anchor':'middle'});t.textContent=e;});
+    // Arbeitsplatte hinten
+    r('rect',{x:0,y:G-H0*.1,width:W0,height:H0*.1-7*U,fill:'#7fb8a8'});
+    r('rect',{x:0,y:G-H0*.1-8*U,width:W0,height:9*U,fill:'#e9e2d6'});
+    for(let i=0;i<W0/(60*U);i++) r('rect',{x:i*60*U+6*U,y:G-H0*.1+6*U,width:48*U,height:H0*.1-26*U,rx:3*U,fill:'none',stroke:'#a8d4c7','stroke-width':2*U});
+    // Plätzchendose & Mixer auf der Platte
+    r('rect',{x:W0*.82,y:G-H0*.1-30*U,width:28*U,height:22*U,rx:5*U,fill:'#e2483d'}); r('rect',{x:W0*.82-2*U,y:G-H0*.1-34*U,width:32*U,height:6*U,rx:3*U,fill:'#c0392b'});
+    const t2=r('text',{x:W0*.82+14*U,y:G-H0*.1-13*U,'font-size':11*U,'text-anchor':'middle',fill:'#fff','font-weight':600}); t2.textContent='🍪';
+  }
+  if(typ==='bad'){
+    // Spiegel & Handtücher
+    r('rect',{x:W0*.36,y:H0*.1,width:W0*.28,height:H0*.17,rx:40*U,fill:'#eaf7fb',stroke:'#fff','stroke-width':6*U});
+    r('path',{d:`M${W0*.42} ${H0*.14} l${18*U} -${10*U} M${W0*.44} ${H0*.17} l${24*U} -${14*U}`,stroke:'#fff','stroke-width':4*U,'stroke-linecap':'round'});
+    r('rect',{x:W0*.06,y:H0*.32,width:W0*.22,height:4*U,rx:2*U,fill:'#9aa6b2'});
+    r('rect',{x:W0*.08,y:H0*.32,width:W0*.08,height:H0*.08,rx:3*U,fill:'#ff8ab3'}); r('rect',{x:W0*.18,y:H0*.32,width:W0*.08,height:H0*.1,rx:3*U,fill:'#ffd84a'});
+    // Badewanne mit Entchen
+    const wx=W0*.62, wy=G-H0*.1;
+    r('path',{d:`M${wx} ${wy} H${W0+20} V${G-10*U} Q${W0} ${G} ${W0-20*U} ${G} H${wx+20*U} Q${wx} ${G} ${wx} ${G-20*U}Z`,fill:'#fff',stroke:'#dbe7ef','stroke-width':2*U});
+    r('rect',{x:wx-6*U,y:wy-6*U,width:W0,height:9*U,rx:4*U,fill:'#f4f8fb'});
+    for(let i=0;i<6;i++) r('circle',{cx:wx+20*U+i*16*U,cy:wy-6*U-Math.random()*6*U,r:(6+Math.random()*5)*U,fill:'#fff',stroke:'#e3eef5'});
+    const ente=r('text',{x:wx+60*U,y:wy-8*U,'font-size':22*U});ente.textContent='🦆';
+    // Pflanze
+    const pl=r('text',{x:W0*.04,y:G-10*U,'font-size':34*U});pl.textContent='🪴';
+  }
+  if(typ==='gym'){
+    // Spiegelwand & Sprossenwand & Poster
+    r('rect',{x:W0*.3,y:H0*.12,width:W0*.4,height:G-H0*.12-20*U,rx:6*U,fill:'#f4f8fd',stroke:'#c8d3e2','stroke-width':4*U});
+    r('path',{d:`M${W0*.36} ${H0*.2} l${40*U} -${30*U} M${W0*.38} ${H0*.28} l${60*U} -${46*U}`,stroke:'#fff','stroke-width':6*U,'stroke-linecap':'round'});
+    for(let i=0;i<9;i++) r('rect',{x:W0*.03,y:H0*.12+i*(G-H0*.14)/9,width:W0*.18,height:5*U,rx:2*U,fill:'#c8924f'});
+    r('rect',{x:W0*.03,y:H0*.12,width:6*U,height:G-H0*.12,fill:'#a8693a'}); r('rect',{x:W0*.21-6*U,y:H0*.12,width:6*U,height:G-H0*.12,fill:'#a8693a'});
+    r('rect',{x:W0*.76,y:H0*.14,width:W0*.2,height:H0*.14,rx:4*U,fill:'#ffd84a'});
+    const p1=r('text',{x:W0*.86,y:H0*.19,'font-size':12*U,'text-anchor':'middle','font-weight':600,fill:'#7a4a1e'});p1.textContent='WEIHNACHTS-';
+    const p2=r('text',{x:W0*.86,y:H0*.215,'font-size':12*U,'text-anchor':'middle','font-weight':600,fill:'#7a4a1e'});p2.textContent='WORKOUT';
+    const p3=r('text',{x:W0*.86,y:H0*.26,'font-size':22*U,'text-anchor':'middle'});p3.textContent='💪🎄';
+    // Gymnastikball & Hantelablage
+    r('circle',{cx:W0*.9,cy:G-24*U,r:24*U,fill:'#ff6b9a'}); r('path',{d:`M${W0*.9-20*U} ${G-34*U} q${20*U} ${-10*U} ${40*U} 0`,stroke:'#ffa3c2','stroke-width':3*U,fill:'none'});
+  }
+  if(typ==='werkstatt'){
+    // Lochwand mit Werkzeug
+    const lx=W0*.12, ly=H0*.12, lw=W0*.76, lh=H0*.22;
+    r('rect',{x:lx,y:ly,width:lw,height:lh,rx:5*U,fill:'#c8a06c',stroke:'#8a542c','stroke-width':4*U});
+    for(let i=0;i<lw/(14*U);i++) for(let j=0;j<lh/(14*U);j++) r('circle',{cx:lx+8*U+i*14*U,cy:ly+8*U+j*14*U,r:1.6*U,fill:'#8a6a40'});
+    [['🔨',.15],['🔧',.32],['🪛',.48],['🪚',.66],['📏',.84]].forEach(([e,f])=>{const t=r('text',{x:lx+lw*f,y:ly+lh*.65,'font-size':30*U,'text-anchor':'middle'});t.textContent=e;});
+    // Lampe
+    r('path',{d:`M${W0*.5} 0 V${H0*.04}`,stroke:'#333','stroke-width':2*U}); r('path',{d:`M${W0*.5-24*U} ${H0*.04+18*U} L${W0*.5-10*U} ${H0*.04} H${W0*.5+10*U} L${W0*.5+24*U} ${H0*.04+18*U}Z`,fill:'#3f9b6b'});
+    r('path',{d:`M${W0*.5-24*U} ${H0*.04+18*U} L${W0*.2} ${H0*.45} H${W0*.8} L${W0*.5+24*U} ${H0*.04+18*U}Z`,fill:'#fff7c2',opacity:.25});
+    // Kisten
+    [[W0*.04,'#c8924f'],[W0*.82,'#b8823f']].forEach(([kx,c])=>{ r('rect',{x:kx,y:G-40*U,width:50*U,height:40*U,fill:c}); r('path',{d:`M${kx} ${G-40*U} l${50*U} ${40*U} M${kx+50*U} ${G-40*U} l-${50*U} ${40*U}`,stroke:'#8a5a2b','stroke-width':2*U}); });
+  }
+  if(typ==='buehne'){
+    // Scheinwerferkegel, Sternchen-Vorhang hinten, Publikum vorne
+    for(let i=0;i<30;i++) r('circle',{cx:Math.random()*W0,cy:Math.random()*G*.8,r:(1+Math.random()*1.5)*U,fill:'#ffd84a',opacity:.6,class:'birne',style:`animation-delay:${-Math.random()*3}s`});
+    grad('kegel',[[0,'rgba(255,240,180,.55)'],[1,'rgba(255,240,180,0)']]);
+    [[.25,.5],[.75,.5]].forEach(([a,b])=>r('path',{d:`M${W0*a-10*U} 0 H${W0*a+10*U} L${W0*b+W0*.3} ${G} H${W0*b-W0*.3}Z`,fill:'url(#kegel)'}));
+    r('rect',{x:0,y:G-4*U,width:W0,height:8*U,fill:'#d4a017'});
+    P=bd; const pub=r('g',{});
+    for(let i=0;i<9;i++){ const px=(i+.5)*W0/9, py=H0+6*U; r('circle',{cx:px,cy:py-46*U,r:16*U,fill:'#1d0f12'},pub); r('ellipse',{cx:px,cy:py,rx:26*U,ry:34*U,fill:'#1d0f12'},pub); }
+    const mk=r('text',{x:W0*.5,y:G-H0*.02,'font-size':0}); 
+  }
+  P=sv;
+  // Warme Vignette
+  const vg=r('radialGradient',{id:'vig',cx:'50%',cy:'45%',r:'75%'},defs); r('stop',{offset:'60%','stop-color':'#000','stop-opacity':0},vg); r('stop',{offset:'100%','stop-color':typ==='buehne'?'#000':'#6b3a10','stop-opacity':typ==='buehne'?.5:.18},vg);
+  r('rect',{x:0,y:0,width:W0,height:H0,fill:'url(#vig)','pointer-events':'none'});
+}
+
+if(SZ && (SZ.ort==='drinnen'||SZ.ort==='buehne')){
+  document.body.style.background='#f0d2b5';
+  raumZeichnen(SZ.ort==='buehne'?'buehne':(SZ.raum||'wohnzimmer'));
+  if(SZ.ort==='buehne'){
+    ['l','r'].forEach(sd=>{const v=document.createElement('div'); v.className='vorhang-seite'; v.style[sd==='l'?'left':'right']=0; document.body.appendChild(v);});
     const o=document.createElement('div'); o.className='vorhang-oben'; document.body.appendChild(o);
-    document.body.style.background='radial-gradient(ellipse at 50% 30%,#ffe9b8 0%,#e0b07a 45%,#6b3f2a 100%)';
   }
 }
 if(SZ && SZ.ort==='nacht'){
@@ -1350,6 +1566,7 @@ async function untergehen(){
   await sleep(1900);
   await hop(mitte(),H()*.12,520);
   actor.style.zIndex='0'; bea.style.zIndex='0'; document.getElementById('scene').style.zIndex='3';
+  const rbd=document.getElementById('raumboden'); if(rbd) rbd.style.zIndex='3';
   document.getElementById('dusk').style.opacity='1';
   const y0=y,t0=performance.now(),dur=2600;
   await new Promise(res=>{(function step(now){
