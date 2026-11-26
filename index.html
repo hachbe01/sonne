@@ -1221,12 +1221,13 @@ if(saison==='winter' && !(SZ && SZ.ort!=='draussen' && SZ.ort!=='nacht')){
   if(hat('dorf')) dorf(B1,B2); if(hat('wald')) wald(B1,B2); if(hat('markt')) markt(B1,B2);
   add('ellipse',{cx:F[0],cy:F[1],rx:F[2],ry:F[3],fill:(SZ&&SZ.ort==='nacht')?'#c9d3ee':'#f7fbff'});
   if(hat('see')) see();
-  tanne(92,hillY(92,...F)+12,1.15,deko);
-  tanne(312,hillY(312,...F)+10,.95,false);
-  tanne(334,hillY(334,...F)+18,.7,false);
+  // Vordergrund: unterhalb der Füße, damit niemand "im Baum" steht
+  tanne(80,230,1.05,deko);
+  tanne(322,224,.9,false);
+  tanne(344,236,.7,false);
   // Schneemann
   if(!(SZ&&SZ.ohneSchneemann)){
-  const sx=262, sy=hillY(262,...F)+30;
+  const sx=258, sy=216;
   add('ellipse',{cx:sx,cy:sy,rx:15,ry:13,fill:'#fff',stroke:'#dfe9f5','stroke-width':1.5});
   add('circle',{cx:sx,cy:sy-21,r:10,fill:'#fff',stroke:'#dfe9f5','stroke-width':1.5});
   add('path',{d:`M${sx} ${sy-21} l9 2 -9 2z`,fill:'#ff8a3c'});
@@ -1391,16 +1392,17 @@ function raumZeichnen(typ){
     r('path',{d:`M${bx+bw*.7} ${by+bh*.68} c-${bw*.18} -${bh*.14} -${bw*.14} -${bh*.36} 0 -${bh*.24} c${bw*.14} -${bh*.12} ${bw*.18} ${bh*.1} 0 ${bh*.24}z`,fill:'#e2483d'});
     r('path',{d:`M${bx+bw*.5} ${by-14*U} L${bx+bw*.15} ${by} M${bx+bw*.5} ${by-14*U} L${bx+bw*.85} ${by}`,stroke:'#b8860b','stroke-width':1.5*U});
     // Regal mit Büchern & Schneekugel
-    const rx=W0*.1, ry=H0*.36, rw=W0*.3;
+    const rx=W0*.06, ry=H0*.4, rw=W0*.42;
     r('rect',{x:rx,y:ry,width:rw,height:6*U,rx:2*U,fill:'#8a542c'});
     let bxx=rx+6*U; ['#e2483d','#3f9b6b','#4a7bd0','#ffd84a','#b48cff'].forEach((c,i)=>{const bh2=(22+i%3*5)*U; r('rect',{x:bxx,y:ry-bh2,width:7*U,height:bh2,rx:1.5*U,fill:c}); bxx+=8*U;});
-    r('circle',{cx:rx+rw*.75,cy:ry-12*U,r:11*U,fill:'#dff1ff',stroke:'#fff','stroke-width':1.5*U}); r('rect',{x:rx+rw*.75-10*U,y:ry-4*U,width:20*U,height:5*U,rx:2*U,fill:'#7a4a2a'});
-    r('path',{d:`M${rx+rw*.75} ${ry-19*U} l${5*U} ${10*U} h-${10*U}z`,fill:'#3f8f5f'});
+    r('circle',{cx:rx+rw*.88,cy:ry-12*U,r:11*U,fill:'#dff1ff',stroke:'#fff','stroke-width':1.5*U}); r('rect',{x:rx+rw*.88-10*U,y:ry-4*U,width:20*U,height:5*U,rx:2*U,fill:'#7a4a2a'});
+    r('path',{d:`M${rx+rw*.88} ${ry-19*U} l${5*U} ${10*U} h-${10*U}z`,fill:'#3f8f5f'});
     // Papiersterne von der Decke
     [[W0*.42,H0*.13,'#ffd84a'],[W0*.5,H0*.2,'#ff8ad8'],[W0*.36,H0*.24,'#fff']].forEach(([sx,sy,c])=>{ r('path',{d:`M${sx} 0 V${sy}`,stroke:'#c9a36a','stroke-width':1*U});
       const s=9*U; r('path',{d:`M${sx} ${sy-s} L${sx+s*.3} ${sy-s*.3} L${sx+s} ${sy-s*.2} L${sx+s*.45} ${sy+s*.25} L${sx+s*.6} ${sy+s} L${sx} ${sy+s*.6} L${sx-s*.6} ${sy+s} L${sx-s*.45} ${sy+s*.25} L${sx-s} ${sy-s*.2} L${sx-s*.3} ${sy-s*.3}Z`,fill:c,class:'pendel',style:`transform-origin:${sx}px 0px`}); });
     // Tannenbaum in der Ecke
-    tanne(W0*.88,G+2*U,Math.min(H0*.36,W0*.62));
+    // kleiner Tannenbaum aufs Regal (der Boden bleibt frei für Bea & Sonni)
+    tanne(rx+rw*.42,ry-1*U,Math.min(H0*.13,W0*.22));
     // Teppich
     P=bd;
     r('ellipse',{cx:W0*.5,cy:G+H0*.07,rx:W0*.46,ry:H0*.055,fill:'#b83a3a'});
