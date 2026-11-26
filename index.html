@@ -910,7 +910,7 @@ const SZENEN = {
     await S('Offenes Wohnkonzept?');
     await B('HAHAHAHA');
     await beaTo(M()-size*.35-beaW*.4); funken(beaMx(),beaY-beaH*1.05,4,['🍫']);
-    await B('Schmeckt trotzdem 😋');
+    await B('Ein kleines Knusperchen geht trotzdem 🤏😋');
     await szeneEnde();
  }},
  14:{ort:'drinnen', raum:'bad', bea:null, sonne:['armseite'], async lauf(){
@@ -1083,6 +1083,8 @@ const SZENEN = {
     await beaTo(M()-size*.3-beaW*.65); await hop(M()+size*.25,H()*.05,400);
     await B('Wir müssen Salmi was übrig lassen 🍪');
     await S('Jaaa klar');
+    await B('Aber nur ein kleines Knusperchen 🤏');
+    await S('Okay, ich auch ein kleines Knusperchen 🤏');
     still(); const ks=[...tl.el.querySelectorAll('.keks')];
     for(let i=0;i<ks.length-1;i++){ ks[i].style.display='none'; funken(i%2?sunMx():beaMx(),groundY()-size*.7,3,['🍪','✨'],.6); (i%2?beaJump:()=>hop(x,H()*.04,250))(); await sleep(550); }
     await S('Wie viele waren da eigentlich drauf? 🤔');
