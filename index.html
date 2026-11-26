@@ -164,6 +164,15 @@
   .gutschein{width:100%;height:100%;background:linear-gradient(135deg,#fffaf0,#f6e7c8);border:3px solid #d4a017;border-radius:10px;box-shadow:0 6px 16px rgba(0,0,0,.3);
     display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:600;color:#7a4a1e}
   .gutschein .g1{font-size:calc(var(--size)*.11);letter-spacing:2px} .gutschein .g2{font-size:calc(var(--size)*.1);color:#2b2420} .gutschein .g3{font-size:calc(var(--size)*.065)}
+  .tv{width:100%;height:100%;position:relative}
+  .tv .screen{position:absolute;inset:0 0 14% 0;background:#1d1d24;border:5px solid #2b2b33;border-radius:10px;overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 6px 14px rgba(0,0,0,.25)}
+  .tv .screen::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,#ff5f8f,#ffb347);opacity:.85;animation:tvflimmer 1.2s steps(3) infinite}
+  @keyframes tvflimmer{33%{filter:hue-rotate(60deg)}66%{filter:hue-rotate(-40deg)}}
+  .tv .assi{position:relative;color:#fff;font-weight:700;font-size:calc(var(--size)*.16);letter-spacing:1px;text-shadow:0 2px 0 #b0214f}
+  .tv .live{position:absolute;top:6%;left:7%;color:#fff;font-size:calc(var(--size)*.06);font-weight:600}
+  .tv .drama{position:relative;font-size:calc(var(--size)*.11)}
+  .tv .fuss{position:absolute;bottom:0;left:38%;right:38%;height:14%;background:#2b2b33;border-radius:0 0 6px 6px}
   #bye{position:fixed;left:0;right:0;top:38%;text-align:center;z-index:5;font-size:1.8rem;font-weight:600;color:#fff;
     text-shadow:0 2px 12px rgba(120,60,40,.35);opacity:0;transition:opacity 1.2s;pointer-events:none}
   #bye.show{opacity:1;pointer-events:auto}
@@ -562,6 +571,7 @@ const PROPS_SVG = {
 };
 // Eigene HTML-Requisiten (Schilder, Stände, Vorhänge)
 const PROPS_HTML = {
+  tv:`<div class="tv"><div class="screen"><div class="assi">ASSI TV</div><div class="live">● LIVE</div><div class="drama">😱🤬💅</div></div><div class="fuss"></div></div>`,
   gutschein:`<div class="gutschein"><div class="g1">GUTSCHEIN</div><div class="g2">Museum 🚗</div><div class="g3">für Salmi ❤️</div></div>`,
   banner:`<div class="banner"><div class="seil l"></div><div class="seil r"></div><div class="lichter"></div><div class="etikett"><div class="est">EST. 2026</div><div class="name">Salmis</div><div class="linie"></div><div class="dorf">WEIHNACHTSDORF</div><div class="klein">Einwohner: 1 Salmi + 2 Chaoten</div></div><div class="schleife">🎀</div></div>`,
   schild:`<div class="schild"><div class="pfosten l"></div><div class="pfosten r"></div><div class="etikett"><div class="est">EST. 2026</div><div class="name">Salmis</div><div class="linie"></div><div class="dorf">WEIHNACHTSDORF</div><div class="klein">Einwohner: 1 Salmi + 2 Chaoten</div></div><div class="schleife">🎀</div></div>`,
@@ -745,6 +755,9 @@ const SZENEN = {
     await beaTo(M()-size*.35-beaW*.6);
     const sch=Prop('sch','schuessel',size*.6,size*.34,M(),groundY()-size*.47,3); await pop(sch);
     await beaTo(L(),H()*.05,450);
+    const tv=Prop('tv','tv',size*1.05,size*.75,W()*.5,groundY()-size*1.85,1); await pop(tv);
+    await B('Samstag heißt Assi TV 📺');
+    await S('JAAA endlich 🤩');
     await B('Sonni, die sind für Salmi 🥜');
     await S('Jaja');
     still(); beaFlip=-1; setBea(); await sleep(400);
@@ -1067,6 +1080,13 @@ const SZENEN = {
     still(); const de=Prop('de','decke',Math.min(W()*.82,size*2.2),size*.5,W()/2,-80,6);
     await Promise.all([ propTo(de,W()/2,groundY()-size*.1,600,0), beaTo(beaX+sfW*.06,H()*.03,500), hop(x-sfW*.06,H()*.03,500) ]);
     funken(W()/2,groundY()-size*.6,6,['💛','✨']);
+    await S('Bea … kraulst du mir den Kopf? 🥺');
+    await B('Na gut');
+    still(); document.getElementById('arm-winkt').style.display=''; document.getElementById('arm-unten').style.display='none';
+    zs('o-schlaf'); for(let i=0;i<5;i++){ funken(sunMx(),y-size*1.0,1,['💛','✨'],.5); await tw(260,t=>{rot=Math.sin(t*Math.PI)*-6; place();}); }
+    document.getElementById('arm-winkt').style.display='none'; document.getElementById('arm-unten').style.display='';
+    await S('Okay, jetzt versteh ich, warum du das bei Salmi so liebst 😌');
+    zs('o-schlaf',false);
     await S('Gibts hier Zimmerservice?');
     await B('Nö');
     still(); const r=Prop('rg','riegel',size*.45,size*.15,W()/2,-60,7); await propTo(r,W()/2,groundY()-size*.35,700,0,540); funken(W()/2,groundY()-size*.5,6,['✨','🥥']);
