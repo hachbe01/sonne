@@ -675,11 +675,24 @@ async function gruss(){
   const d=dezTag||new Date().getDate();
   await S(d%4===2 ? `<big>Salami Aluminium, ${spitzname()} ☀️</big>` : `<big>Guten Morgen, ${spitzname()} ☀️</big>`);
 }
+const UEBERGANG=['So, genug Chaos für heute 😌','Okay, das räumen wir später auf 😅','Das bleibt unter uns, okay? 🤫','Morgen machen wir weniger Quatsch … vielleicht 😇','Puh, was für ein Morgen 😮‍💨','Ich glaub, wir brauchen erst mal Kaffee ☕'];
+const ABSCHIED=['Hab einen schönen Tag, Salmi 💛','Bis morgen, Salmönchen 💛','Wir haben dich lieb 💛','Hab einen tollen Tag 💛','Bis morgen 👋💛'];
 async function szeneEnde(){
-  still(); await sleep(400);
-  SZ_AKTIV=false; sprecher='sonne';
+  still(); await sleep(1000);
+  LEB_AUS=true;
+  // kurzer Moment: beide hüpfen kichernd und schauen zu Salmi
+  beaFlip=1; setBea();
+  for(let i=0;i<2;i++){ await Promise.all([hop(x,H()*.045,360), beaTo(beaX,H()*.045,360)]); }
+  funken((sunMx()+beaMx())/2,Math.min(y-size,beaY-beaH)-10,5,['💛','✨'],.8);
+  await sleep(500);
+  const d=dezTag||1;
+  await S(UEBERGANG[d%UEBERGANG.length]);
+  beaWinkt(6000);
+  await B(ABSCHIED[d%ABSCHIED.length]);
+  still(); await sleep(500);
+  LEB_AUS=false; SZ_AKTIV=false; sprecher='sonne'; szeneVorbei=true;
   setTimeout(()=>tap.classList.add('show'),800);
-  planeUntergang(2200);
+  planeUntergang(200);
 }
 
 /* ----------------------- Die 24 Abenteuer ----------------------- */
@@ -723,8 +736,9 @@ const SZENEN = {
     still(); sm.el.querySelector('.sm-mund').style.display='none'; sm.el.querySelector('.sm-grinsen').style.display='';
     funken(M(),groundY()-size*.9,6,['✨','💛']); await sleep(700);
     sm.el.style.transformOrigin='50% 100%';
-    await Promise.all([tw(800,t=>{sm.rot=-85*t; setP(sm);},rein3), propTo(r,M()-size*.55,groundY()-6,800,size*.1,-200)]);
-    funken(M()-size*.45,groundY()-10,12,['❄️','💨'],1.3);
+    const smsvg=sm.el.firstElementChild; smsvg.style.transformOrigin='50% 100%';
+    await Promise.all([tw(700,t=>{ sm.rot=Math.sin(t*Math.PI*3)*8*(1-t); setP(sm); smsvg.style.transform=`scale(${1+.35*t*t},${1-.75*t*t})`; },rein3), propTo(r,M()+size*.05,groundY()-4,700,size*.25,-200)]);
+    funken(M(),groundY()-10,12,['❄️','💨'],1.3);
     await S('ups 😳');
     await B('HAHAHA okay das erzählen wir ihm nicht');
     await szeneEnde();
@@ -1950,18 +1964,18 @@ async function beaAuftritt(){
   }
   beaModus='folgen';
 }
-let untergegangen=false, untergangTimer;
+let untergegangen=false, untergangTimer, szeneVorbei=false;
 function planeUntergang(ms){ clearTimeout(untergangTimer); untergangTimer=setTimeout(untergehen,ms); }
 async function untergehen(){
   if(hopping){ return planeUntergang(800); }
   untergegangen=true; tap.classList.remove('show');
-  say(pick([`Bis morgen, ${typeof spitzname==='function'?spitzname().replace(' 🕺',''):'Salmi'} 💛`,'Hab einen wunderschönen Tag ☀️','Wir sehen uns morgen 👋💛','Hab dich lieb, bis morgen 💛']),2200); beaWinkt(4500);
-  await sleep(2300);
+  if(!szeneVorbei) say(pick([`Bis morgen, ${typeof spitzname==='function'?spitzname().replace(' 🕺',''):'Salmi'} 💛`,'Hab einen wunderschönen Tag ☀️','Wir sehen uns morgen 👋💛','Hab dich lieb, bis morgen 💛']),2200); beaWinkt(4500);
+  if(!szeneVorbei) await sleep(2300);
   if(!SZ) await hop(mitte(),H()*.12,520);
   actor.style.zIndex='0'; bea.style.zIndex='0'; document.getElementById('scene').style.zIndex='3';
   const rbd=document.getElementById('raumboden'); if(rbd) rbd.style.zIndex='3';
   document.getElementById('dusk').style.opacity='1';
-  const y0=y,by0=beaY,t0=performance.now(),dur=2600;
+  const y0=y,by0=beaY,t0=performance.now(),dur=3400;
   await new Promise(res=>{(function step(now){
     const t=Math.min(1,(now-t0)/dur), e=t*t;
     y=y0+(H()*.32+size)*e; rot=Math.sin(t*12)*4; place();

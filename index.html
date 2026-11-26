@@ -700,8 +700,9 @@ const SZENEN = {
     still(); sm.el.querySelector('.sm-mund').style.display='none'; sm.el.querySelector('.sm-grinsen').style.display='';
     funken(M(),groundY()-size*.9,6,['✨','💛']); await sleep(700);
     sm.el.style.transformOrigin='50% 100%';
-    await Promise.all([tw(800,t=>{sm.rot=-85*t; setP(sm);},rein3), propTo(r,M()-size*.55,groundY()-6,800,size*.1,-200)]);
-    funken(M()-size*.45,groundY()-10,12,['❄️','💨'],1.3);
+    const smsvg=sm.el.firstElementChild; smsvg.style.transformOrigin='50% 100%';
+    await Promise.all([tw(700,t=>{ sm.rot=Math.sin(t*Math.PI*3)*8*(1-t); setP(sm); smsvg.style.transform=`scale(${1+.35*t*t},${1-.75*t*t})`; },rein3), propTo(r,M()+size*.05,groundY()-4,700,size*.25,-200)]);
+    funken(M(),groundY()-10,12,['❄️','💨'],1.3);
     await S('ups 😳');
     await B('HAHAHA okay das erzählen wir ihm nicht');
     await szeneEnde();
