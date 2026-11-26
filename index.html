@@ -80,7 +80,15 @@
   .schild{position:relative;width:100%;height:100%}
   .schild .brett{position:absolute;left:4%;right:4%;top:6%;height:52%;background:#8a542c;border:3px solid #6b3f20;border-radius:10px;color:#fff;
     font-weight:600;display:flex;align-items:center;justify-content:center;text-align:center;font-size:calc(var(--size)*.13);line-height:1.1;box-shadow:inset 0 -6px 0 rgba(0,0,0,.15)}
-  .schild .pfosten{position:absolute;bottom:0;width:9%;height:60%;background:#6b3f20;border-radius:3px}
+  .schild .etikett{position:absolute;left:2%;right:2%;top:4%;height:62%;background:#fffdf8;border:2px solid #e8dcc6;border-radius:4px;
+    box-shadow:0 3px 8px rgba(90,60,20,.25);text-align:center;color:#2b2420;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Georgia,'Times New Roman',serif}
+  .schild .est{font-size:calc(var(--size)*.055);letter-spacing:1px;color:#6b5e52}
+  .schild .name{font-size:calc(var(--size)*.2);font-weight:700;line-height:1}
+  .schild .linie{width:70%;height:1.5px;background:#2b2420;margin:3px 0}
+  .schild .dorf{font-size:calc(var(--size)*.072);letter-spacing:1.5px;font-family:'Fredoka',sans-serif;font-weight:600}
+  .schild .klein{font-size:calc(var(--size)*.045);color:#6b5e52;margin-top:2px}
+  .schild .schleife{position:absolute;top:-8%;right:-4%;font-size:calc(var(--size)*.22);transform:rotate(15deg)}
+  .schild .pfosten{position:absolute;bottom:0;width:7%;height:60%;background:#8a5a33;border-radius:3px}
   .schild .pfosten.l{left:18%} .schild .pfosten.r{right:18%}
   .schild .schneekappe{position:absolute;left:2%;right:2%;top:2%;height:12%;background:#fff;border-radius:12px}
   .stand{position:relative;width:100%;height:100%}
@@ -505,7 +513,7 @@ const PROPS_SVG = {
 };
 // Eigene HTML-Requisiten (Schilder, Stände, Vorhänge)
 const PROPS_HTML = {
-  schild:`<div class="schild"><div class="brett">Salmis<br>Weihnachtsdorf</div><div class="pfosten l"></div><div class="pfosten r"></div><div class="schneekappe"></div></div>`,
+  schild:`<div class="schild"><div class="pfosten l"></div><div class="pfosten r"></div><div class="etikett"><div class="est">EST. 2026</div><div class="name">Salmis</div><div class="linie"></div><div class="dorf">WEIHNACHTSDORF</div><div class="klein">Einwohner: 1 Salmi + 2 Chaoten</div></div><div class="schleife">🎀</div></div>`,
   waffelstand:`<div class="stand"><div class="markise"></div><div class="standschild">Sonnis Waffelstube</div><div class="theke"></div></div>`,
   restaurant:`<div class="stand"><div class="markise gruen"></div><div class="standschild wende">Sonnis Sternerestaurant ⭐</div><div class="theke"></div></div>`,
   vorhang:`<div class="vorhang"><div class="stange"></div><div class="tuch"></div></div>`,
@@ -574,7 +582,7 @@ async function szeneEnde(){
 
 /* ----------------------- Die 24 Abenteuer ----------------------- */
 const SZENEN = {
- 1:{ort:'draussen', kulisse:['dorf'], himmel:'morgenrot', sonne:['bommelmuetze','schal'], async lauf(){
+ 1:{ort:'draussen', kulisse:['kraftdorf'], ohneSchneemann:true, himmel:'morgenrot', sonne:['bommelmuetze','schal'], async lauf(){
     x=W()+20; place(); bea.style.opacity='0';
     await hop((W()+R())/2,H()*.12,400); await hop(R(),H()*.12,400);
     beaX=-beaW-30; beaY=bodenBea(); setBea(); bea.style.opacity='1';
@@ -582,7 +590,7 @@ const SZENEN = {
     await S('<big>SALMIIII! 🎉</big>GUCK MAL, WEN ICH DABEI HAB!!');
     beaJump(); funken(beaMx(),beaY-beaH*.8,6,['👋','💛']);
     await B('Halloooo! 🥹');
-    const sch=Prop('schild','schild',size*1.15,size*.95,M(),groundY()+size*.08,2); pop(sch);
+    const sch=Prop('schild','schild',size*1.35,size*1.15,M(),groundY()+size*.06,3); pop(sch);
     await S('Wir wohnen jetzt übrigens hier.');
     await B('Also … für 24 Tage.');
     await hop(R(),H()*.15,450); funken(W()*.8,H()*.6,6,['🏠','✨']);
@@ -974,7 +982,7 @@ const SZENEN = {
     await S('Wir brauchen noch eine. 📦📦');
     await szeneEnde();
  }},
- 24:{ort:'nacht', bea:'hut', sonne:['weihnachtsmuetze'], async lauf(){
+ 24:{ort:'nacht', kulisse:['kraftdorf'], bea:'hut', sonne:['weihnachtsmuetze'], async lauf(){
     await reinBeide();
     await Promise.all([hop(M()+size*.05-size/2+size*.35,H()*.06,500), beaTo(M()-beaW*.9,H()*.06,500)]);
     await S('Beaaa, wir haben\'s geschafft! 🎄');
@@ -1099,6 +1107,47 @@ function keksglas(x,y,s){
   add('circle',{cx:x+26*s,cy:y-4*s,r:6*s,fill:'#d99a5a',stroke:'#b8783e','stroke-width':1});
   add('circle',{cx:x+31*s,cy:y-8*s,r:3*s,fill:'#f7fbff'}); // angebissen
 }
+function kraftdorf(B1,B2,nacht){
+  // Häuschen wie im echten Adventskalender: Packpapier, Treppengiebel, weiße Kritzel-Fenster, Lichterkette
+  const papier=nacht?'#b89566':'#dcbf93', kante=nacht?'#9c7b50':'#c4a273', dach=nacht?'#6f6a66':'#8f8a85';
+  const glas=nacht?'#ffd36a':'#4a3426';
+  const hs=[[62,40,66,'treppe'],[100,36,56,'spitz'],[138,40,74,'rund'],[176,32,50,'spitz'],[226,36,58,'treppe'],[264,40,72,'spitz'],[302,36,60,'rund'],[338,38,54,'treppe']];
+  const punkte=[];
+  hs.forEach(([hx,w,h,typ],i)=>{
+    const Hh=hx<200?B1:B2, base=hillY(hx,...Hh)+16, top=base-h, l=hx-w/2, r=hx+w/2;
+    let d;
+    if(typ==='treppe'){ const st=w/6; d=`M${l} ${base} V${top+14} H${l+st} V${top+9} H${l+2*st} V${top+4} H${l+2.5*st} V${top} H${r-2.5*st} V${top+4} H${r-2*st} V${top+9} H${r-st} V${top+14} H${r} V${base} Z`; }
+    else if(typ==='rund'){ d=`M${l} ${base} V${top+12} Q${l} ${top+5} ${l+5} ${top+5} Q${hx} ${top-6} ${r-5} ${top+5} Q${r} ${top+5} ${r} ${top+12} V${base} Z`; }
+    else { d=`M${l} ${base} V${top+14} L${hx} ${top-2} L${r} ${top+14} V${base} Z`; }
+    add('path',{d,fill:papier,stroke:kante,'stroke-width':1.2});
+    if(typ==='spitz'){ add('path',{d:`M${l-3} ${top+15} L${hx} ${top-4} L${r+3} ${top+15} Z`,fill:dach});
+      for(let k=1;k<4;k++) add('path',{d:`M${hx-k*4.5} ${top-1+k*4.6} q2.2 -1.8 4.5 0 q2.2 -1.8 4.5 0`.replace(/q2.2 -1.8 4.5 0 q2.2 -1.8 4.5 0/, ' '+[...Array(k)].map(()=>'q2.25 -1.8 4.5 0 q2.25 -1.8 4.5 0').join(' ')),stroke:'#fff','stroke-width':.7,fill:'none',opacity:.85}); }
+    // Fenster: weiße Kritzel-Rahmen und ausgeschnittene Fenster
+    const fw=w*.26, fh=h*.18;
+    if(i%2===0){
+      add('path',{d:`M${hx-fw/2} ${top+18+fh} V${top+18+fh*.35} Q${hx-fw/2} ${top+18} ${hx} ${top+18} Q${hx+fw/2} ${top+18} ${hx+fw/2} ${top+18+fh*.35} V${top+18+fh} Z`,fill:glas,opacity:nacht?1:.9});
+      if(nacht) add('circle',{cx:hx,cy:top+18+fh*.6,r:fw,fill:'#ffcf6a',opacity:.35,filter:'url(#weichzeichner)'});
+    } else {
+      [[-1],[1]].forEach(([sg])=>{ const wx=hx+sg*w*.2-fw/2, wy=top+20;
+        add('rect',{x:wx,y:wy,width:fw,height:fh,fill:nacht?'#ffe29a':'none',stroke:'#fff','stroke-width':1});
+        add('path',{d:`M${wx+fw/2} ${wy} V${wy+fh} M${wx} ${wy+fh/2} H${wx+fw}`,stroke:'#fff','stroke-width':.7}); });
+    }
+    // Tür, Herz, Wellenlinie
+    add('rect',{x:hx-w*.13,y:base-h*.24,width:w*.26,height:h*.24,rx:1.5,fill:'none',stroke:'#fff','stroke-width':1});
+    if(i%3===1) add('path',{d:`M${hx} ${top+12} c-2 -2 -4 0 -2 2 l2 2 l2 -2 c2 -2 0 -4 -2 -2z`,fill:'#d8434a'});
+    add('path',{d:`M${l+2} ${base-h*.36} q2 -1.5 4 0 q2 -1.5 4 0 q2 -1.5 4 0 q2 -1.5 4 0 q2 -1.5 4 0 q2 -1.5 4 0 q2 -1.5 4 0`,stroke:'#fff','stroke-width':.6,fill:'none',opacity:.7,'clip-path':''});
+    // kleiner roter Anhänger
+    if(i%2===1){ add('path',{d:`M${r-4} ${top+16} q4 6 2 12`,stroke:'#c0392b','stroke-width':1,fill:'none'}); add('rect',{x:r-5,y:top+27,width:7,height:5,rx:1,fill:'#e8d3b0',stroke:'#c0392b','stroke-width':.6}); }
+    punkte.push([l,base-h*.55],[hx,base-h*.42],[r,base-h*.6]);
+  });
+  // Warme Lichterkette über die Häuser
+  punkte.sort((a,b)=>a[0]-b[0]);
+  add('path',{d:'M'+punkte.map(p=>p.join(' ')).join(' L'),stroke:'#a38a5a','stroke-width':.8,fill:'none'});
+  punkte.forEach(([px,py],k)=>{ add('circle',{cx:px,cy:py,r:4,fill:'#ffe9a8',opacity:.45,filter:'url(#weichzeichner)',class:'birne',style:`animation-delay:${-k*.35}s`}); add('circle',{cx:px,cy:py,r:1.5,fill:'#fff6d0'}); });
+  // Große rote Schleife oben auf dem mittleren Haus
+  const sx=138, sy=hillY(138,...B1)+16-76;
+  add('path',{d:`M${sx} ${sy} q-12 -8 -14 2 q2 8 14 -2 q12 -8 14 2 q-2 8 -14 -2 M${sx} ${sy} l-6 12 M${sx} ${sy} l6 12`,fill:'#d8434a',stroke:'#b8323a','stroke-width':1.2});
+}
 function dorf(B1,B2){
   [[70,'#e2483d'],[104,'#4a7bd0'],[140,'#ffb13d'],[262,'#3f9b6b'],[298,'#b48cff'],[334,'#e2483d']].forEach(([hx,c],i)=>{
     const Hh=hx<200?B1:B2, base=hillY(hx,...Hh)+8, w=22+(i%2)*6, h=16+(i%3)*3;
@@ -1161,6 +1210,8 @@ if(saison==='winter' && !(SZ && SZ.ort!=='draussen' && SZ.ort!=='nacht')){
   [[78,.55],[100,.45],[122,.6],[300,.5],[322,.6]].forEach(([x,sc])=>{
     const H=x<200?B1:B2; tanne(x,hillY(x,...H)+2,sc,false,'#7aa79a');
   });
+  if(!document.getElementById('weichzeichner')){ const sv=document.getElementById('scene'); const df=document.createElementNS(NS,'defs'); sv.insertBefore(df,sv.firstChild); const f=document.createElementNS(NS,'filter'); f.id='weichzeichner'; f.setAttribute('x','-1');f.setAttribute('y','-1');f.setAttribute('width','3');f.setAttribute('height','3'); const g=document.createElementNS(NS,'feGaussianBlur'); g.setAttribute('stdDeviation','2.5'); f.appendChild(g); df.appendChild(f); }
+  if(hat('kraftdorf')) kraftdorf(B1,B2,SZ&&SZ.ort==='nacht');
   if(hat('dorf')) dorf(B1,B2); if(hat('wald')) wald(B1,B2); if(hat('markt')) markt(B1,B2);
   add('ellipse',{cx:F[0],cy:F[1],rx:F[2],ry:F[3],fill:(SZ&&SZ.ort==='nacht')?'#c9d3ee':'#f7fbff'});
   if(hat('see')) see();
@@ -1436,14 +1487,6 @@ if(SZ && (SZ.ort==='drinnen'||SZ.ort==='buehne')){
 if(SZ && SZ.ort==='nacht'){
   document.body.style.background='linear-gradient(180deg,#0c1638 0%,#1f2a66 60%,#3b3f86 100%)';
   for(let i=0;i<40;i++){const st=document.createElement('div');st.className='stern';st.style.left=rnd(0,100)+'vw';st.style.top=rnd(0,45)+'vh';st.style.animationDelay=(-rnd(0,3))+'s';document.body.appendChild(st);}
-  // Dorf mit leuchtenden Häuschen
-  [[70,96,.9],[118,88,.7],[290,92,.85],[332,98,1]].forEach(([hx,hy,hs])=>{
-    add('rect',{x:hx-14*hs,y:hy-20*hs,width:28*hs,height:20*hs,fill:'#7a4a2a'});
-    add('path',{d:`M${hx-18*hs} ${hy-20*hs} L${hx} ${hy-36*hs} L${hx+18*hs} ${hy-20*hs} Z`,fill:'#f7fbff'});
-    add('rect',{x:hx-8*hs,y:hy-15*hs,width:7*hs,height:7*hs,fill:'#ffd84a'});add('rect',{x:hx+2*hs,y:hy-15*hs,width:7*hs,height:7*hs,fill:'#ffd84a'});
-  });
-  for(let i=0;i<16;i++) add('circle',{cx:40+i*21,cy:70+Math.sin(i)*6,r:2,fill:['#ff5a5a','#ffd84a','#5ab0ff','#fff'][i%4]});
-  add('path',{d:'M30 70 Q200 90 380 70',stroke:'#333','stroke-width':.6,fill:'none'});
 }
 const drinnen = SZ && (SZ.ort==='drinnen'||SZ.ort==='buehne');
 if(SZ && SZ.himmel==='morgenrot') document.body.style.background='linear-gradient(180deg,#ffa98a 0%,#ffcfae 40%,#fde9dc 75%,#f3f6fb 100%)';
