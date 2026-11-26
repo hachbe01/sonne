@@ -376,7 +376,9 @@
   <ellipse cx="80" cy="76" rx="5.5" ry="3.5" fill="#ff9c8a" opacity=".55"/>
   <path id="bea-mund" d="M53 78 Q60 84 67 78" stroke="#a0473a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
   <!-- rechter Arm (winkt) -->
-  <g class="wave"><path class="aermel" d="M84 106 Q106 100 110 80" stroke="#3b2a22" stroke-width="13" fill="none" stroke-linecap="round"/>
+  <g id="arm-unten"><path class="aermel" d="M85 106 Q93 126 89 144" stroke="#3b2a22" stroke-width="13" fill="none" stroke-linecap="round"/>
+    <circle cx="89" cy="147" r="6" fill="#f3cdb0"/><circle cx="85.5" cy="151.5" r="1.6" fill="#b3122e"/><circle cx="89" cy="152.8" r="1.6" fill="#b3122e"/><circle cx="92.5" cy="151.5" r="1.6" fill="#b3122e"/></g>
+  <g class="wave" id="arm-winkt" style="display:none"><path class="aermel" d="M84 106 Q106 100 110 80" stroke="#3b2a22" stroke-width="13" fill="none" stroke-linecap="round"/>
     <circle cx="111" cy="74" r="6.5" fill="#f3cdb0"/></g>
 </svg></div>
 <div id="monster"><svg viewBox="0 0 200 200" aria-label="Diabetesmonster">
@@ -578,8 +580,10 @@ const zs=(id,an=true)=>{const e=document.getElementById(id); if(e) e.style.displ
 let beaX=0, beaY=0, beaFlip=1, beaS=1, beaHub=0, sunHub=0, sunS=1;
 function setBea(){ bea.style.transform=`translate(${beaX}px,${beaY-beaH}px) rotate(${beaRot}deg) scale(${beaFlip*beaS},${beaS})`; }
 const bodenBea=()=>groundY()-beaHub;
-async function beaTo(tx,h=H()*.08,dur=450,ty=null){ const fx=beaX, fy=beaY, zy=ty??bodenBea();
-  await tw(dur,t=>{beaX=fx+(tx-fx)*t; beaY=fy+(zy-fy)*t-h*4*t*(1-t); setBea(); place();}); }
+let beaId=0;
+async function beaTo(tx,h=H()*.08,dur=450,ty=null){ const id=++beaId, fx=beaX, fy=beaY, zy=ty??bodenBea(); dur*=1.12;
+  await tw(dur,t=>{ if(id!==beaId) return; const e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2; beaX=fx+(tx-fx)*e; beaY=fy+(zy-fy)*e-h*4*t*(1-t); setBea(); place();}); }
+let winkT; function beaWinkt(ms=2600){ document.getElementById('arm-winkt').style.display=''; document.getElementById('arm-unten').style.display='none'; clearTimeout(winkT); winkT=setTimeout(()=>{ document.getElementById('arm-winkt').style.display='none'; document.getElementById('arm-unten').style.display=''; },ms); }
 function beaJump(){ bea.classList.remove('jump'); void bea.offsetWidth; bea.classList.add('jump'); }
 async function sonniTo(tx,h=H()*.08,dur=450){ await hop(tx,h,dur); }
 const RAND=()=>(SZ&&SZ.ort==='buehne')?W()*.13:0;
@@ -604,14 +608,14 @@ function lebendig(wer,t){
   }
 }
 async function S(t){ sprecher='sonne'; say(t,0); if(SZ_AKTIV) lebendig('sonne',t); await sleep(dauer(t)); }
-async function B(t){ sprecher='bea'; say(t,0); place(); if(SZ_AKTIV) lebendig('bea',t); await sleep(dauer(t)); }
+async function B(t){ sprecher='bea'; say(t,0); place(); if(/hallo|hey!|guten morgen|tschüss|bis morgen/i.test(t)) beaWinkt(); if(SZ_AKTIV) lebendig('bea',t); await sleep(dauer(t)); }
 function still(){ bubble.classList.remove('show'); }
 const funken=(cx,cy,n,em,w=1)=>sparks(cx,cy,n,em,w);
 
 async function reinBeide(beaAuch=true){
   x=W()+20; y=groundY()-sunHub; place();
   beaX=-beaW-30; beaY=bodenBea(); setBea();
-  if(beaAuch) bea.style.opacity='1';
+  if(beaAuch){ bea.style.opacity='1'; beaWinkt(3200); }
   const a=(async()=>{ await hop((W()+20+R())/2,H()*.09,420); await hop(R(),H()*.09,420); })();
   const b=beaAuch?(async()=>{ await beaTo((L()-beaW-30)/2,H()*.09,420); await beaTo(L(),H()*.09,420); })():null;
   await Promise.all([a,b]);
@@ -621,10 +625,8 @@ async function gruss(){
   await S(`<big>${h}${KOSENAME?', '+KOSENAME:''}! ☀️</big>`);
 }
 async function szeneEnde(){
-  still(); await sleep(300);
-  beaX=Math.max(beaX,-beaW); 
-  await Promise.all([hop(mitte(),H()*.1,500), beaTo(mitte()-beaW*.78,H()*.1,500)]);
-  beaModus='folgen'; SZ_AKTIV=false; sprecher='sonne';
+  still(); await sleep(400);
+  SZ_AKTIV=false; sprecher='sonne';
   setTimeout(()=>tap.classList.add('show'),800);
   planeUntergang(2200);
 }
@@ -850,7 +852,7 @@ const SZENEN = {
  }},
  11:{ort:'drinnen', raum:'wohnzimmer', bea:null, sonne:[], async lauf(){
     const ls=Prop('ls','laufsteg',size*1.7,size*.12,M(),groundY()+6,1);
-    const vh=Prop('vh','vorhang',size*.75,size*1.3,M()-size*.3,groundY()+2,4);
+    const vh=Prop('vh','vorhang',size*.75,size*1.3,M()-size*.3,groundY()+2,3);
     x=W()+20; place(); await hop((W()+R())/2,H()*.1,400); await hop(R(),H()*.1,400);
     beaX=M()-size*.3-beaW/2; beaY=bodenBea(); bea.style.opacity='0'; setBea();
     await S('Bea, was machst du? 🤨');
@@ -868,7 +870,6 @@ const SZENEN = {
     await S('Natürlich.');
     await B('Choreografie.');
     await S('Sehr modern. 👏');
-    await beaTo(L(),H()*.05); zs('bea-mode',false); zs('bea-sonnenbrille',false);
     await szeneEnde();
  }},
  12:{ort:'draussen', kulisse:['see','wald'], ohneSchneemann:true, bea:'beanie', sonne:['kochmuetze'], async lauf(){
@@ -1305,7 +1306,7 @@ function kraftdorf(B1,B2,nacht){
     const fw=w*.26, fh=h*.18;
     if(i%2===0){
       add('path',{d:`M${hx-fw/2} ${top+18+fh} V${top+18+fh*.35} Q${hx-fw/2} ${top+18} ${hx} ${top+18} Q${hx+fw/2} ${top+18} ${hx+fw/2} ${top+18+fh*.35} V${top+18+fh} Z`,fill:glas,opacity:nacht?1:.9});
-      if(nacht) add('circle',{cx:hx,cy:top+18+fh*.6,r:fw,fill:'#ffcf6a',opacity:.35,filter:'url(#weichzeichner)'});
+      if(nacht) add('circle',{cx:hx,cy:top+18+fh*.6,r:fw,fill:'#ffcf6a',opacity:.35});
     } else {
       [[-1],[1]].forEach(([sg])=>{ const wx=hx+sg*w*.2-fw/2, wy=top+20;
         add('rect',{x:wx,y:wy,width:fw,height:fh,fill:nacht?'#ffe29a':'none',stroke:'#fff','stroke-width':1});
@@ -1325,7 +1326,7 @@ function kraftdorf(B1,B2,nacht){
   // Warme Lichterkette über die Häuser
   punkte.sort((a,b)=>a[0]-b[0]);
   add('path',{d:'M'+punkte.map(p=>p.join(' ')).join(' L'),stroke:'#a38a5a','stroke-width':.8,fill:'none'});
-  punkte.forEach(([px,py],k)=>{ add('circle',{cx:px,cy:py,r:4,fill:'#ffe9a8',opacity:.45,filter:'url(#weichzeichner)',class:'birne',style:`animation-delay:${-k*.35}s`}); add('circle',{cx:px,cy:py,r:1.5,fill:'#fff6d0'}); });
+  punkte.forEach(([px,py],k)=>{ add('circle',{cx:px,cy:py,r:4,fill:'#ffe9a8',opacity:.3,class:'birne',style:`animation-delay:${-k*.35}s`}); add('circle',{cx:px,cy:py,r:1.5,fill:'#fff6d0'}); });
   // Große rote Schleife oben auf dem mittleren Haus
   const sx=142, sy=hillY(142,...B1)+16-124;
   add('path',{d:`M${sx} ${sy} q-12 -8 -14 2 q2 8 14 -2 q12 -8 14 2 q-2 8 -14 -2 M${sx} ${sy} l-6 12 M${sx} ${sy} l6 12`,fill:'#d8434a',stroke:'#b8323a','stroke-width':1.2});
@@ -1481,7 +1482,7 @@ function raumZeichnen(typ){
     r('path',{d:`M-10 ${yk} `+[...Array(4)].map((_,i)=>`Q${W0*(i*.25+.125)} ${yk+26*U} ${W0*(i+1)*.25} ${yk}`).join(' '),stroke:'#2f5a3a','stroke-width':2*U,fill:'none'});
     for(let i=0;i<n;i++){ const t=(i+.5)/n, seg=t*4%1, cx=t*W0, cy=yk+26*U*2*seg*(1-seg)*2*.5+2*U;
       const c=['#ff5a5a','#ffd84a','#5ab0ff','#7be07b','#ff8ad8'][i%5];
-      r('circle',{cx,cy:cy+6*U,r:7*U,fill:c,opacity:.45,filter:'url(#glow)',class:'birne',style:`animation-delay:${-(i%5)*.4}s`});
+      r('circle',{cx,cy:cy+6*U,r:7*U,fill:c,opacity:.3,class:'birne',style:`animation-delay:${-(i%5)*.4}s`});
       r('ellipse',{cx,cy:cy+6*U,rx:3.6*U,ry:5*U,fill:c});
       r('rect',{x:cx-2*U,y:cy-1*U,width:4*U,height:3*U,fill:'#2f5a3a'}); }
   }
@@ -1520,9 +1521,9 @@ function raumZeichnen(typ){
     });
     for(let i=0;i<16;i++){ const f=Math.random(), yy=base-th*(.12+f*.76), ww=th*.34*(1-f*.8)*(Math.random()*1.6-.8);
       const c=['#ff5a5a','#ffd84a','#5ab0ff','#ff8ad8','#fff'][i%5];
-      r('circle',{cx:tx+ww,cy:yy,r:4*U,fill:c,opacity:.5,filter:'url(#glow)',class:'birne',style:`animation-delay:${-i*.3}s`}); r('circle',{cx:tx+ww,cy:yy,r:2.4*U,fill:c}); }
+      r('circle',{cx:tx+ww,cy:yy,r:4*U,fill:c,opacity:.5,class:'birne',style:`animation-delay:${-i*.3}s`}); r('circle',{cx:tx+ww,cy:yy,r:2.4*U,fill:c}); }
     [[.42,.27],[.66,.17]].forEach(([f,w])=>r('path',{d:`M${tx-th*w} ${base-th*f+th*.03} Q${tx} ${base-th*f+th*.09} ${tx+th*w} ${base-th*f-th*.01}`,stroke:'#ffd84a','stroke-width':2*U,fill:'none'}));
-    r('path',{d:`M${tx} ${base-th*.98} l${th*.03} ${th*.06} ${th*.065} ${th*.006}-${th*.048} ${th*.044} ${th*.013} ${th*.064}-${th*.06} -${th*.033}-${th*.06} ${th*.033} ${th*.013} -${th*.064}-${th*.048} -${th*.044} ${th*.065} -${th*.006}z`,fill:'#ffd84a',filter:'url(#glow)'});
+    r('path',{d:`M${tx} ${base-th*.98} l${th*.03} ${th*.06} ${th*.065} ${th*.006}-${th*.048} ${th*.044} ${th*.013} ${th*.064}-${th*.06} -${th*.033}-${th*.06} ${th*.033} ${th*.013} -${th*.064}-${th*.048} -${th*.044} ${th*.065} -${th*.006}z`,fill:'#ffd84a'});
     r('path',{d:`M${tx} ${base-th*.98} l${th*.03} ${th*.06} ${th*.065} ${th*.006}-${th*.048} ${th*.044} ${th*.013} ${th*.064}-${th*.06} -${th*.033}-${th*.06} ${th*.033} ${th*.013} -${th*.064}-${th*.048} -${th*.044} ${th*.065} -${th*.006}z`,fill:'#ffe680'});
     const gesch=(gx,gw,gh,c,b)=>{ r('rect',{x:gx,y:base-gh,width:gw,height:gh,rx:2*U,fill:c}); r('rect',{x:gx+gw/2-2*U,y:base-gh,width:4*U,height:gh,fill:b}); r('rect',{x:gx,y:base-gh*.6,width:gw,height:4*U,fill:b}); };
     gesch(tx-th*.3,th*.16,th*.11,'#4a7bd0','#ffd84a'); gesch(tx+th*.12,th*.14,th*.09,'#e2483d','#fff'); gesch(tx-th*.1,th*.1,th*.07,'#b48cff','#fff');
@@ -1557,7 +1558,7 @@ function raumZeichnen(typ){
     // Kerzen & Pflanze auf dem Fensterbrett
     const fb=H0*.30; 
     [[W0*.6,'#fff3c4'],[W0*.64,'#ffe0e0']].forEach(([kx,c],i)=>{ r('rect',{x:kx,y:fb-16*U+i*4*U,width:9*U,height:16*U-i*4*U,rx:2*U,fill:c});
-      r('ellipse',{cx:kx+4.5*U,cy:fb-21*U+i*4*U,rx:5*U,ry:8*U,fill:'#ffb347',opacity:.5,filter:'url(#glow)',class:'flamme'}); r('ellipse',{cx:kx+4.5*U,cy:fb-20*U+i*4*U,rx:2.2*U,ry:4*U,fill:'#ffcf4a',class:'flamme'}); });
+      r('ellipse',{cx:kx+4.5*U,cy:fb-21*U+i*4*U,rx:5*U,ry:8*U,fill:'#ffb347',opacity:.5,class:'flamme'}); r('ellipse',{cx:kx+4.5*U,cy:fb-20*U+i*4*U,rx:2.2*U,ry:4*U,fill:'#ffcf4a',class:'flamme'}); });
     r('path',{d:`M${W0*.84} ${fb} l${4*U} -${14*U} h${12*U} l${4*U} ${14*U}z`,fill:'#c8692f'});
     [-8,0,8].forEach(d=>r('ellipse',{cx:W0*.84+10*U+d*U,cy:fb-20*U-Math.abs(d)*-.3*U,rx:4*U,ry:9*U,fill:'#4f9a5b',transform:`rotate(${d*3} ${W0*.84+10*U} ${fb-14*U})`}));
     // Bilderrahmen mit Herz & Sonne
@@ -1791,17 +1792,21 @@ function place(){
   bubble.style.left=bx+'px'; bubble.style.top=Math.max(10,top-bh-8)+'px';
   bubble.style.setProperty('--tail',Math.max(24,Math.min(bw-24,ax-bx))+'px');
 }
+let hopId=0;
+const weich=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
 function hop(toX,height=H()*.2,dur=620,salto=false){
   return new Promise(res=>{
-    hopping=true; body.className='stretch';
-    const fx=x,t0=performance.now();
+    const id=++hopId; hopping=true; body.className='stretch';
+    const fx=x,fy=y,boden=groundY()-sunHub,t0=performance.now();
+    dur*=1.12;
     (function step(now){
-      const t=Math.min(1,(now-t0)/dur);
-      x=fx+(toX-fx)*t; y=groundY()-sunHub-height*4*t*(1-t); rot=salto?360*t*(toX<fx?-1:1):0;
+      if(id!==hopId) return res();
+      const t=Math.min(1,(now-t0)/dur), e=weich(t);
+      x=fx+(toX-fx)*e; y=fy+(boden-fy)*e-height*4*t*(1-t); rot=salto?360*e*(toX<fx?-1:1):0;
       place();
       if(t<1) requestAnimationFrame(step);
-      else{ rot=0; body.className='squash'; sparks(x+size/2,y,4,['✨']);
-        setTimeout(()=>{body.className='';hopping=false;res();},140); }
+      else{ rot=0; body.className='squash'; if(height>H()*.05) sparks(x+size/2,y,3,['✨']);
+        setTimeout(()=>{ if(id===hopId){ body.className=''; hopping=false; } res(); },150); }
     })(t0);
   });
 }
@@ -1810,6 +1815,9 @@ function say(html,ms){
   if(ms) bubbleTimer=setTimeout(()=>bubble.classList.remove('show'),ms);
 }
 function sparks(cx,cy,n,emojis=['✨','💛','⭐','☀️'],weit=1){
+  // nichts vor die Gesichter: Funken, die im Gesicht starten würden, beginnen über dem Kopf
+  if(cx>x-10 && cx<x+size+10 && cy>y-size*1.05 && cy<y-size*.15) cy=y-size*1.05;
+  if(typeof beaX!=='undefined' && cx>beaX-10 && cx<beaX+beaW+10 && cy>beaY-beaH*1.02 && cy<beaY-beaH*.45) cy=beaY-beaH*1.02;
   for(let i=0;i<n;i++){
     const s=document.createElement('div');s.className='spark';s.textContent=pick(emojis);
     s.style.left=cx+'px';s.style.top=(cy-20)+'px';
@@ -1905,16 +1913,17 @@ function planeUntergang(ms){ clearTimeout(untergangTimer); untergangTimer=setTim
 async function untergehen(){
   if(hopping){ return planeUntergang(800); }
   untergegangen=true; tap.classList.remove('show');
-  say(pick(['Bis morgen, Salmi! 💛','Hab einen wunderschönen Tag! ☀️','Wir sehen uns morgen! 👋💛','Hab dich lieb! Bis morgen! 💛']),2200);
+  say(pick(['Bis morgen, Salmi! 💛','Hab einen wunderschönen Tag! ☀️','Wir sehen uns morgen! 👋💛','Hab dich lieb! Bis morgen! 💛']),2200); beaWinkt(4500);
   await sleep(2300);
-  await hop(mitte(),H()*.12,520);
+  if(!SZ) await hop(mitte(),H()*.12,520);
   actor.style.zIndex='0'; bea.style.zIndex='0'; document.getElementById('scene').style.zIndex='3';
   const rbd=document.getElementById('raumboden'); if(rbd) rbd.style.zIndex='3';
   document.getElementById('dusk').style.opacity='1';
-  const y0=y,t0=performance.now(),dur=2600;
+  const y0=y,by0=beaY,t0=performance.now(),dur=2600;
   await new Promise(res=>{(function step(now){
     const t=Math.min(1,(now-t0)/dur), e=t*t;
     y=y0+(H()*.32+size)*e; rot=Math.sin(t*12)*4; place();
+    if(beaModus==='frei'){ beaY=by0+(H()*.32+beaH)*e; beaRot=-Math.sin(t*12)*4; setBea(); }
     t<1?requestAnimationFrame(step):res();
   })(t0);});
   document.getElementById('bye').classList.add('show');
