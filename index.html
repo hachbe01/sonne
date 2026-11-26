@@ -51,7 +51,7 @@
   #bea{position:fixed;left:0;top:0;z-index:4;width:var(--beaw);height:var(--beah);will-change:transform}
   #bea svg{width:100%;height:100%;display:block;transform-origin:50% 100%}
   #bea.jump svg{animation:beajump .55s cubic-bezier(.3,1.4,.5,1)}
-  @keyframes beajump{40%{transform:translateY(-40%) scale(.95,1.08)}80%{transform:scale(1.08,.92)}}
+  @keyframes beajump{40%{transform:translateY(-24%) scale(.95,1.08)}80%{transform:scale(1.08,.92)}}
   .wave{transform-origin:86px 106px;animation:wave 1s ease-in-out infinite}
   @keyframes wave{50%{transform:rotate(-16deg)}}
   #dusk{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity 2.6s;
@@ -651,7 +651,7 @@ const SZENEN = {
     still(); await sleep(900);
     await S('… Und wo schlafen wir dann? 🤔');
     await B('HAHAHAHA.');
-    still(); const k=Prop('kor','koriander',size*.42,size*.52,beaMx()+beaW*.48,beaY-beaH*.28,5); await pop(k); funken(k.x,k.y-size*.3,6,['✨','🌿']);
+    still(); const k=Prop('kor','koriander',size*.42,size*.52,beaX+beaW+size*.2,groundY()+2,3); await pop(k); funken(k.x,k.y-size*.6,6,['✨','🌿']);
     await S('Ist das unser Frühstück? 😋');
     await B('Nein, das ist für Salmi!');
     await S('Boah, hier ist ja alles für Salmi. 😤');
@@ -1787,7 +1787,7 @@ function place(){
   actor.style.transform=`translate(${x}px,${y-size}px) rotate(${rot}deg)`+(sunS!==1?` scale(${sunS})`:'');
   const bw=bubble.offsetWidth,bh=bubble.offsetHeight;
   const ax = sprecher==='bea' ? beaX+beaW/2 : x+size/2;
-  const top = sprecher==='bea' ? beaY-beaH : y-size*sunS;
+  const top = sprecher==='bea' ? beaY-beaH*1.28 : y-size*sunS;
   let bx=Math.max(10,Math.min(W()-bw-10,ax-bw/2));
   bubble.style.left=bx+'px'; bubble.style.top=Math.max(10,top-bh-8)+'px';
   bubble.style.setProperty('--tail',Math.max(24,Math.min(bw-24,ax-bx))+'px');
