@@ -13,7 +13,7 @@
   body.stage{width:60vh;margin:0 auto;position:relative;transform:translateZ(0);box-shadow:0 0 80px rgba(0,0,0,.45)}
   body{font-family:'Fredoka',system-ui,sans-serif;min-height:100dvh;touch-action:manipulation;
     user-select:none;-webkit-user-select:none;transition:background 1s}
-  #scene{position:fixed;left:0;right:0;bottom:0;height:42vh;width:100%;z-index:1}
+  #scene{position:fixed;left:0;right:0;bottom:0;height:42vh;width:100%;z-index:1;overflow:visible}
   .particle{position:fixed;top:-30px;pointer-events:none;z-index:2;animation:fall linear infinite}
   @keyframes fall{to{transform:translateY(110vh) translateX(var(--drift,30px)) rotate(var(--rot,0deg))}}
   .cloud{position:fixed;z-index:0;background:#fff;border-radius:999px;opacity:.85;animation:drift linear infinite}
@@ -90,6 +90,19 @@
   .schild .dorf{font-size:calc(var(--size)*.072);letter-spacing:1.5px;font-family:'Fredoka',sans-serif;font-weight:600}
   .schild .klein{font-size:calc(var(--size)*.045);color:#6b5e52;margin-top:2px}
   .schild .schleife{position:absolute;top:-8%;right:-4%;font-size:calc(var(--size)*.22);transform:rotate(15deg)}
+  .banner{position:relative;width:100%;height:100%}
+  .banner .seil{position:absolute;bottom:60%;width:2px;height:120vh;background:#a07a4a}
+  .banner .seil.l{left:14%} .banner .seil.r{right:14%}
+  .banner .etikett{position:absolute;inset:0;background:#fffdf8;border:3px solid #e8dcc6;border-radius:8px;box-shadow:0 8px 24px rgba(90,60,20,.28);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;color:#2b2420;font-family:Georgia,'Times New Roman',serif;text-align:center}
+  .banner .est{font-size:calc(var(--bw)*.045);letter-spacing:2px;color:#6b5e52}
+  .banner .name{font-size:calc(var(--bw)*.17);font-weight:700;line-height:1}
+  .banner .linie{width:72%;height:2px;background:#2b2420;margin:6px 0}
+  .banner .dorf{font-size:calc(var(--bw)*.065);letter-spacing:3px;font-family:'Fredoka',sans-serif;font-weight:600}
+  .banner .klein{font-size:calc(var(--bw)*.04);color:#6b5e52;margin-top:4px}
+  .banner .schleife{position:absolute;top:-14%;right:-5%;font-size:calc(var(--bw)*.18);transform:rotate(15deg);z-index:2}
+  .banner .lichter{position:absolute;left:-4%;right:-4%;top:-7%;height:14%;z-index:1;
+    background:radial-gradient(circle,#fff3b0 0 3.5px,rgba(255,220,120,.6) 4.5px,transparent 8px) 0 50%/calc(var(--bw)*.09) 100% repeat-x;animation:birne 1.8s ease-in-out infinite}
   .schild .pfosten{position:absolute;bottom:0;width:7%;height:60%;background:#8a5a33;border-radius:3px}
   .schild .pfosten.l{left:18%} .schild .pfosten.r{right:18%}
   .schild .schneekappe{position:absolute;left:2%;right:2%;top:2%;height:12%;background:#fff;border-radius:12px}
@@ -515,6 +528,7 @@ const PROPS_SVG = {
 };
 // Eigene HTML-Requisiten (Schilder, Stände, Vorhänge)
 const PROPS_HTML = {
+  banner:`<div class="banner"><div class="seil l"></div><div class="seil r"></div><div class="lichter"></div><div class="etikett"><div class="est">EST. 2026</div><div class="name">Salmis</div><div class="linie"></div><div class="dorf">WEIHNACHTSDORF</div><div class="klein">Einwohner: 1 Salmi + 2 Chaoten</div></div><div class="schleife">🎀</div></div>`,
   schild:`<div class="schild"><div class="pfosten l"></div><div class="pfosten r"></div><div class="etikett"><div class="est">EST. 2026</div><div class="name">Salmis</div><div class="linie"></div><div class="dorf">WEIHNACHTSDORF</div><div class="klein">Einwohner: 1 Salmi + 2 Chaoten</div></div><div class="schleife">🎀</div></div>`,
   waffelstand:`<div class="stand"><div class="markise"></div><div class="standschild">Sonnis Waffelstube</div><div class="theke"></div></div>`,
   restaurant:`<div class="stand"><div class="markise gruen"></div><div class="standschild wende">Sonnis Sternerestaurant ⭐</div><div class="theke"></div></div>`,
@@ -592,7 +606,8 @@ const SZENEN = {
     await S('<big>SALMIIII! 🎉</big>GUCK MAL, WEN ICH DABEI HAB!!');
     beaJump(); funken(beaMx(),beaY-beaH*.8,6,['👋','💛']);
     await B('Halloooo! 🥹');
-    const sch=Prop('schild','schild',size*1.1,size*.95,M(),groundY()-size*.32,2); pop(sch);
+    const bw=W()*.78; document.documentElement.style.setProperty('--bw',bw+'px');
+    const sch=Prop('schild','banner',bw,bw*.52,W()/2,H()*.42,2); sch.y=-bw; setP(sch); propTo(sch,W()/2,H()*.42,900,0);
     await S('Wir wohnen jetzt übrigens hier.');
     await B('Also … für 24 Tage.');
     await hop(R(),H()*.15,450); funken(W()*.8,H()*.6,6,['🏠','✨']);
@@ -1117,7 +1132,7 @@ function kraftdorf(B1,B2,nacht){
   // Häuschen wie im echten Adventskalender: Packpapier, Treppengiebel, weiße Kritzel-Fenster, Lichterkette
   const papier=nacht?'#b89566':'#dcbf93', kante=nacht?'#9c7b50':'#c4a273', dach=nacht?'#6f6a66':'#8f8a85';
   const glas=nacht?'#ffd36a':'#4a3426';
-  const hs=[[62,40,66,'treppe'],[100,36,56,'spitz'],[138,40,74,'rund'],[176,32,50,'spitz'],[226,36,58,'treppe'],[264,40,72,'spitz'],[302,36,60,'rund'],[338,38,54,'treppe']];
+  const hs=[[60,46,104,'treppe'],[100,42,88,'spitz'],[142,48,124,'rund'],[182,38,80,'spitz'],[222,42,96,'treppe'],[262,48,118,'spitz'],[302,42,98,'rund'],[340,44,86,'treppe']];
   const punkte=[];
   hs.forEach(([hx,w,h,typ],i)=>{
     const Hh=hx<200?B1:B2, base=hillY(hx,...Hh)+16, top=base-h, l=hx-w/2, r=hx+w/2;
@@ -1138,6 +1153,9 @@ function kraftdorf(B1,B2,nacht){
         add('rect',{x:wx,y:wy,width:fw,height:fh,fill:nacht?'#ffe29a':'none',stroke:'#fff','stroke-width':1});
         add('path',{d:`M${wx+fw/2} ${wy} V${wy+fh} M${wx} ${wy+fh/2} H${wx+fw}`,stroke:'#fff','stroke-width':.7}); });
     }
+    if(h>90){ [[-1],[1]].forEach(([sg])=>{ const wx=hx+sg*w*.2-fw/2, wy=top+20+fh+14;
+        add('rect',{x:wx,y:wy,width:fw,height:fh*.9,fill:nacht?'#ffe29a':'none',stroke:'#fff','stroke-width':1});
+        add('path',{d:`M${wx+fw/2} ${wy} V${wy+fh*.9}`,stroke:'#fff','stroke-width':.7}); }); }
     // Tür, Herz, Wellenlinie
     add('rect',{x:hx-w*.13,y:base-h*.24,width:w*.26,height:h*.24,rx:1.5,fill:'none',stroke:'#fff','stroke-width':1});
     if(i%3===1) add('path',{d:`M${hx} ${top+12} c-2 -2 -4 0 -2 2 l2 2 l2 -2 c2 -2 0 -4 -2 -2z`,fill:'#d8434a'});
@@ -1151,7 +1169,7 @@ function kraftdorf(B1,B2,nacht){
   add('path',{d:'M'+punkte.map(p=>p.join(' ')).join(' L'),stroke:'#a38a5a','stroke-width':.8,fill:'none'});
   punkte.forEach(([px,py],k)=>{ add('circle',{cx:px,cy:py,r:4,fill:'#ffe9a8',opacity:.45,filter:'url(#weichzeichner)',class:'birne',style:`animation-delay:${-k*.35}s`}); add('circle',{cx:px,cy:py,r:1.5,fill:'#fff6d0'}); });
   // Große rote Schleife oben auf dem mittleren Haus
-  const sx=138, sy=hillY(138,...B1)+16-76;
+  const sx=142, sy=hillY(142,...B1)+16-124;
   add('path',{d:`M${sx} ${sy} q-12 -8 -14 2 q2 8 14 -2 q12 -8 14 2 q-2 8 -14 -2 M${sx} ${sy} l-6 12 M${sx} ${sy} l6 12`,fill:'#d8434a',stroke:'#b8323a','stroke-width':1.2});
 }
 function dorf(B1,B2){
