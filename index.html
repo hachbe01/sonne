@@ -34,14 +34,20 @@
   .eye{transform-box:fill-box;transform-origin:center;animation:blink 3.8s infinite}
   @keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
 
-  #bubble{position:fixed;left:0;top:0;z-index:9;background:#fff;color:#4a2a14;border-radius:24px;
-    padding:14px 18px;font-weight:600;font-size:1.2rem;line-height:1.25;text-align:center;
-    box-shadow:0 8px 24px rgba(80,40,0,.18);max-width:82%;width:max-content;
-    transform:scale(0);transform-origin:50% 100%;transition:transform .35s cubic-bezier(.3,1.6,.5,1)}
-  #bubble.show{transform:scale(1)}
-  #bubble::after{content:"";position:absolute;left:var(--tail,50%);bottom:-12px;transform:translateX(-50%);
-    border:12px solid transparent;border-top-color:#fff;border-bottom:0}
-  #bubble big{display:block;font-size:1.55rem;color:#e8780c}
+  #bubble{position:fixed;left:0;top:0;z-index:9;--bb:#fffaf0;--bk:#ffd36a;background:var(--bb);color:#4a2a14;
+    border:2.5px solid var(--bk);border-radius:22px;padding:13px 17px 11px;font-weight:500;font-size:1.08rem;line-height:1.32;text-align:center;
+    box-shadow:0 8px 22px rgba(90,50,10,.13),0 2px 0 rgba(255,255,255,.8) inset;max-width:76%;width:max-content;
+    opacity:0;transform:translateY(8px) scale(.85);transform-origin:50% 100%;
+    transition:transform .38s cubic-bezier(.25,1.4,.5,1),opacity .22s ease-out}
+  #bubble.show{opacity:1;transform:none}
+  #bubble[data-wer=bea]{--bb:#fff4f7;--bk:#f4b6c9}
+  #bubble::before{content:attr(data-name);position:absolute;top:-12px;left:16px;font-size:.7rem;font-weight:600;letter-spacing:.6px;
+    padding:2px 9px;border-radius:999px;background:var(--bk);color:#5a3412;box-shadow:0 2px 6px rgba(90,50,10,.12)}
+  #bubble[data-wer=bea]::before{color:#7a2b45}
+  #bubble:not([data-name])::before,#bubble[data-name=""]::before{display:none}
+  #bubble::after{content:"";position:absolute;left:var(--tail,50%);bottom:-11px;width:16px;height:16px;transform:translateX(-50%) rotate(45deg);
+    background:var(--bb);border-right:2.5px solid var(--bk);border-bottom:2.5px solid var(--bk);border-bottom-right-radius:4px}
+  #bubble big{display:block;font-size:1.4rem;font-weight:600;color:#e8780c;margin-bottom:2px}
 
   .spark{position:fixed;pointer-events:none;z-index:6;font-size:22px;animation:pop 1.1s ease-out forwards}
   @keyframes pop{to{transform:translate(var(--dx),var(--dy)) scale(.4) rotate(var(--rot,0deg));opacity:0}}
@@ -620,9 +626,9 @@ async function reinBeide(beaAuch=true){
   const b=beaAuch?(async()=>{ await beaTo((L()-beaW-30)/2,H()*.09,420); await beaTo(L(),H()*.09,420); })():null;
   await Promise.all([a,b]);
 }
+function spitzname(){ const d=dezTag||new Date().getDate(); return d%7===3 ? 'Michael J Jackson 🕺' : d%3===0 ? 'Salmönchen' : 'Salmi'; }
 async function gruss(){
-  const h=hour<11?'Guten Morgen':hour<14?'Mahlzeit':hour<18?'Hallo':'Guten Abend';
-  await S(`<big>${h}${KOSENAME?', '+KOSENAME:''}! ☀️</big>`);
+  await S(`<big>Guten Morgen, ${spitzname()} ☀️</big>`);
 }
 async function szeneEnde(){
   still(); await sleep(400);
@@ -638,86 +644,81 @@ const SZENEN = {
     await hop((W()+R())/2,H()*.14,380); await hop(R(),H()*.14,380);
     beaX=-beaW-30; beaY=bodenBea(); setBea(); bea.style.opacity='1';
     beaTo((L()-beaW-30)/2,H()*.08,400).then(()=>beaTo(L(),H()*.08,400));
-    await S('<big>SALMIIII! 🎉</big>ÜBERRASCHUNG!!');
-    await B('Halloooo! 🥹');
+    await S('<big>SALMIIII 🎉</big>');
+    await B('Halloooo 🥹');
     const bw=W()*.78; document.documentElement.style.setProperty('--bw',bw+'px');
     const sch=Prop('schild','banner',bw,bw*.52,W()/2,-bw,2); propTo(sch,W()/2,H()*.42,900,0);
-    await S('Wir ziehen jetzt hier ein!');
-    await B('Für 24 Tage!');
+    await S('Wir wohnen jetzt hier!');
+    await B('Also nur 24 Tage');
     still(); await hop(R()-size*.15,H()*.16,420); funken(W()*.78,H()*.55,6,['🏠','✨','💛']); await hop(R(),H()*.1,380);
-    await S('Ich hab schon ein Haus ausgesucht. 🏠');
-    await B('Sonni, die Häuser sind doch für Salmis Geschenke. 🎁');
-    await S('Ach so.');
+    await S('Ich hab mir schon ein Haus ausgesucht 🏠');
+    await B('Sonni, da sind Salmis Geschenke drin 🎁');
+    await S('Achso');
     still(); await sleep(900);
-    await S('… Und wo schlafen wir dann? 🤔');
-    await B('HAHAHAHA.');
-    still(); const k=Prop('kor','koriander',size*.42,size*.52,beaX+beaW+size*.2,groundY()+2,3); await pop(k); funken(k.x,k.y-size*.6,6,['✨','🌿']);
+    await S('Und wo schlafen wir dann? 🤔');
+    await B('HAHAHAHA');
+    still(); const k=Prop('kor','koriander',size*.42,size*.52,beaMx()+beaW*.48,beaY-beaH*.28,5); await pop(k); funken(k.x,k.y-size*.3,6,['✨','🌿']);
     await S('Ist das unser Frühstück? 😋');
-    await B('Nein, das ist für Salmi!');
-    await S('Boah, hier ist ja alles für Salmi. 😤');
+    await B('Nein ey, das ist für Salmi');
+    await S('Boah hier ist echt alles für Salmi 😤');
     await szeneEnde();
  }},
  2:{ort:'draussen', kulisse:['wald'], ohneSchneemann:true, bea:'hut', sonne:['schal'], async lauf(){
     const sm=Prop('sm','schneemann',size*.8,size*1.1,M(),groundY()+4,3);
     await reinBeide(); await gruss();
     await hop(M()+size*.32,H()*.06,420);
-    await S('Bea, ich glaub, der hat Hunger. 🥺');
-    await B('Der ist aus Schnee.');
-    await S('Ja, eben. Der kann doch nicht von Luft und Liebe leben!');
-    still(); const r=Prop('rg','riegel',size*.5,size*.17,sunMx()-size*.3,y-size*.45,5); await pop(r);
+    await S('Bea guck mal, der hat voll Hunger 🥺');
+    await B('Alter Sonni, das ist ein Schneemann');
+    still(); const r=Prop('rg','riegel',size*.5,size*.17,sunMx()-size*.6,y-size*.22,5); await pop(r);
     await propTo(r,M()+size*.04,groundY()-size*.76,450,size*.12); funken(M(),groundY()-size*.8,5,['😋','✨']);
-    await B('SONNI, DER IST FÜR SALMI!');
+    await B('NEIN DER IST FÜR SALMI');
     still(); sm.el.querySelector('.sm-mund').style.display='none'; sm.el.querySelector('.sm-grinsen').style.display='';
     funken(M(),groundY()-size*.9,6,['✨','💛']); await sleep(700);
     sm.el.style.transformOrigin='50% 100%';
     await Promise.all([tw(800,t=>{sm.rot=-85*t; setP(sm);},rein3), propTo(r,M()-size*.55,groundY()-6,800,size*.1,-200)]);
     funken(M()-size*.45,groundY()-10,12,['❄️','💨'],1.3);
-    await S('… Oh. 😳');
-    await B('Was hast du gemacht?!');
-    await S('Ich glaub, der verträgt kein Protein. 🤷');
+    await S('ups 😳');
+    await B('HAHAHA okay das erzählen wir ihm nicht');
     await szeneEnde();
  }},
  3:{ort:'draussen', kulisse:['berge','gondel'], bea:'hut', sonne:['weihnachtsmuetze'], async lauf(){
     const bm=Prop('baum','baum',size*1.0,size*1.42,M(),groundY()+6,2);
     await reinBeide(); await gruss();
-    still(); const st=Prop('st','struempfe',size*.34,size*.34,sunMx()-size*.25,y-size*.4,5); await pop(st);
+    still(); const st=Prop('st','struempfe',size*.34,size*.34,sunMx()-size*.6,y-size*.15,5); await pop(st);
     await hop(M()+size*.35,H()*.12,450);
     await propTo(st,M()+size*.16,groundY()-size*.55,450,size*.25); funken(st.x,st.y-size*.2,4,['✨']);
     await hop(R(),H()*.08,400);
-    await B('Ähhhh. Was machst du da? 😳');
-    await S('Dekorieren! ✨');
-    await B('Mit DEN Strümpfen?! HAHAHAHA.');
+    await B('Sonni was machst du da 😳');
+    await S('Dekorieren ✨');
+    await B('Mit DEN Strümpfen?? HAHAHA');
     wackel(st,3,8);
-    await S('Ja, Weihnachtsstrümpfe halt. 🧦');
-    await B('Sonni, die sind nicht für Weihnachten!');
-    await S('Ach.');
+    await S('Sind doch Weihnachtsstrümpfe 🧦');
+    await B('Ähm nein, die sind für Salmi 🤭');
     still(); await hop(M()+size*.4,H()*.05,400); await sleep(600);
-    await S('… Soll ich noch die Unterwäsche dazuhängen? 👀');
-    await B('HAHAHAHA NEIN!!');
+    await S('Soll ich die Unterwäsche auch noch dranhängen? 👀');
+    await B('SONNI NEIN HAHAHA');
     still(); await beaTo(M()-size*.2-beaW*.6); await propTo(st,beaMx(),beaY-beaH*.4,350,size*.1); weg(st,200); await beaTo(L());
     await szeneEnde();
  }},
  4:{ort:'draussen', kulisse:['berge','piste'], bea:'beanie', sonne:['ohren','schal'], async lauf(){
     await reinBeide(); await gruss();
-    still(); const sb=Prop('sb','⚪',size*.18,size*.18,sunMx()-size*.3,y-size*.4,5);
+    still(); const sb=Prop('sb','⚪',size*.18,size*.18,sunMx()-size*.6,y-size*.25,5);
     await propTo(sb,beaMx(),beaY-beaH*.82,550,size*.4); weg(sb,100); funken(beaMx(),beaY-beaH*.82,10,['❄️','💥']);
     await B('HEY!');
-    await S('Hihihi. 🤭');
+    await S('hihi 🤭');
     still(); const gb=Prop('gb','⚪',size*.85,size*.85,beaMx()+beaW*.45,beaY-beaH*.35,5); gb.el.querySelector('.emo').style.filter='drop-shadow(0 4px 0 #dbe7f4)';
     gb.s=.15; setP(gb); await tw(1100,t=>{gb.s=.15+.85*t; setP(gb);}); funken(gb.x,gb.y-size*.5,6,['❄️']);
-    await S('Bea?');
-    await B('Mhm? 😇');
-    await S('Du weißt schon, dass ich eine SONNE bin? ☀️');
-    await B('Ja und?');
+    await S('Bea, der ist bisschen groß');
+    await B('Findest du? 😇');
     actor.style.filter='brightness(1.25) saturate(1.4)'; funken(sunMx(),y-size*.6,8,['🔥','✨']);
-    await S('Ich schmelz den doch eh! 😎');
+    await S('Egal, ich bin eine Sonne, ich schmelz den eh 😎');
     still(); actor.style.filter='';
     await propTo(gb,sunMx(),y+size*.1,700,size*.7,-120);
     actor.style.opacity='0'; weg(gb,150);
     const hf=Prop('hf','haufen',size*1.2,size*.9,sunMx(),groundY()+4,4); hf.el.classList.add('wink');
     funken(sunMx(),groundY()-size*.4,16,['❄️','💨'],1.4); await sleep(700);
-    await S('… HAT NICHT GEKLAPPT!');
-    await B('HAHAHAHAHA.');
+    await S('hat nicht geklappt');
+    await B('HAHAHAHA');
     still(); for(let i=0;i<5;i++){ funken(sunMx(),groundY()-size*.5,3,['💨','💧'],.8); hf.s=1-i*.15; setP(hf); await sleep(220); }
     await weg(hf,250); actor.style.opacity='1'; funken(sunMx(),y-size*.5,10,['💧','✨']);
     await hop(R(),H()*.15,450);
@@ -729,21 +730,21 @@ const SZENEN = {
     await beaTo(M()-size*.35-beaW*.6);
     const sch=Prop('sch','schuessel',size*.6,size*.34,M(),groundY()-size*.47,3); await pop(sch);
     await beaTo(L(),H()*.05,450);
-    await B('Sonni, die sind für Salmi. 🥜');
-    await S('Weiß ich!');
+    await B('Sonni, die sind für Salmi 🥜');
+    await S('Jaja');
     still(); beaFlip=-1; setBea(); await sleep(400);
     await hop(M()+size*.1,H()*.08,380); funken(M(),groundY()-size*.6,4,['🥜']); await hop(R(),H()*.08,380);
     beaFlip=1; setBea(); await sleep(300);
-    await B('Hast du gerade einen genommen? 🤨');
+    await B('Hast du grad einen gegessen? 🤨');
     let kau=true; (async()=>{ while(kau){ await tw(260,t=>{sunS=1+Math.sin(t*Math.PI)*.05; place();}); } sunS=1; place(); })();
-    await S('Nein.');
-    await B('Du kaust.');
-    await S('Das mach ich manchmal. 😇');
+    await S('Nein');
+    await B('Du kaust');
+    await S('Ich kau manchmal einfach so 😇');
     kau=false;
-    await B('HAHAHAHA.');
+    await B('HAHAHA');
     still(); const kr=Prop('kr','🟤',size*.07,size*.07,sunMx()-size*.05,y-size*.38,6);
     await propTo(kr,sunMx()-size*.12,groundY(),500); await sleep(300);
-    await S('… Beweismittel vernichten. 🕵️');
+    await S('Beweismittel vernichten 🕵️');
     funken(sunMx()-size*.2,groundY()-10,5,['💨'],1); await propTo(kr,-40,groundY()-size*.3,600,size*.2,360);
     await szeneEnde();
  }},
@@ -751,78 +752,72 @@ const SZENEN = {
     const sf=Prop('sf','🥾',size*.5,size*.5,M(),groundY()+2,3); sf.el.querySelector('.emo').style.filter='hue-rotate(-30deg) saturate(3)';
     const sk=Prop('sk','schokomann',size*.32,size*.42,M(),groundY()-size*.2,2); sk.o=0; setP(sk);
     await reinBeide();
-    await S('<big>LAUSI LAUSI LAUSI, HEUTE IST NIKOLAUSI!! 🎅</big>');
-    await B('HAHAHAHA guten Morgen!');
-    await S('DER NIKOLAUS WAR DA!!');
+    await S('<big>LAUSI LAUSI LAUSI OHHHH HEUTE IST NIKOLAUSI 🎅</big>');
+    await B('HAHAHA guten Morgen');
+    await S('Der Nikolaus war da!!');
     still(); await Promise.all([beaTo(M()-size*.32-beaW*.7), hop(M()+size*.36,H()*.08,450)]);
     sk.o=1; await propTo(sk,M(),groundY()-size*.38,500,size*.12); sk.el.classList.add('wink'); funken(M(),groundY()-size*.7,8,['🍫','✨']);
-    await B('WAS IST DAS DENN?! 😱');
+    await B('Omg was ist das denn 😱');
     await S('Der Nikolaus?');
-    await B('Der ist aber klein geworden.');
-    await S('Vielleicht ist er in der Wäsche eingelaufen. 🧺');
-    still(); await Promise.all([beaTo(beaX+beaW*.12,H()*.02,400), hop(x-size*.08,H()*.02,400)]); await sleep(500);
-    await B('… Sollen wir ihn fragen?');
-    await S('Nee, nachher ist er beleidigt. 🤫');
+    await B('Der ist aber voll klein geworden');
+    await S('Bestimmt zu heiß gewaschen 🧺');
+    await B('HAHAHA');
     await szeneEnde();
  }},
  7:{ort:'draussen', kulisse:['markt'], ohneSchneemann:true, bea:'beanie', sonne:['kochmuetze'], async lauf(){
     const st=Prop('stand','waffelstand',size*1.3,size*1.1,M()+size*.1,groundY()+4,2);
     await reinBeide(); await hop(M()+size*.15,H()*.08,420); await gruss();
-    await B('OHA! SEIT WANN BIST DU SELBSTSTÄNDIG?!');
-    await S('Seit acht Minuten. 😎');
-    await B('HAHAHAHA. Und wie läuft\'s?');
+    await B('Seit wann hast du einen Waffelstand??');
+    await S('Seit acht Minuten 😎');
+    await B('HAHAHA und läufts?');
     const ws=[0,1,2].map(i=>{const p=Prop('w'+i,'🧇',size*.26,size*.26,M()-size*.08+i*size*.12,groundY()-size*.56-i*size*.05,4); return p;});
     for(const w of ws){ await pop(w); }
-    await S('Ich hab schon drei Waffeln verkauft! 🧇🧇🧇');
-    await B('An wen denn?');
+    await S('Hab schon drei verkauft 🧇🧇🧇');
+    await B('An wen?');
     for(const w of ws){ propTo(w,sunMx(),y-size*.45,350,size*.1); await sleep(180); weg(w,150); }
     funken(sunMx(),y-size*.5,4,['😋']);
-    await S('An mich. 😋');
-    await B('… Sonni.');
-    await S('WAS? ICH UNTERSTÜTZE KLEINE UNTERNEHMEN!');
-    await B('Okay, dann nehm ich auch eine!');
+    await S('An mich 😋');
+    await B('Sonni…');
+    await B('Okay, ich nehm auch eine');
     const w4=Prop('w4','🧇',size*.26,size*.26,M(),groundY()-size*.56,4); await pop(w4);
-    await S('Vier Euro bitte. 💶');
-    await B('VIER EURO?!');
-    await S('Inflation, Bea. 🤷');
+    await S('Vier Euro bitte 💶');
+    await B('VIER EURO??');
+    await S('Inflation, Bea 🤷');
     await szeneEnde();
  }},
  8:{ort:'drinnen', raum:'kueche', bea:'hut', sonne:[], async lauf(){
     const tp=Prop('tp','topf',size*.5,size*.4,L()+beaW+size*.12,groundY()+2,3); tp.el.classList.add('dampfend');
     const sp=Prop('sp','spaghetti',size*.8,size*.36,M()+size*.25,groundY()+2,5);
     await reinBeide(); await gruss();
-    await S('OHHH, Spaghetti! 🍝');
-    await B('Jaaaa!');
+    await S('OMG Spaghetti 🍝');
     await S('Darf ich probieren?');
-    await B('Klar, aber warte kurz!');
+    await B('Ja, warte kurz');
     still(); actor.style.zIndex='4';
     await hop(M()+size*.25-size/2,H()*.28,700,true); sunHub=size*.06;
     await tw(250,t=>{sunS=1-.35*t; y=groundY()-size*.08; place();}); funken(sunMx(),groundY()-size*.3,12,['🍝','💦'],1.2);
-    await B('HAHAHAHA WAS MACHST DU?!');
-    zs('o-nudeln'); await S('PROBIEREN!');
+    await B('HAHAHA SONNI');
+    zs('o-nudeln'); await S('Ich probier doch nur');
     await tw(250,t=>{sunS=.65+.35*t; place();}); sunHub=0; await hop(R(),H()*.12,450);
     sp.el.querySelectorAll('path').forEach((e,i)=>{ if(i<2) e.style.display='none'; }); sp.el.querySelector('ellipse').style.display='none';
-    await B('Und?');
-    await S('Lecker. 😋');
-    await B('HAHAHAHA.');
-    await S('… Aber ich glaub, wir brauchen neue Nudeln.');
+    await S('War lecker 😋');
+    await S('Wir brauchen glaub neue Nudeln');
     zs('o-nudeln',false); await szeneEnde();
  }},
  9:{ort:'drinnen', raum:'bad', bea:null, sonne:[], async lauf(){
     zs('bea-creme');
     const ct=Prop('ct','cremetiegel',size*.32,size*.22,L()+beaW+size*.1,groundY()+2,3);
     await reinBeide(); await gruss();
-    await S('Bea, warum bist du so weiß? 😳');
-    await B('Ich mach Gesichtspflege. 🧴');
-    await S('Ach so. Darf ich helfen?');
-    await B('Jaaaa!');
+    await S('Bea, warum bist du so weiß 😳');
+    await B('Gesichtspflege halt 🧴');
+    await S('Darf ich helfen?');
+    await B('Jaaa');
     still(); await hop(L()+beaW*.45,H()*.08,450); funken(beaMx(),beaY-beaH*.72,5,['✍️','✨']);
     zs('bea-schnurrbart'); await sleep(600); await hop(R(),H()*.08,450);
-    await B('Was machst du denn?');
-    await S('Beauty. 💅');
+    await B('Was machst du?');
+    await S('Beauty 💅');
     still(); await beaTo(W()*.42-beaW/2,H()*.05,500); beaFlip=-1; setBea(); funken(W()*.5,H()*.25,4,['🪞','✨']); await sleep(700); beaFlip=1; setBea();
-    await B('HAHAHAHA ICH SEH AUS WIE MEIN VATER!');
-    await S('Steht dir aber. 😌');
+    await B('HAHAHA ICH SEH AUS WIE MEIN PAPA');
+    await S('Steht dir aber 😌');
     zs('bea-creme',false); zs('bea-schnurrbart',false); funken(beaMx(),beaY-beaH*.7,8,['✨','🫧']);
     await szeneEnde();
  }},
@@ -834,101 +829,92 @@ const SZENEN = {
     still(); await beaTo(W()*.5-size*.55-beaW/2,H()*.1,450);
     await tw(400,t=>{beaRot=-88*t; beaY=groundY()-size*.05*t; setBea();}); zs('bea-zu');
     const liegend=()=>{ beaX=W()*.5-size*.55-beaW/2; };
-    await S('Bea?');
-    await B('Mhm?');
-    await S('Machst du Wellness?');
-    await B('Jaaaa.');
+    await S('Was machst du?');
+    await B('Wellness');
     await S('Und was macht man da?');
-    await B('Nichts.');
+    await B('Nix');
     still(); await sleep(800);
-    await S('… Das kann ich richtig gut.');
-    still(); await hop(W()*.5+size*.15,H()*.1,450); await tw(400,t=>{rot=-90*t; place();}); zs('o-schlaf');
+    await S('Das kann ich gut');
+    still(); await hop(W()*.5+size*.05,H()*.1,450); await tw(400,t=>{rot=90*t; place();}); zs('o-schlaf');
     for(let i=0;i<4;i++){ funken(beaMx()-beaW*.2,groundY()-size*.6,1,['💤'],.6); funken(sunMx()+size*.2,groundY()-size*.6,1,['💤'],.6); await sleep(500); }
     const r=Prop('rg','riegel',size*.42,size*.14,W()*.5-size*.05,-50,6); await propTo(r,W()*.5-size*.05,groundY()-size*.28,600,0,360); funken(r.x,r.y,4,['✨']);
     await sleep(500); zs('o-schlaf',false);
-    await S('<small>(verschlafen)</small> Wer hat Essen bestellt? 😴');
-    await tw(400,t=>{rot=-90*(1-t); beaRot=-88*(1-t); setBea(); place();}); zs('bea-zu',false); zs('bea-pads',false);
+    await S('Wer hat Essen bestellt? 😴');
+    await tw(400,t=>{rot=90*(1-t); beaRot=-88*(1-t); setBea(); place();}); zs('bea-zu',false); zs('bea-pads',false);
     await szeneEnde();
  }},
  11:{ort:'drinnen', raum:'wohnzimmer', bea:null, sonne:[], async lauf(){
     const ls=Prop('ls','laufsteg',size*1.7,size*.12,M(),groundY()+6,1);
-    const vh=Prop('vh','vorhang',size*.75,size*1.3,M()-size*.3,groundY()+2,3);
+    const vh=Prop('vh','vorhang',size*.75,size*1.3,M()-size*.3,groundY()+2,4);
     x=W()+20; place(); await hop((W()+R())/2,H()*.1,400); await hop(R(),H()*.1,400);
     beaX=M()-size*.3-beaW/2; beaY=bodenBea(); bea.style.opacity='0'; setBea();
-    await S('Bea, was machst du? 🤨');
-    sprecher='bea'; say('MODEENSCHAUUU! 💃',0); funken(M()-size*.3,groundY()-size*1.1,6,['✨','💃']); await sleep(1800);
+    await S('Bea, was wird das? 🤨');
+    sprecher='bea'; say('MODENSCHAUUU 💃',0); funken(M()-size*.3,groundY()-size*1.1,6,['✨','💃']); await sleep(1800);
     still(); for(let i=0;i<4;i++){ funken(sunMx(),y-size*.8,2,['🎵','🎶'],.8); await sleep(250); }
     zs('bea-mode'); zs('bea-sonnenbrille'); bea.style.opacity='1';
     await beaTo(M()+size*.42-beaW/2,H()*.03,700);
-    await S('OHHHHH! 🤩');
+    await S('OHHHHH 🤩');
     for(let i=0;i<3;i++){ funken(sunMx(),y-size*.6,3,['👏','✨']); hop(x,H()*.05,280); await sleep(320); }
-    await S('NOCHMAL! NOCHMAL!');
+    await S('NOCHMAL NOCHMAL');
     still(); await tw(500,t=>{beaFlip=Math.cos(t*Math.PI*2); setBea();}); beaFlip=1;
     beaRot=-16; setBea(); await sleep(160); beaRot=12; setBea(); await sleep(160); beaRot=-6; setBea(); await sleep(140); beaRot=0; setBea();
-    await S('HAHAHAHA.');
-    await B('Das war Absicht. 😎');
-    await S('Natürlich.');
-    await B('Choreografie.');
-    await S('Sehr modern. 👏');
+    await B('Das war Absicht 😎');
+    await S('Klar 😌');
+    await beaTo(L(),H()*.05); zs('bea-mode',false); zs('bea-sonnenbrille',false);
     await szeneEnde();
  }},
  12:{ort:'draussen', kulisse:['see','wald'], ohneSchneemann:true, bea:'beanie', sonne:['kochmuetze'], async lauf(){
     const st=Prop('stand','restaurant',size*1.35,size*1.1,M()+size*.1,groundY()+4,2);
     await reinBeide(); await hop(M()+size*.15,H()*.08,420);
     const pg=Prop('pg','🫑',size*.3,size*.3,M()-size*.05,groundY()-size*.54,4); await pop(pg);
-    await B('Ohaaaa! Was gibt\'s heute?');
-    await S('Proteinaufstrich mit Paprika! 🫑');
+    await B('Ohaa, was gibts heute?');
+    await S('Proteinaufstrich mit Paprika 🫑');
     await B('Und als Hauptgang?');
-    await S('Proteinaufstrich mit Paprika.');
-    await B('… Nachtisch?');
-    await S('Proteinaufstrich mit Paprika.');
-    await B('HAHAHAHA.');
-    await S('Wir haben ein klares Konzept. 😌');
+    await S('Proteinaufstrich mit Paprika');
+    await B('Nachtisch?');
+    await S('Proteinaufstrich mit Paprika');
+    await B('HAHAHA');
     still(); const sc=st.el.querySelector('.standschild'); sc.classList.add('dreh');
     await sleep(350); sc.textContent='AUSVERKAUFT ❌'; sc.classList.add('rot'); weg(pg,300); await sleep(400);
-    await B('HÄ?');
-    zs('o-kruemel'); await S('Ich hab die Küche leer gegessen. 😋');
+    zs('o-kruemel'); await S('Hab alles selber gegessen 😋');
     zs('o-kruemel',false); await szeneEnde();
  }},
  13:{ort:'drinnen', raum:'kueche', bea:'hut', sonne:[], async lauf(){
     const hs=Prop('hs','schokohaus',size*.85,size*.85,M(),groundY()+2,2);
     await reinBeide(); await gruss();
-    await S('Bea, das Dach ist schief. 🧐');
-    await B('Das ist ein Designhaus. 😎');
-    await S('Die Wand auch.');
-    await B('Moderne Architektur.');
+    await S('Bea, das Dach ist schief 🧐');
+    await B('Das ist Design 😎');
     still(); await wackel(hs,3,7); await weg(hs,150);
     const tr=Prop('tr','truemmer',size*1.05,size*.4,M(),groundY()+2,2); funken(M(),groundY()-size*.3,14,['🍫','💥'],1.3);
     await sleep(500); funken(M(),groundY()-size*.7,2,['👀']); await sleep(900);
-    await S('… Offenes Wohnkonzept?');
-    await B('HAHAHAHAHA.');
-    await S('Mit Dachterrasse. ☀️');
-    await B('WO IST DENN DIE TERRASSE?!');
-    await S('Ist auch eingestürzt.');
+    await S('Offenes Wohnkonzept?');
+    await B('HAHAHAHA');
+    await beaTo(M()-size*.35-beaW*.4); funken(beaMx(),beaY-beaH*1.05,4,['🍫']);
+    await B('Schmeckt trotzdem 😋');
     await szeneEnde();
  }},
  14:{ort:'drinnen', raum:'bad', bea:null, sonne:['armseite'], async lauf(){
     const dg=Prop('dg','duschgel',size*.28,size*.6,R()-size*.02,groundY()+2,5);
     await reinBeide(); await gruss();
     await S('Wie viel Duschgel soll ich nehmen? 🧴');
-    await B('Nach Gefühl!');
+    await B('Nach Gefühl');
     still(); const sch=document.createElement('div'); sch.className='schaum'; document.body.appendChild(sch);
     const schaumH=f=>(H()-groundY()+size*f)+'px';
     for(let i=0;i<3;i++){ dg.s=.9; setP(dg); await sleep(120); dg.s=1; setP(dg); funken(dg.x,dg.y-size*.6,4,['🫧'],.8); await sleep(150); }
     sch.style.height=schaumH(.05);
-    await B('… Was sagt dein Gefühl so?');
-    await S('Dass wir gleich ein Problem haben. 😬');
+    await B('Und was sagt dein Gefühl?');
+    await S('Dass wir gleich ein Problem haben 😬');
     sch.style.height=schaumH(.45); for(let i=0;i<8;i++) funken(rnd(0,W()),groundY()-rnd(0,60),2,['🫧'],.6);
-    await B('HAHAHAHAHA WIR HABEN EIN PROBLEM!');
+    await B('HAHAHA SONNI');
     sch.style.height=schaumH(.8);
-    await S('ICH HAB\'S DOCH GESAGT!');
+    await S('Hab ich doch gesagt!!');
     still(); sch.style.height=schaumH(1.35); for(let i=0;i<10;i++){ funken(rnd(0,W()),H()*.6,2,['🫧'],.8); await sleep(140); }
     await sleep(600);
     await S('Bea?');
     await B('Ja?');
     const d2=Prop('dg2','duschgel',size*.3,size*.64,sunMx(),groundY()-size*.95,8); d2.y=groundY()-size*.4; setP(d2);
     await propTo(d2,sunMx(),groundY()-size*1.05,500,0); wackel(d2,2,10);
-    await S('Ich hab noch eine Flasche. 😇');
+    await S('Ich hab noch eine Flasche 😇');
     weg(d2,300); sch.style.height='0'; await sleep(1200);
     await szeneEnde();
  }},
@@ -937,20 +923,19 @@ const SZENEN = {
     const sp=Prop('sp','spinat',size*.6,size*.27,M(),groundY()-size*.47,3);
     await reinBeide(); await gruss();
     await hop(M()+size*.32,H()*.05,400);
-    await S('Boah, ist das grün. 🤢');
-    await B('Ist ja auch Spinat!');
-    await S('Macht der wirklich stark?');
-    await B('Keine Ahnung, probier\'s!');
+    await S('Boah ist das grün 🤢');
+    await B('Ist halt Spinat');
+    await S('Macht der echt stark?');
+    await B('Probiers halt');
     still(); funken(M(),groundY()-size*.65,4,['💚','😋']); await sleep(600);
     zs('o-muskeln'); funken(sunMx(),y-size*.5,12,['💪','✨'],1.2); actor.style.zIndex='5';
-    await S('BEAAAA! GUCK MAL!!');
-    await B('HAHAHAHA WAS?!');
+    await S('BEA GUCK MAL 💪');
+    await B('HAHAHA WAS');
     still(); await Promise.all([propTo(ti,sunMx(),y-size*.88,600,size*.1), propTo(sp,sunMx(),y-size*1.35,600,size*.1)]);
-    await S('ICH BIN SO STARK!! 💪');
-    await B('Okay, dann kannst du morgen die Einkäufe tragen. 🛍️');
+    await B('Okay, dann trägst du morgen die Einkäufe 🛍️');
     still(); await Promise.all([propTo(ti,M(),groundY()+2,500), propTo(sp,M(),groundY()-size*.47,500)]);
     zs('o-muskeln',false); zs('o-arme');
-    await S('… Ich glaub, die Wirkung lässt schon nach. 😅');
+    await S('Ähm ich glaub, die Wirkung lässt nach 😅');
     zs('o-arme',false); await szeneEnde();
  }},
  16:{ort:'drinnen', raum:'gym', bea:null, sonne:['arme'], async lauf(){
@@ -958,18 +943,16 @@ const SZENEN = {
     const hoch=()=>{ ht.x=x+size/2; ht.y=y-size*.92; setP(ht); };
     await reinBeide(); hoch();
     let pump=true; (async()=>{ while(pump){ await tw(450,t=>{ ht.y=y-size*.92+Math.sin(t*Math.PI)*size*.12; setP(ht);}); } })();
-    await B('KOMM SONNI! NOCH EINE!!');
-    await S('ICH KANN NICHT MEHR! 😩');
-    await B('DENK AN DEIN ZIEL!');
-    await S('WAS IST MEIN ZIEL?!');
-    await B('WEISS ICH NICHT, DU WOLLTEST DOCH TRAINIEREN!');
+    await B('KOMM SONNI NOCH EINE');
+    await S('ICH KANN NICHT MEHR 😩');
+    await B('Denk an dein Ziel!!');
     pump=false; still(); await propTo(ht,x+size*.5,groundY()+2,350); funken(sunMx(),groundY(),8,['💥']);
     zs('o-arme',false);
-    await S('Ich wollte nur einen Proteinriegel.');
+    await S('Mein Ziel war ein Proteinriegel');
     const r=Prop('rg','riegel',size*.46,size*.16,beaMx(),beaY-beaH*1.05,6); await pop(r); funken(r.x,r.y-10,4,['✨']);
-    await B('Ach sooooo. 💡');
+    await B('Ach soooo 💡');
     await hop(L()+beaW+size*.05,H()*.12,500);
-    await S('… Können wir jetzt essen? 🥺');
+    await S('Können wir jetzt essen? 🥺');
     await szeneEnde();
  }},
  17:{ort:'drinnen', raum:'kueche', bea:'hut', sonne:[], async lauf(){
@@ -978,15 +961,12 @@ const SZENEN = {
     const fl=Prop('fl','flasche',size*.17,size*.34,0,0,6); const halten=()=>{fl.x=beaMx()+beaW*.45; fl.y=beaY-beaH*.3; setP(fl);};
     const hi=setInterval(halten,16);
     await beaTo((L()-beaW-30)/2,H()*.08,400); await beaTo(L(),H()*.08,400);
-    await S('Was hast du denn da? 👀');
+    await S('Was hast du da? 👀');
     clearInterval(hi); await propTo(fl,beaMx()+beaW*.4,beaY-beaH*1.05,350); funken(fl.x,fl.y-size*.3,10,['✨','🌶️']);
-    await B('DIE SRIRACHA!! 🌶️');
-    await S('Ohhh!');
-    await B('DU GLAUBST NICHT, WIE LANGE ICH DIE GESUCHT HAB!');
-    await S('Ist die selten?');
-    await B('ANSCHEINEND JA!');
+    await B('DIE SRIRACHA 🌶️');
+    await B('Weißt du, wie lang ich die gesucht hab??');
     await S('Darf ich probieren?');
-    await B('Aber nur ganz wenig!');
+    await B('Aber nur bisschen');
     still(); await propTo(fl,sunMx()-size*.15,y-size*.45,500,size*.2);
     await tw(500,t=>{fl.rot=-120*t; setP(fl);}); funken(sunMx(),y-size*.4,4,['💦']); await sleep(400);
     await tw(300,t=>{fl.rot=-120*(1-t); setP(fl);}); await propTo(fl,beaMx()+beaW*.45,beaY-beaH*.3,450,size*.15);
@@ -994,10 +974,8 @@ const SZENEN = {
     document.querySelectorAll('#rays path').forEach((p,i)=>{p.dataset.f=p.getAttribute('fill'); p.setAttribute('fill',i%2?'#ff5a1f':'#ff2d1a');});
     document.getElementById('rays').classList.add('flammen'); actor.style.filter='saturate(1.6)';
     let feuer=true; (async()=>{ while(feuer){ funken(sunMx()+rnd(-size*.4,size*.4),y-size*rnd(.6,1),1,['🔥'],.7); await sleep(180);} })();
-    await S('… Bea?');
-    await B('Ja?');
-    await S('ICH GLAUB, ICH BIN JETZT DIE SONNE. 🔥');
-    await B('HAHAHAHA DU WARST SCHON DIE SONNE!!');
+    await S('Bea, ich glaub ich bin jetzt die Sonne 🔥');
+    await B('HAHAHA DU BIST DIE SONNE');
     feuer=false; document.querySelectorAll('#rays path').forEach(p=>p.setAttribute('fill',p.dataset.f)); document.getElementById('rays').classList.remove('flammen'); actor.style.filter='';
     weg(fl,200); await szeneEnde();
  }},
@@ -1005,33 +983,26 @@ const SZENEN = {
     const ms=Prop('ms','mistel',size*.5,size*1.0,M(),groundY()-beaH*.92,6);
     await reinBeide();
     await Promise.all([beaTo(M()-beaW-size*.02,H()*.08,450), hop(M()-size*.05,H()*.08,450)]);
-    await S('Beaaa! Guck mal über uns! 🌿');
-    await B('OHHHH! 😍');
+    await S('Bea, guck mal über uns 🌿');
+    await B('Ohhh 😍');
     still(); const lb=Prop('lb','💄',size*.2,size*.2,beaMx()+beaW*.2,beaY-beaH*.52,6); await pop(lb); await wackel(lb,2,15); weg(lb,200);
-    await S('Oh, jetzt geht\'s los! 😏');
-    await B('Was geht los?');
-    await S('Na, ein Küsschen! 😘');
+    await S('Krieg ich jetzt einen Kuss? 😘');
     still(); zs('o-schlaf'); funken(sunMx()-size*.2,y-size*.45,3,['💋'],.5); await sleep(700);
     const hand=()=>[x+size/2+size*.37, y-size*.22];
     const r=Prop('rg','riegel',size*.42,size*.14,beaMx()+beaW*.3,beaY-beaH*.4,6); await pop(r);
     await propTo(r,hand()[0],hand()[1]+size*.06,500,size*.1); zs('o-schlaf',false);
-    await S('HÄ?! 😳');
-    await B('Was denn?');
-    await S('Ich dachte, ich krieg einen Kuss!');
-    await B('Den kriegt Salmi! 💋');
-    await S('… Und der Riegel?');
+    await S('Hä? 😳');
+    await B('Der Kuss ist für Salmi 💋');
+    await S('Und der Riegel?');
     await propTo(r,beaMx()+beaW*.3,beaY-beaH*.4,500,size*.15);
-    await B('Auch Salmi. 😇');
-    await S('BOAH. 😤');
+    await B('Auch für Salmi 😇');
+    await S('Boah 😤');
     weg(r,200); await szeneEnde();
  }},
  19:{ort:'buehne', bea:'hut', sonne:['armseite'], async lauf(){
     await reinBeide();
-    await S('Bea, ich hab mir was überlegt. 🤔');
-    await B('Was denn?');
-    await S('Ich könnte auch Comedy machen. 🎤');
-    await B('HAHAHAHA echt?');
-    await S('Ja! Hör zu.');
+    await S('Bea, ich mach jetzt auch Comedy 🎤');
+    await B('HAHAHA okay, leg los');
     still(); const mk=Prop('mk','🎤',size*.3,size*.3,W()/2,-60,6);
     await hop(W()/2-size/2,H()*.1,450);
     const hand=()=>[x+size/2+size*.37, y-size*.18];
@@ -1039,34 +1010,27 @@ const SZENEN = {
     const sp=document.createElement('div'); sp.className='spot'; sp.style.left=(sunMx()-W()*.22)+'px'; sp.style.width=W()*.44+'px'; document.body.appendChild(sp);
     await S('Was macht eine Sonne im Fitnessstudio? 😏');
     await B('Keine Ahnung?');
-    await S('<big>STRAHLENDE LEISTUNG!</big> 🤩');
+    await S('<big>STRAHLENDE LEISTUNG</big> 🤩');
     still(); const gr=Prop('gr','🦗',size*.28,size*.28,W()*.75,groundY()+2,6); await pop(gr); await wackel(gr,3,10); await sleep(900); weg(gr,300);
-    await B('… Sonni.');
-    await S('Was?');
     const tk=Prop('tk','🎟️',size*.34,size*.34,beaMx()+beaW*.4,beaY-beaH*.55,6); await pop(tk);
-    await B('Wir haben zum Glück Tickets für richtige Comedians. 🎟️');
+    await B('Gut, dass wir Tickets für richtige Comedians haben 🎟️');
     sp.remove(); weg(mk,200); await szeneEnde();
  }},
  20:{ort:'drinnen', raum:'werkstatt', bea:'hut', sonne:['schutzbrille'], async lauf(){
     const wb=Prop('wb','werkbank',size*1.0,size*.55,M(),groundY()+2,2);
     await reinBeide();
     funken(M(),groundY()-size*.6,8,['⚙️','🔧','✨']);
-    await B('SOOO! FERTIG!! 🛠️');
-    await S('Was hast du gebaut?');
-    await B('Eine Sriracha für unterwegs!');
-    await S('OHHHH!');
+    await B('FERTIG 🛠️');
+    await S('Was ist das?');
+    await B('Sriracha für unterwegs!');
     still(); const an=Prop('an','anhaenger',size*.16,size*.27,beaMx()+beaW*.4,beaY-beaH*.95,6); await pop(an);
     await tw(400,t=>{an.s=1+Math.sin(t*Math.PI)*.5; setP(an);}); funken(an.x,an.y-size*.25,5,['✨']);
-    await S('… Wo ist der Rest? 🧐');
-    await B('Das ist alles!');
-    await S('Und was kostet der?');
-    await B('4,90 Euro.');
-    await S('… Und die Soße?');
-    await B('Weniger. 😇');
+    await S('Und wo ist der Rest? 🧐');
+    await B('Das ist alles');
     still(); await hop(M()+size*.1,H()*.05,400); await sleep(500);
-    await S('HAHAHAHA. Bea, du bist ein Genie.');
+    await S('HAHAHA Bea, du bist ein Genie');
     await tw(500,t=>{beaRot=Math.sin(t*Math.PI)*18; setBea();});
-    await B('DANKE! 🙇');
+    await B('Danke danke 🙇');
     await szeneEnde();
  }},
  21:{ort:'drinnen', raum:'wohnzimmer', bea:null, sonne:['pads'], async lauf(){
@@ -1076,17 +1040,17 @@ const SZENEN = {
     await reinBeide();
     beaHub=size*.42; sunHub=size*.42;
     await Promise.all([ beaTo(W()/2-sfW*.36,H()*.12,550), hop(W()/2+sfW*.36-size,H()*.12,550) ]);
-    await S('Bea, ich find unser Wellnesshotel richtig schön. 🥹');
-    await B('Sonni, das ist unser Wohnzimmer.');
-    await S('Ja, aber mit Augenpads. 😌');
-    await B('HAHAHAHA.');
+    await S('Bea, unser Wellnesshotel ist richtig schön 🥹');
+    await B('Sonni, das ist unser Wohnzimmer');
+    await S('Ja, aber mit Augenpads 😌');
+    await B('HAHAHA');
     still(); const de=Prop('de','decke',Math.min(W()*.82,size*2.2),size*.5,W()/2,-80,6);
     await Promise.all([ propTo(de,W()/2,groundY()-size*.1,600,0), beaTo(beaX+sfW*.06,H()*.03,500), hop(x-sfW*.06,H()*.03,500) ]);
     funken(W()/2,groundY()-size*.6,6,['💛','✨']);
-    await S('Gibt\'s hier eigentlich Zimmerservice?');
-    await B('Neeee.');
+    await S('Gibts hier Zimmerservice?');
+    await B('Nö');
     still(); const r=Prop('rg','riegel',size*.45,size*.15,W()/2,-60,7); await propTo(r,W()/2,groundY()-size*.35,700,0,540); funken(W()/2,groundY()-size*.5,6,['✨','🥥']);
-    await S('… DOCH! 🤩');
+    await S('DOCH 🤩');
     weg(de); zs('bea-pads',false);
     beaHub=0; sunHub=0; await Promise.all([ beaTo(L(),H()*.08,500), hop(R(),H()*.08,500) ]);
     await szeneEnde();
@@ -1096,18 +1060,16 @@ const SZENEN = {
     const tl=Prop('tl','teller',size*.8,size*.28,M(),groundY()-size*.47,3);
     await reinBeide(); await gruss();
     await beaTo(M()-size*.3-beaW*.65); await hop(M()+size*.25,H()*.05,400);
-    await B('Sonni, wir müssen Salmi was übrig lassen. 🍪');
-    await S('Jaaaaa.');
+    await B('Wir müssen Salmi was übrig lassen 🍪');
+    await S('Jaaa klar');
     still(); const ks=[...tl.el.querySelectorAll('.keks')];
     for(let i=0;i<ks.length-1;i++){ ks[i].style.display='none'; funken(i%2?sunMx():beaMx(),groundY()-size*.7,3,['🍪','✨'],.6); (i%2?beaJump:()=>hop(x,H()*.04,250))(); await sleep(550); }
-    await S('Bea?');
-    await B('Mhm?');
     await S('Wie viele waren da eigentlich drauf? 🤔');
-    await B('Keine Ahnung.');
+    await B('Keine Ahnung');
     still(); ks[ks.length-1].style.display='none'; funken(M(),groundY()-size*.6,3,['🍪']); tl.el.querySelector('.kruemel').style.display='';
     await sleep(500); funken(M(),groundY()-size*.65,2,['👀']); await sleep(1000);
-    await S('… Wir können sagen, es waren nie welche da. 🤫');
-    await B('HAHAHAHA.');
+    await S('Wir sagen einfach, es waren nie welche da 🤫');
+    await B('HAHAHA deal');
     await szeneEnde();
  }},
  23:{ort:'drinnen', raum:'wohnzimmer', bea:'hut', sonne:[], async lauf(){
@@ -1115,14 +1077,14 @@ const SZENEN = {
     const it=dinge.map((d,i)=>Prop('k'+i,d,size*.2,size*.2,M()+rnd(-size*.35,size*.35),groundY()-(i%4)*size*.12,3));
     await reinBeide(); await gruss();
     await S('Bea, was ist das alles? 😳');
-    await B('Salmis Sachen.');
-    await S('Braucht er die?');
-    await B('Anscheinend. 🤷');
+    await B('Salmis Sachen');
+    await S('Braucht er das?');
+    await B('Anscheinend 🤷');
     still(); const ki=Prop('ki','kiste',size*.6,size*.48,M(),groundY()+2,4); await pop(ki);
     for(let i=0;i<it.length;i++){ const p=it[i]; propTo(p,ki.x+rnd(-size*.12,size*.12),ki.y-size*.25,420,size*.4,rnd(-180,180)); (i%2?beaJump:()=>hop(x,H()*.04,220))(); await sleep(260); }
     await sleep(500); it.forEach(p=>weg(p,200));
-    await S('So. Und was machen wir mit dem Rest?');
-    await B('… Welchem Rest?');
+    await S('Und der Rest?');
+    await B('Welcher Rest?');
     // riesiger Krempelberg hinter ihnen
     still(); const berg=document.createElement('div'); berg.className='krempelberg'; document.body.appendChild(berg);
     const viele=['🧦','🔋','📎','🧸','🔑','🧩','🪀','🖊️','🧤','🎧','📦','🎮','🧴','🕶️','📚','🧲','🔦','🪥','🧢','⚽','🎒','📱','💡','🧻','🪴'];
@@ -1130,49 +1092,44 @@ const SZENEN = {
       const fx=rnd(0,100), fy=Math.pow(rnd(0,1),.7); e.style.left=fx+'%'; e.style.bottom=(fy*(100-Math.abs(fx-50)*1.4))+'%'; e.style.fontSize=rnd(20,38)+'px'; e.style.transform=`rotate(${rnd(-40,40)}deg)`;
       e.style.animationDelay=(i*12)+'ms'; berg.appendChild(e); }
     await sleep(1600);
-    await S('HAHAHAHAHA.');
-    await B('Ich kündige. 😩');
+    await B('Ich kündige 😩');
     const r=Prop('rg','riegel',size*.45,size*.15,W()*.6,H()*.45,8); await pop(r); await propTo(r,sunMx(),y-size*.6,600,size*.2);
-    await S('Oh, wenigstens Verpflegung! 🥥');
+    await S('Oh guck, ein Riegel 🥥');
     weg(r,200); await szeneEnde();
  }},
  24:{ort:'nacht', kulisse:['kraftdorf'], bea:'hut', sonne:['weihnachtsmuetze'], async lauf(){
     // Mit dem Cabrio angebraust
-    LEB_AUS=true; sunS=.62; beaS=.62; const auto=Prop('auto','auto',size*2.1,size*.85,-size*1.3,groundY()+6,6);
-    const imAuto=()=>{ x=auto.x+size*.12-size/2; y=groundY()-size*.4; beaX=auto.x-size*.55-beaW/2; beaY=groundY()-size*.17; setBea(); place(); };
+    sunS=.62; beaS=.62; const auto=Prop('auto','auto',size*2.1,size*.85,-size*1.3,groundY()+6,6);
+    const imAuto=()=>{ x=auto.x+size*.05-size/2; y=groundY()-size*.18; beaX=auto.x-size*.62-beaW/2; beaY=groundY()-size*.2; setBea(); place(); };
     bea.style.opacity='1'; imAuto();
     await tw(1600,t=>{ auto.x=-size*1.3+(W()*.55+size*1.3)*t; auto.rot=Math.sin(t*30)*1.5; setP(auto); imAuto(); });
-    sprecher='bea'; say('SONNI, DU MUSST BREMSEN!',0); 
+    sprecher='bea'; say('SONNI BREMSEN',0); 
     await tw(1000,t=>{ auto.x=W()*.55+W()*.08*t; setP(auto); imAuto(); }); 
-    await S('ICH WEISS NICHT WIE!');
+    await S('WIE GEHT BREMSEN');
     still(); auto.rot=-8; setP(auto); imAuto(); funken(auto.x+size*.9,groundY()-10,10,['💨','💥','⭐'],1.2); await sleep(200); auto.rot=4; setP(auto); await sleep(150); auto.rot=0; setP(auto); imAuto();
     // aussteigen
-    LEB_AUS=true; sunS=1; beaS=1; await Promise.all([ beaTo(L(),H()*.16,550), hop(R(),H()*.18,550) ]); LEB_AUS=false;
-    // das Auto rollt ohne Fahrerin einfach weiter 😂
-    (async()=>{ await sleep(500); await tw(2200,t=>{auto.x=W()*.63+(W()+size*1.6-W()*.63)*t*t; setP(auto);}); })();
-    await B('HAHAHAHA. Du fährst NIE WIEDER!');
-    await S('Fand ich eigentlich ganz gut. 😎');
+    sunS=1; beaS=1; await Promise.all([ beaTo(L(),H()*.16,550), hop(R(),H()*.18,550) ]);
+    await B('HAHAHA du fährst nie wieder');
+    await S('Fand ich eigentlich gut 😎');
     const gs=Prop('gs','gutschein',size*.85,size*.5,beaMx()+beaW*.6,beaY-beaH*.45,7); await pop(gs); funken(gs.x,gs.y-size*.4,10,['✨','🎁']);
-    await S('OHHH! Gehen wir jetzt ins Museum?');
-    await B('Neeeee, Salmi bekommt einen Gutschein! 🎁');
-    await S('Gut. Ich glaub, ich brauch erst mal eine Fahrstunde. 🚗');
+    await S('Ohh, gehen wir ins Museum?');
+    await B('Nee, der Gutschein ist für Salmi 🎁');
+    await S('Gut, ich brauch eh erst mal eine Fahrstunde 🚗');
     for(let i=0;i<3;i++){ funken(W()/2,groundY()-size*.8,3,['😂','💛']); beaJump(); hop(x,H()*.05,250); await sleep(350); }
-    weg(gs,300); still();
+    weg(gs,300); weg(auto,500); still();
     // ruhiger Moment
     await Promise.all([hop(W()/2-size*.1,H()*.06,600), beaTo(W()/2-size*.1-beaW*.95,H()*.06,600)]);
     await sleep(800);
     await S('Bea?');
     await B('Mhm?');
-    await S('Jetzt sind wir schon fertig.');
-    await B('Jaaaa. 🥹');
-    await S('War aber schön.');
-    await B('Fand ich auch.');
+    await S('Jetzt sind wir schon fertig');
+    await B('Jaa 🥹');
     still(); await sleep(1100);
-    await S('Meinst du, Salmi hat sich gefreut?');
-    await B('Ich hoffe es.');
-    await S('Bestimmt. Du hast dir so viel Mühe gegeben. 💛');
-    await B('Ich hab ihn halt schon ziemlich lieb.');
-    await S('Das hab ich gemerkt. 💛');
+    await S('Meinst du, Salmönchen hat sich gefreut?');
+    await B('Ich hoffs');
+    await S('Safe. Du hast dir so viel Mühe gegeben 💛');
+    await B('Ich hab ihn halt ziemlich lieb');
+    await S('Merkt man 💛');
     still(); await hop(x-size*.18,H()*.03,600);
     const ende=document.getElementById('endkarte'); ende.classList.add('show');
     for(let i=0;i<16;i++){ funken(rnd(20,W()-20),rnd(H()*.15,H()*.5),2,['✨','⭐','❤️'],.7); await sleep(260); }
@@ -1811,7 +1768,7 @@ function hop(toX,height=H()*.2,dur=620,salto=false){
   });
 }
 function say(html,ms){
-  clearTimeout(bubbleTimer); bubble.innerHTML=html; bubble.classList.add('show'); place();
+  clearTimeout(bubbleTimer); bubble.innerHTML=html; bubble.dataset.wer=sprecher; bubble.dataset.name=SZ_AKTIV?(sprecher==='bea'?'Bea':'Sonni'):''; bubble.classList.add('show'); place();
   if(ms) bubbleTimer=setTimeout(()=>bubble.classList.remove('show'),ms);
 }
 function sparks(cx,cy,n,emojis=['✨','💛','⭐','☀️'],weit=1){
@@ -1913,7 +1870,7 @@ function planeUntergang(ms){ clearTimeout(untergangTimer); untergangTimer=setTim
 async function untergehen(){
   if(hopping){ return planeUntergang(800); }
   untergegangen=true; tap.classList.remove('show');
-  say(pick(['Bis morgen, Salmi! 💛','Hab einen wunderschönen Tag! ☀️','Wir sehen uns morgen! 👋💛','Hab dich lieb! Bis morgen! 💛']),2200); beaWinkt(4500);
+  say(pick([`Bis morgen, ${typeof spitzname==='function'?spitzname().replace(' 🕺',''):'Salmi'} 💛`,'Hab einen wunderschönen Tag ☀️','Wir sehen uns morgen 👋💛','Hab dich lieb, bis morgen 💛']),2200); beaWinkt(4500);
   await sleep(2300);
   if(!SZ) await hop(mitte(),H()*.12,520);
   actor.style.zIndex='0'; bea.style.zIndex='0'; document.getElementById('scene').style.zIndex='3';
