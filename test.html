@@ -1,0 +1,2047 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Guten Morgen ☀️</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden}
+  html{background:#232846}
+  body.stage{width:60vh;margin:0 auto;position:relative;transform:translateZ(0);box-shadow:0 0 80px rgba(0,0,0,.45)}
+  body{font-family:'Fredoka',system-ui,sans-serif;min-height:100dvh;touch-action:manipulation;
+    user-select:none;-webkit-user-select:none;transition:background 1s}
+  #scene{position:fixed;left:0;right:0;bottom:0;height:42vh;width:100%;z-index:1;overflow:visible}
+  .particle{position:fixed;top:-30px;pointer-events:none;z-index:2;animation:fall linear infinite}
+  @keyframes fall{to{transform:translateY(110vh) translateX(var(--drift,30px)) rotate(var(--rot,0deg))}}
+  .cloud{position:fixed;z-index:0;background:#fff;border-radius:999px;opacity:.85;animation:drift linear infinite}
+  .cloud::before,.cloud::after{content:"";position:absolute;background:#fff;border-radius:50%}
+  .cloud::before{width:55%;height:160%;left:15%;bottom:20%}
+  .cloud::after{width:40%;height:130%;right:12%;bottom:25%}
+  @keyframes drift{from{transform:translateX(-40vw)}to{transform:translateX(140vw)}}
+
+  #actor{position:fixed;left:0;top:0;will-change:transform;z-index:4}
+  #body{width:var(--size);height:var(--size);transform-origin:50% 90%;transition:transform .12s ease-out}
+  #body.squash{transform:scale(1.18,.8)}
+  #body.stretch{transform:scale(.88,1.12)}
+  #body.dance{animation:dance .5s ease-in-out 4}
+  @keyframes dance{25%{transform:rotate(-14deg) translateX(-6px)}75%{transform:rotate(14deg) translateX(6px)}}
+  .sun{width:100%;height:100%;display:block}
+  .rays{transform-origin:100px 100px;animation:spin 14s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .eye{transform-box:fill-box;transform-origin:center;animation:blink 3.8s infinite}
+  @keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+
+  #bubble{position:fixed;left:0;top:0;z-index:9;--bb:#fffaf0;--bk:#ffd36a;background:var(--bb);color:#4a2a14;
+    border:2.5px solid var(--bk);border-radius:22px;padding:13px 17px 11px;font-weight:500;font-size:1.08rem;line-height:1.32;text-align:center;
+    box-shadow:0 8px 22px rgba(90,50,10,.13),0 2px 0 rgba(255,255,255,.8) inset;max-width:76%;width:max-content;
+    opacity:0;transform:translateY(8px) scale(.85);transform-origin:50% 100%;
+    transition:transform .38s cubic-bezier(.25,1.4,.5,1),opacity .22s ease-out}
+  #bubble.show{opacity:1;transform:none}
+  #bubble[data-wer=bea]{--bb:#fff4f7;--bk:#f4b6c9}
+  #bubble::before{content:attr(data-name);position:absolute;top:-12px;left:16px;font-size:.7rem;font-weight:600;letter-spacing:.6px;
+    padding:2px 9px;border-radius:999px;background:var(--bk);color:#5a3412;box-shadow:0 2px 6px rgba(90,50,10,.12)}
+  #bubble[data-wer=bea]::before{color:#7a2b45}
+  #bubble:not([data-name])::before,#bubble[data-name=""]::before{display:none}
+  #bubble::after{content:"";position:absolute;left:var(--tail,50%);bottom:-11px;width:16px;height:16px;transform:translateX(-50%) rotate(45deg);
+    background:var(--bb);border-right:2.5px solid var(--bk);border-bottom:2.5px solid var(--bk);border-bottom-right-radius:4px}
+  #bubble big{display:block;font-size:1.4rem;font-weight:600;color:#e8780c;margin-bottom:2px}
+
+  .spark{position:fixed;pointer-events:none;z-index:6;font-size:22px;animation:pop 1.1s ease-out forwards}
+  @keyframes pop{to{transform:translate(var(--dx),var(--dy)) scale(.4) rotate(var(--rot,0deg));opacity:0}}
+  .tap{position:fixed;top:calc(16px + env(safe-area-inset-top));left:0;right:0;text-align:center;z-index:5;
+    color:#5a3a2a;opacity:0;transition:opacity 1s;font-size:.95rem}
+  .tap.show{opacity:.65}
+  #bea{position:fixed;left:0;top:0;z-index:4;width:var(--beaw);height:var(--beah);will-change:transform}
+  #bea svg{width:100%;height:100%;display:block;transform-origin:50% 100%}
+  #bea.jump svg{animation:beajump .55s cubic-bezier(.3,1.4,.5,1)}
+  @keyframes beajump{40%{transform:translateY(-24%) scale(.95,1.08)}80%{transform:scale(1.08,.92)}}
+  .hack{animation:hack .16s ease-in-out infinite alternate !important} @keyframes hack{from{transform:rotate(-10deg)}to{transform:rotate(55deg)}}
+  .wave{transform-origin:86px 106px;animation:wave 1s ease-in-out infinite}
+  @keyframes wave{50%{transform:rotate(-16deg)}}
+  #dusk{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity 2.6s;
+    background:linear-gradient(180deg,rgba(255,140,90,.0) 0%,rgba(255,150,110,.35) 60%,rgba(255,120,120,.4) 100%)}
+  #monster{position:fixed;left:0;top:0;z-index:4;width:var(--msize);height:var(--msize);will-change:transform;display:none}
+  #monster svg{width:100%;height:100%;display:block;animation:grumble .5s ease-in-out infinite}
+  @keyframes grumble{50%{transform:scale(1.04,.96) rotate(-2deg)}}
+  #mbubble{position:fixed;z-index:5;background:#2d1f47;color:#fff;border-radius:18px;padding:10px 14px;font-weight:600;
+    font-size:1.05rem;max-width:60vw;transform:scale(0);transform-origin:50% 100%;transition:transform .3s cubic-bezier(.3,1.6,.5,1)}
+  #mbubble.show{transform:scale(1)}
+  #mbubble::after{content:"";position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);border:10px solid transparent;border-top-color:#2d1f47;border-bottom:0}
+  #fight{position:fixed;z-index:5;width:var(--fsize);height:var(--fsize);pointer-events:none;display:none}
+  #fight .puff{position:absolute;border-radius:50%;background:#fff;box-shadow:inset -6px -8px 0 rgba(0,0,0,.08);animation:puff .35s ease-in-out infinite alternate}
+  @keyframes puff{to{transform:scale(1.15) translate(4px,-3px)}}
+  #fight .spin{position:absolute;inset:0;animation:fspin .6s linear infinite}
+  @keyframes fspin{to{transform:rotate(360deg)}}
+  .boom{position:fixed;z-index:6;pointer-events:none;font:900 2.1rem 'Fredoka',sans-serif;color:#e2483d;
+    -webkit-text-stroke:2px #fff;paint-order:stroke;text-shadow:0 3px 0 #ffd84a;animation:boom .7s cubic-bezier(.3,1.6,.5,1) forwards}
+  @keyframes boom{0%{transform:scale(0) rotate(var(--r))}50%{transform:scale(1.2) rotate(var(--r))}100%{transform:scale(1) rotate(var(--r));opacity:0}}
+  .prop{position:fixed;left:0;top:0;transform-origin:50% 100%;pointer-events:none;will-change:transform}
+  .prop svg{width:100%;height:100%;display:block;overflow:visible}
+  .prop .emo{line-height:1;text-align:center;width:100%;height:100%;display:flex;align-items:flex-end;justify-content:center}
+  .wink .winke-l{transform-origin:44px 52px;animation:winkl .5s ease-in-out infinite}
+  .wink .winke-r{transform-origin:96px 52px;animation:winkr .5s ease-in-out infinite}
+  @keyframes winkl{50%{transform:rotate(-25deg)}} @keyframes winkr{50%{transform:rotate(25deg)}}
+  .dampfend .dampf{animation:dampf 1.4s ease-in-out infinite}
+  @keyframes dampf{50%{transform:translateY(-4px);opacity:.4}}
+  .schild{position:relative;width:100%;height:100%}
+  .schild .brett{position:absolute;left:4%;right:4%;top:6%;height:52%;background:#8a542c;border:3px solid #6b3f20;border-radius:10px;color:#fff;
+    font-weight:600;display:flex;align-items:center;justify-content:center;text-align:center;font-size:calc(var(--size)*.13);line-height:1.1;box-shadow:inset 0 -6px 0 rgba(0,0,0,.15)}
+  .schild .etikett{position:absolute;left:2%;right:2%;top:4%;height:62%;background:#fffdf8;border:2px solid #e8dcc6;border-radius:4px;
+    box-shadow:0 3px 8px rgba(90,60,20,.25);text-align:center;color:#2b2420;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Georgia,'Times New Roman',serif}
+  .schild .est{font-size:calc(var(--size)*.055);letter-spacing:1px;color:#6b5e52}
+  .schild .name{font-size:calc(var(--size)*.2);font-weight:700;line-height:1}
+  .schild .linie{width:70%;height:1.5px;background:#2b2420;margin:3px 0}
+  .schild .dorf{font-size:calc(var(--size)*.072);letter-spacing:1.5px;font-family:'Fredoka',sans-serif;font-weight:600}
+  .schild .klein{font-size:calc(var(--size)*.045);color:#6b5e52;margin-top:2px}
+  .schild .schleife{position:absolute;top:-8%;right:-4%;font-size:calc(var(--size)*.22);transform:rotate(15deg)}
+  .banner{position:relative;width:100%;height:100%}
+  .banner .seil{position:absolute;bottom:60%;width:2px;height:120vh;background:#a07a4a}
+  .banner .seil.l{left:14%} .banner .seil.r{right:14%}
+  .banner .etikett{position:absolute;inset:0;background:#fffdf8;border:3px solid #e8dcc6;border-radius:8px;box-shadow:0 8px 24px rgba(90,60,20,.28);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;color:#2b2420;font-family:Georgia,'Times New Roman',serif;text-align:center}
+  .banner .est{font-size:calc(var(--bw)*.045);letter-spacing:2px;color:#6b5e52}
+  .banner .name{font-size:calc(var(--bw)*.17);font-weight:700;line-height:1}
+  .banner .linie{width:72%;height:2px;background:#2b2420;margin:6px 0}
+  .banner .dorf{font-size:calc(var(--bw)*.065);letter-spacing:3px;font-family:'Fredoka',sans-serif;font-weight:600}
+  .banner .klein{font-size:calc(var(--bw)*.04);color:#6b5e52;margin-top:4px}
+  .banner .schleife{position:absolute;top:-14%;right:-5%;font-size:calc(var(--bw)*.18);transform:rotate(15deg);z-index:2}
+  .banner .lichter{position:absolute;left:-4%;right:-4%;top:-7%;height:14%;z-index:1;
+    background:radial-gradient(circle,#fff3b0 0 3.5px,rgba(255,220,120,.6) 4.5px,transparent 8px) 0 50%/calc(var(--bw)*.09) 100% repeat-x;animation:birne 1.8s ease-in-out infinite}
+  .schild .pfosten{position:absolute;bottom:0;width:7%;height:60%;background:#8a5a33;border-radius:3px}
+  .schild .pfosten.l{left:18%} .schild .pfosten.r{right:18%}
+  .schild .schneekappe{position:absolute;left:2%;right:2%;top:2%;height:12%;background:#fff;border-radius:12px}
+  .stand{position:relative;width:100%;height:100%}
+  .stand .markise{position:absolute;left:0;right:0;top:20%;height:20%;border-radius:8px 8px 14px 14px;
+    background:repeating-linear-gradient(90deg,#e2483d 0 12%,#fff 12% 24%)}
+  .stand .markise.gruen{background:repeating-linear-gradient(90deg,#3f9b6b 0 12%,#fff 12% 24%)}
+  .stand .standschild{position:absolute;left:8%;right:8%;top:0;height:20%;background:#fff6e6;border:2px solid #8a542c;border-radius:8px;color:#8a542c;
+    font-weight:600;font-size:calc(var(--size)*.085);display:flex;align-items:center;justify-content:center;text-align:center;transition:transform .35s}
+  .stand .standschild.dreh{transform:rotateX(360deg)} .stand .standschild.rot{color:#fff;background:#e2483d;border-color:#a92a2a}
+  .stand .theke{position:absolute;left:4%;right:4%;bottom:0;height:52%;background:linear-gradient(#c8924f,#a8693a);border-radius:6px;border-top:6px solid #8a542c}
+  .vorhang{position:relative;width:100%;height:100%}
+  .vorhang .stange{position:absolute;top:0;left:-4%;right:-4%;height:5%;background:#d4a017;border-radius:4px}
+  .vorhang .tuch{position:absolute;top:4%;bottom:0;left:0;right:0;border-radius:0 0 10px 10px;
+    background:repeating-linear-gradient(90deg,#b3202a 0 10%,#d6333d 10% 20%)}
+  .laufsteg{width:100%;height:100%;background:linear-gradient(#f1d27a,#d4a017);border-radius:6px}
+  .werkbank{position:relative;width:100%;height:100%}
+  .werkbank .platte{position:absolute;top:30%;left:0;right:0;height:16%;background:#a8693a;border-radius:4px}
+  .werkbank .bein{position:absolute;top:44%;bottom:0;width:9%;background:#8a542c} .werkbank .bein.l{left:8%} .werkbank .bein.r{right:8%}
+  .werkbank .werkzeug{position:absolute;top:0;left:0;right:0;text-align:center;font-size:calc(var(--size)*.16)}
+  .schaum{position:fixed;left:0;right:0;bottom:0;height:0;z-index:6;pointer-events:none;transition:height 1.4s ease-out;
+    background:radial-gradient(circle at 10% 20%,#fff 0 18px,transparent 19px),radial-gradient(circle at 30% 10%,#fff 0 24px,transparent 25px),
+    radial-gradient(circle at 55% 18%,#fff 0 20px,transparent 21px),radial-gradient(circle at 78% 8%,#fff 0 26px,transparent 27px),
+    radial-gradient(circle at 92% 22%,#fff 0 18px,transparent 19px),linear-gradient(transparent 22px,#fff 22px);
+    filter:drop-shadow(0 -2px 3px rgba(120,160,200,.35))}
+  .fenster{position:fixed;z-index:0;top:12%;right:8%;width:30vw;height:24vw;max-width:220px;max-height:176px;border:8px solid #fff;border-radius:6px;
+    background:linear-gradient(#8fc3ee,#cfe6f8);box-shadow:0 4px 12px rgba(120,80,40,.2);overflow:hidden}
+  .fenster::before,.fenster::after{content:"";position:absolute;background:#fff}
+  .fenster::before{left:50%;top:0;bottom:0;width:6px;transform:translateX(-50%)} .fenster::after{top:50%;left:0;right:0;height:6px;transform:translateY(-50%)}
+  .lichterkette{position:fixed;z-index:0;top:4%;left:0;right:0;height:30px;text-align:center;font-size:16px;letter-spacing:6px;white-space:nowrap;overflow:hidden}
+  .kranz{position:fixed;z-index:0;top:14%;left:10%;font-size:12vw;max-font-size:80px}
+  .vorhang-seite{position:fixed;top:0;bottom:0;width:13%;z-index:7;pointer-events:none;background:repeating-linear-gradient(90deg,#b3202a 0 25%,#d6333d 25% 50%)}
+  .vorhang-oben{position:fixed;top:0;left:0;right:0;height:7vh;z-index:7;pointer-events:none;background:#b3202a;border-bottom:6px solid #d4a017;border-radius:0 0 40% 40%/0 0 30px 30px}
+  .stern{position:fixed;width:3px;height:3px;border-radius:50%;background:#fff;z-index:0;animation:funkel 2.4s ease-in-out infinite}
+  @keyframes funkel{50%{opacity:.2}}
+  #endkarte{position:fixed;left:0;right:0;top:16%;z-index:8;text-align:center;color:#fff;font-weight:600;font-size:2.1rem;line-height:1.2;
+    text-shadow:0 2px 16px rgba(255,200,120,.8);opacity:0;transform:scale(.8);transition:all 1.6s ease-out;pointer-events:none;padding:0 20px}
+  #endkarte.show{opacity:1;transform:none}
+  #raum,#raumboden{position:fixed;left:0;top:0;pointer-events:none}
+  #raum{z-index:0} #raumboden{z-index:1}
+  .rauch{animation:rauch 2.4s ease-in-out infinite} @keyframes rauch{50%{transform:translateY(-4px);opacity:.2}}
+  .birne{animation:birne 1.8s ease-in-out infinite} @keyframes birne{50%{opacity:.15}}
+  .flocke{animation:flocke linear infinite} @keyframes flocke{to{transform:translateY(var(--fh))}}
+  .flamme{transform-box:fill-box;transform-origin:50% 100%;animation:flamme .6s ease-in-out infinite alternate} @keyframes flamme{to{transform:scale(.85,1.12) rotate(4deg)}}
+  .pendel{animation:pendel 3s ease-in-out infinite} @keyframes pendel{50%{transform:rotate(8deg)}}
+  #bea svg{animation:atmen 2.4s ease-in-out infinite} @keyframes atmen{50%{transform:scale(1.015,.985)}}
+  .flammen{animation:spin 3s linear infinite, flackern .25s ease-in-out infinite alternate !important} @keyframes flackern{to{filter:brightness(1.3)}}
+  .spot{position:fixed;top:0;bottom:15%;z-index:3;pointer-events:none;background:linear-gradient(180deg,rgba(255,245,200,.0),rgba(255,245,200,.45));clip-path:polygon(42% 0,58% 0,100% 100%,0 100%);animation:birne 2.5s ease-in-out infinite}
+  .krempelberg{position:fixed;left:-5%;right:-5%;bottom:18%;height:55%;z-index:1;pointer-events:none}
+  .krempelberg span{position:absolute;opacity:0;animation:krempelpop .35s cubic-bezier(.3,1.6,.5,1) forwards}
+  @keyframes krempelpop{from{opacity:0;translate:0 40px;scale:.3}to{opacity:1;translate:0 0;scale:1}}
+  .gutschein{width:100%;height:100%;background:linear-gradient(135deg,#fffaf0,#f6e7c8);border:3px solid #d4a017;border-radius:10px;box-shadow:0 6px 16px rgba(0,0,0,.3);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:600;color:#7a4a1e}
+  .gutschein .g1{font-size:calc(var(--size)*.11);letter-spacing:2px} .gutschein .g2{font-size:calc(var(--size)*.1);color:#2b2420} .gutschein .g3{font-size:calc(var(--size)*.065)}
+  .tv{width:100%;height:100%;position:relative}
+  .tv .screen{position:absolute;inset:0 0 14% 0;background:#1d1d24;border:5px solid #2b2b33;border-radius:10px;overflow:hidden;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 6px 14px rgba(0,0,0,.25)}
+  .tv .screen::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,#ff5f8f,#ffb347);opacity:.85;animation:tvflimmer 1.2s steps(3) infinite}
+  @keyframes tvflimmer{33%{filter:hue-rotate(60deg)}66%{filter:hue-rotate(-40deg)}}
+  .tv .assi{position:relative;color:#fff;font-weight:700;font-size:calc(var(--size)*.16);letter-spacing:1px;text-shadow:0 2px 0 #b0214f}
+  .tv .live{position:absolute;top:6%;left:7%;color:#fff;font-size:calc(var(--size)*.06);font-weight:600}
+  .tv .drama{position:relative;font-size:calc(var(--size)*.11)}
+  .tv .fuss{position:absolute;bottom:0;left:38%;right:38%;height:14%;background:#2b2b33;border-radius:0 0 6px 6px}
+  .hschild{position:relative;width:100%;height:100%}
+  .hschild .brett2{position:absolute;left:0;right:0;top:0;height:58%;background:#fff8ec;border:2.5px solid #8a542c;border-radius:6px;color:#5a3412;
+    font-weight:600;font-size:calc(var(--size)*.085);display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.15}
+  .hschild .stab{position:absolute;left:46%;width:8%;top:58%;bottom:0;background:#8a542c}
+  .dampf{position:fixed;z-index:6;pointer-events:none;border-radius:50%;background:radial-gradient(circle,#fff 0 45%,rgba(255,255,255,0) 70%);animation:dampf2 1.8s ease-out forwards}
+  @keyframes dampf2{from{transform:scale(.2);opacity:1}to{transform:scale(2.2) translateY(-60px);opacity:0}}
+  #bye{position:fixed;left:0;right:0;top:38%;text-align:center;z-index:5;font-size:1.8rem;font-weight:600;color:#fff;
+    text-shadow:0 2px 12px rgba(120,60,40,.35);opacity:0;transition:opacity 1.2s;pointer-events:none}
+  #bye.show{opacity:1;pointer-events:auto}
+  #bye small{display:block;font-size:.9rem;font-weight:500;opacity:.85;margin-top:6px}
+</style>
+</head>
+<body>
+<svg id="scene" viewBox="0 0 400 240" preserveAspectRatio="xMidYMax slice"></svg>
+
+<div id="actor"><div id="body">
+<svg class="sun" viewBox="0 0 200 200" aria-label="Fröhliche Sonne">
+  <defs><radialGradient id="g" cx="45%" cy="40%" r="65%">
+    <stop offset="0%" stop-color="#ffe58a"/><stop offset="70%" stop-color="#ffc240"/><stop offset="100%" stop-color="#f7a62a"/>
+  </radialGradient></defs>
+  <g class="rays" id="rays"></g>
+  <circle cx="100" cy="100" r="56" fill="url(#g)"/>
+  <g class="eye"><ellipse cx="80" cy="94" rx="7.5" ry="9.5" fill="#3b2416"/><circle cx="82.5" cy="90.5" r="2.8" fill="#fff"/></g>
+  <g class="eye"><ellipse cx="120" cy="94" rx="7.5" ry="9.5" fill="#3b2416"/><circle cx="122.5" cy="90.5" r="2.8" fill="#fff"/></g>
+  <ellipse cx="66" cy="112" rx="10" ry="6.5" fill="#ff8a7a" opacity=".65"/>
+  <ellipse cx="134" cy="112" rx="10" ry="6.5" fill="#ff8a7a" opacity=".65"/>
+  <path d="M88 109 Q100 128 112 109 Z" fill="#8a3420" stroke="#8a3420" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M95 118 Q100 122 105 118" stroke="#ff7a6a" stroke-width="4" stroke-linecap="round" fill="none"/>
+
+  <!-- Outfits -->
+  <g class="acc" id="o-schal" style="display:none">
+    <path d="M52 132 Q100 162 148 132 L150 146 Q100 176 50 146 Z" fill="var(--schal,#3f9b6b)"/>
+    <path d="M70 146 L68 158 M88 152 L87 165 M112 152 L113 165 M130 146 L132 158" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+    <path d="M128 148 L140 190 L122 192 L116 152 Z" fill="var(--schal,#3f9b6b)"/>
+  </g>
+  <g class="acc" id="o-weihnachtsmuetze" style="display:none">
+    <path d="M50 66 C50 32 76 12 106 13 C134 14 154 32 166 64 C158 50 148 42 136 40 C146 50 150 58 152 68 Z" fill="#e2483d"/>
+    <path d="M70 30 C84 20 100 18 114 20" stroke="#f26b5f" stroke-width="5" fill="none" stroke-linecap="round" opacity=".7"/>
+    <path d="M46 70 Q100 46 156 70" stroke="#fff" stroke-width="17" fill="none" stroke-linecap="round"/>
+    <path d="M52 74 Q100 54 150 74" stroke="#e9eef4" stroke-width="4" fill="none" stroke-linecap="round" opacity=".8"/>
+    <circle cx="167" cy="68" r="11" fill="#fff"/><circle cx="163" cy="64" r="4" fill="#fff" opacity=".9"/>
+    <circle cx="170" cy="72" r="5" fill="#eef2f6"/>
+</g>
+  <g class="acc" id="o-bommelmuetze" style="display:none">
+    <path d="M44 76 C42 32 70 18 100 18 C130 18 158 32 156 76 Z" fill="#4a7bd0"/>
+    <path d="M50 52 Q100 32 150 52" stroke="#fff" stroke-width="6" fill="none"/>
+    <path d="M47 64 Q100 44 153 64" stroke="#ffd84a" stroke-width="4" fill="none"/>
+    <path d="M42 78 Q100 56 158 78" stroke="#2f5fb3" stroke-width="16" fill="none" stroke-linecap="round"/>
+    <path d="M42 78 Q100 56 158 78" stroke="#4a7bd0" stroke-width="12" fill="none" stroke-dasharray="2 5" opacity=".9"/>
+    <circle cx="100" cy="17" r="13" fill="#fff"/><circle cx="91" cy="12" r="7" fill="#fff"/><circle cx="109" cy="12" r="7" fill="#fff"/><circle cx="100" cy="7" r="6" fill="#fff"/>
+</g>
+  <g class="acc" id="o-ohren" style="display:none">
+    <path d="M48 98 Q50 30 100 30 Q150 30 152 98" fill="none" stroke="#c43a33" stroke-width="7"/>
+    <circle cx="46" cy="102" r="15" fill="#fff"/><circle cx="154" cy="102" r="15" fill="#fff"/>
+    <circle cx="46" cy="102" r="9" fill="#ffe3ea"/><circle cx="154" cy="102" r="9" fill="#ffe3ea"/>
+  </g>
+  <g class="acc" id="o-blumen" style="display:none"></g>
+  <g class="acc" id="o-brille" style="display:none">
+    <rect x="62" y="83" width="32" height="21" rx="9" fill="#2a1b40"/>
+    <rect x="106" y="83" width="32" height="21" rx="9" fill="#2a1b40"/>
+    <path d="M94 91 L106 91 M62 88 L50 84 M138 88 L150 84" stroke="#2a1b40" stroke-width="4" stroke-linecap="round"/>
+    <path d="M69 88 L78 88 M113 88 L122 88" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+  </g>
+  <g class="acc" id="o-arme" style="display:none">
+    <path d="M56 118 Q36 96 46 60" stroke="#ffb13d" stroke-width="10" fill="none" stroke-linecap="round"/><circle cx="47" cy="56" r="8" fill="#ffb13d"/>
+    <path d="M144 118 Q164 96 154 60" stroke="#ffb13d" stroke-width="10" fill="none" stroke-linecap="round"/><circle cx="153" cy="56" r="8" fill="#ffb13d"/>
+  </g>
+  <g class="acc" id="o-muskeln" style="display:none">
+    <path d="M56 116 Q24 110 30 70" stroke="#ffb13d" stroke-width="14" fill="none" stroke-linecap="round"/><circle cx="36" cy="96" r="16" fill="#ffb13d"/><circle cx="30" cy="62" r="11" fill="#ffb13d"/>
+    <path d="M144 116 Q176 110 170 70" stroke="#ffb13d" stroke-width="14" fill="none" stroke-linecap="round"/><circle cx="164" cy="96" r="16" fill="#ffb13d"/><circle cx="170" cy="62" r="11" fill="#ffb13d"/>
+    <path d="M28 92 q6 -6 12 0 M160 92 q6 -6 12 0" stroke="#e8962a" stroke-width="2" fill="none"/>
+  </g>
+  <g class="acc" id="o-haende" style="display:none">
+    <ellipse cx="80" cy="94" rx="17" ry="13" fill="#ffb13d" stroke="#e8962a" stroke-width="2"/><ellipse cx="120" cy="94" rx="17" ry="13" fill="#ffb13d" stroke="#e8962a" stroke-width="2"/>
+    <path d="M70 88 v10 M78 86 v12 M86 88 v10 M114 88 v10 M122 86 v12 M130 88 v10" stroke="#e8962a" stroke-width="1.5"/>
+  </g>
+  <g class="acc" id="o-kochmuetze" style="display:none">
+    <circle cx="78" cy="30" r="18" fill="#fff"/><circle cx="100" cy="20" r="22" fill="#fff"/><circle cx="122" cy="30" r="18" fill="#fff"/>
+    <rect x="66" y="34" width="68" height="28" rx="6" fill="#fff" stroke="#e5e5e5" stroke-width="2"/>
+  </g>
+  <g class="acc" id="o-schutzbrille" style="display:none">
+    <path d="M44 90 Q100 70 156 90" stroke="#333" stroke-width="6" fill="none"/>
+    <circle cx="80" cy="94" r="19" fill="rgba(160,215,255,.55)" stroke="#333" stroke-width="5"/><circle cx="120" cy="94" r="19" fill="rgba(160,215,255,.55)" stroke="#333" stroke-width="5"/>
+    <path d="M72 86 l8 -4 M112 86 l8 -4" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <g class="acc" id="o-kruemel" style="display:none">
+    <circle cx="90" cy="122" r="2.5" fill="#8a5a2b"/><circle cx="112" cy="126" r="2" fill="#8a5a2b"/><circle cx="104" cy="132" r="2.5" fill="#b8763c"/><circle cx="84" cy="130" r="1.8" fill="#b8763c"/>
+  </g>
+  <g class="acc" id="o-nudeln" style="display:none">
+    <path d="M60 60 q8 -10 16 0 q8 -10 16 0 q8 -10 16 0 q8 -10 16 0 q8 -10 16 0" stroke="#f2c94c" stroke-width="5" fill="none"/>
+    <path d="M70 62 q-4 20 4 34 M128 62 q4 22 -4 36" stroke="#f2c94c" stroke-width="4" fill="none"/><ellipse cx="100" cy="52" rx="16" ry="6" fill="#c0392b"/>
+  </g>
+  <g class="acc" id="o-pads" style="display:none">
+    <ellipse cx="78" cy="108" rx="12" ry="6" fill="#bff3d4" stroke="#9ad9b5"/><ellipse cx="122" cy="108" rx="12" ry="6" fill="#bff3d4" stroke="#9ad9b5"/>
+  </g>
+  <g class="acc" id="o-schock" style="display:none">
+    <circle cx="80" cy="92" r="14" fill="#fff" stroke="#3b2416" stroke-width="2"/><circle cx="120" cy="92" r="14" fill="#fff" stroke="#3b2416" stroke-width="2"/>
+    <circle cx="80" cy="92" r="4" fill="#3b2416"/><circle cx="120" cy="92" r="4" fill="#3b2416"/>
+  </g>
+  <g class="acc" id="o-armseite" style="display:none">
+    <path d="M146 122 Q166 132 172 150" stroke="#ffb13d" stroke-width="10" fill="none" stroke-linecap="round"/><circle cx="174" cy="156" r="7.5" fill="#ffb13d"/>
+  </g>
+  <g class="acc" id="o-schlaf" style="display:none">
+    <ellipse cx="80" cy="94" rx="11" ry="12" fill="#ffd15c"/><ellipse cx="120" cy="94" rx="11" ry="12" fill="#ffd15c"/>
+    <path d="M71 95 Q80 101 89 95 M111 95 Q120 101 129 95" stroke="#3b2416" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  </g>
+  <g class="acc" id="o-creme1" style="display:none">
+    <path d="M60 110 Q58 86 76 82 Q88 80 92 92 Q96 108 84 118 Q70 126 60 110 Z" fill="#fffdf8" stroke="#eee6da" stroke-width="2"/>
+    <path d="M110 120 Q106 104 122 100 Q140 98 142 114 Q142 128 126 130 Q112 132 110 120 Z" fill="#fffdf8" stroke="#eee6da" stroke-width="2"/>
+  </g>
+  <g class="acc" id="o-creme2" style="display:none">
+    <circle cx="100" cy="100" r="58" fill="#fffdf8" stroke="#eee6da" stroke-width="3"/>
+    <path d="M60 70 q10 -8 20 0 M118 130 q10 6 20 0 M70 128 q8 4 14 0" stroke="#efe7dc" stroke-width="3" fill="none"/>
+    <ellipse cx="80" cy="94" rx="7.5" ry="9.5" fill="#3b2416"/><circle cx="82.5" cy="90.5" r="2.8" fill="#fff"/>
+    <ellipse cx="120" cy="94" rx="7.5" ry="9.5" fill="#3b2416"/><circle cx="122.5" cy="90.5" r="2.8" fill="#fff"/>
+  </g>
+  <g class="acc" id="o-detektiv" style="display:none">
+    <path d="M52 64 Q54 26 100 24 Q146 26 148 64 Z" fill="#8a6a45"/>
+    <g fill="#6f5233"><circle cx="76" cy="44" r="2.5"/><circle cx="92" cy="36" r="2.5"/><circle cx="110" cy="38" r="2.5"/><circle cx="126" cy="48" r="2.5"/><circle cx="100" cy="52" r="2.5"/><circle cx="84" cy="56" r="2.5"/><circle cx="118" cy="58" r="2.5"/></g>
+    <path d="M40 64 Q100 50 160 64 Q160 72 152 72 Q100 62 48 72 Q40 72 40 64 Z" fill="#6f5233"/>
+    <path d="M100 24 Q104 16 110 18" stroke="#6f5233" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </g>
+  <g class="acc" id="o-strohhut" style="display:none">
+    <ellipse cx="100" cy="58" rx="66" ry="13" fill="#e9c46a"/>
+    <path d="M66 58 Q66 22 100 22 Q134 22 134 58 Z" fill="#f2d07a"/>
+    <path d="M67 50 Q100 56 133 50 L133 58 Q100 64 67 58 Z" fill="#e76f51"/>
+  </g>
+</svg>
+</div></div>
+<div id="bea"><svg viewBox="0 0 120 200" aria-label="Mini Bea">
+  <!-- Haare hinten, mittellang -->
+  <path d="M26 58 Q22 30 60 24 Q98 30 94 58 Q97 80 93 98 Q90 107 84 102 Q80 108 74 103 L46 103 Q40 108 36 102 Q30 107 27 98 Q23 80 26 58 Z" fill="#dcb168"/>
+  <path d="M31 70 Q29 86 33 98 M89 70 Q91 86 87 98" stroke="#f0d08f" stroke-width="2.2" fill="none" stroke-linecap="round" opacity=".8"/>
+  <!-- Beine & Schuhe -->
+  <rect x="44" y="150" width="14" height="36" rx="5" fill="#2a2522"/>
+  <rect x="62" y="150" width="14" height="36" rx="5" fill="#2a2522"/>
+  <ellipse class="schuh" cx="50" cy="188" rx="11" ry="6" fill="#151212"/><ellipse class="schuh" cx="70" cy="188" rx="11" ry="6" fill="#151212"/>
+  <g id="bea-sohle" style="display:none"><path d="M40 191 H60 M60 191 H80" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/><path d="M45 186 l5 -3 M66 186 l5 -3" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".8"/></g>
+  <!-- linker Arm -->
+  <path d="M34 104 Q24 126 30 144" class="aermel" stroke="#3b2a22" stroke-width="13" fill="none" stroke-linecap="round"/>
+  <circle cx="30" cy="147" r="6" fill="#f3cdb0"/>
+  <circle cx="26.5" cy="151.5" r="1.6" fill="#b3122e"/><circle cx="30" cy="152.8" r="1.6" fill="#b3122e"/><circle cx="33.5" cy="151.5" r="1.6" fill="#b3122e"/>
+  <!-- Oberkörper: Jacke + Cardigan -->
+  <path class="jacke" d="M34 100 Q60 92 86 100 L90 150 Q60 156 30 150 Z" fill="#3b2a22"/>
+  <path class="cardigan" d="M50 99 Q60 97 70 99 L68 150 L52 150 Z" fill="#dcdcd8"/>
+  <circle cx="60" cy="110" r="2" fill="#fff"/><circle cx="60" cy="121" r="2" fill="#fff"/><circle cx="60" cy="132" r="2" fill="#fff"/>
+  <rect x="51" y="141" width="18" height="7" rx="1.5" fill="#8a5a2b"/>
+  <rect x="55.5" y="140" width="9" height="9" rx="1.5" fill="none" stroke="#c9a46a" stroke-width="2"/>
+  <path d="M50 99 L46 150 M70 99 L74 150" stroke="#2a1d17" stroke-width="2"/>
+  <g id="bea-top-hoodie" style="display:none">
+    <path class="top-farbe" d="M33 100 Q60 92 87 100 L90 152 Q60 158 30 152 Z"/>
+    <path class="top-dunkel" d="M38 98 Q60 112 82 98 Q78 90 60 92 Q42 90 38 98 Z"/>
+    <path d="M55 104 L54 118 M65 104 L66 118" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+    <path class="top-dunkel" d="M44 130 H76 L80 146 H40 Z" opacity=".6"/>
+    <path class="top-dunkel" d="M31 146 Q60 152 89 146 L90 152 Q60 158 30 152 Z"/>
+  </g>
+  <g id="bea-top-teddy" style="display:none">
+    <path d="M33 100 Q60 92 87 100 L90 152 Q60 158 30 152 Z" fill="#f4efe6"/>
+    <g fill="#e7dfd1"><circle cx="40" cy="110" r="2.2"/><circle cx="48" cy="122" r="2"/><circle cx="38" cy="134" r="2.2"/><circle cx="46" cy="144" r="2"/><circle cx="74" cy="112" r="2.2"/><circle cx="80" cy="126" r="2"/><circle cx="72" cy="138" r="2.2"/><circle cx="82" cy="144" r="2"/><circle cx="56" cy="130" r="1.8"/><circle cx="66" cy="118" r="1.8"/></g>
+    <path d="M60 98 V152" stroke="#cfc6b6" stroke-width="2"/>
+    <path d="M42 96 Q50 104 60 100 Q70 104 78 96 Q70 92 60 94 Q50 92 42 96 Z" fill="#e7dfd1"/>
+  </g>
+  <g id="bea-top-puffer" style="display:none">
+    <path d="M31 100 Q60 90 89 100 L92 152 Q60 159 28 152 Z" fill="#1f1f22"/>
+    <path d="M30 112 Q60 118 90 112 M29 124 Q60 130 91 124 M29 136 Q60 142 91 136" stroke="#3a3a40" stroke-width="2.4" fill="none"/>
+    <path d="M60 96 V154" stroke="#555" stroke-width="1.6"/>
+    <path d="M44 88 Q60 96 76 88 L78 100 Q60 108 42 100 Z" fill="#2a2a2e"/>
+    <path d="M36 106 q4 -2 8 0" stroke="#fff" stroke-width="1.5" opacity=".25" fill="none"/>
+  </g>
+  <g id="bea-mode" style="display:none">
+    <g id="bea-mode-brille"></g>
+    <path d="M30 98 Q60 90 90 98 L98 188 Q60 196 22 188 Z" fill="#f7a8c8"/>
+    <path d="M50 98 L60 150 L70 98" stroke="#fff" stroke-width="4" fill="none"/><path d="M30 140 Q60 150 90 140" stroke="#e57ba7" stroke-width="6" fill="none"/>
+  </g>
+  <!-- Ski / Schlittschuhe -->
+  <g id="bea-ski" style="display:none">
+    <path d="M14 196 L96 196 Q106 196 108 188" stroke="#1f6fd1" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M22 200 L104 200 Q114 200 116 192" stroke="#e2483d" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M30 142 L20 198" stroke="#888" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="21" cy="194" r="3.5" fill="none" stroke="#888" stroke-width="1.5"/>
+  </g>
+  <g id="bea-skates" style="display:none">
+    <rect x="40" y="176" width="20" height="14" rx="5" fill="#fff" stroke="#ddd"/>
+    <rect x="60" y="176" width="20" height="14" rx="5" fill="#fff" stroke="#ddd"/>
+    <path d="M38 196 L62 196 M58 196 L82 196" stroke="#9aa6b2" stroke-width="3" stroke-linecap="round"/>
+    <path d="M44 190 L44 196 M56 190 L56 196 M64 190 L64 196 M76 190 L76 196" stroke="#9aa6b2" stroke-width="2"/>
+  </g>
+  <!-- Hals & Kopf -->
+  <rect x="54" y="86" width="12" height="12" fill="#f1c9aa"/>
+  <path d="M54 91 Q60 95 66 91" stroke="#e3b28e" stroke-width="2" fill="none"/>
+  <ellipse cx="60" cy="61" rx="30.5" ry="31.5" fill="#f8dcc4"/>
+  <ellipse cx="60" cy="70" rx="24" ry="17" fill="#fde8d6" opacity=".55"/>
+  <!-- Haare: glatt mit Mittelscheitel -->
+  <path d="M28.5 64 Q26 26 60 24 Q94 26 91.5 64 Q89 48 80 42 Q70 36 60 35.5 Q50 36 40 42 Q31 48 28.5 64 Z" fill="#e8c27a"/>
+  <path d="M60 35.5 Q48 37 40 44 Q34 51 32.5 62 Q37 50 45 45 Q52 41 60 40 Z" fill="#e8c27a"/>
+  <path d="M60 35.5 Q72 37 80 44 Q86 51 87.5 62 Q83 50 75 45 Q68 41 60 40 Z" fill="#e8c27a"/>
+  <path d="M30 60 Q28 76 31.5 90 M90 60 Q92 76 88.5 90" stroke="#e8c27a" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M44 31 Q50 28 56 27.5 M64 27.5 Q70 28 76 31" stroke="#f7dea4" stroke-width="2.2" fill="none" stroke-linecap="round" opacity=".9"/>
+  <path d="M60 25 Q59.6 30.5 60 36" stroke="#c9a05a" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <!-- Haarreif geflochten -->
+  <path class="reif" d="M30 50 Q34 22 60 21 Q86 22 90 50" stroke="#1d1a1a" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path class="reif" d="M30 50 Q34 22 60 21 Q86 22 90 50" stroke="#4a4444" stroke-width="3" fill="none" stroke-dasharray="4 4" stroke-linecap="round"/>
+  <!-- Nikolaus-Kostüm -->
+  <g id="bea-hut" style="display:none">
+    <path d="M30 46 C30 20 50 6 70 7 C90 8 104 22 110 50 C104 40 98 35 90 34 C96 40 98 46 98 52 Z" fill="#e2483d"/>
+    <path d="M26 48 Q60 28 94 48" stroke="#fff" stroke-width="11" fill="none" stroke-linecap="round"/>
+    <circle cx="110" cy="54" r="7" fill="#fff"/>
+  </g>
+  <g id="bea-beanie" style="display:none">
+    <path d="M27 50 C26 20 44 10 60 10 C76 10 94 20 93 50 Z" fill="#d64545"/>
+    <path d="M31 34 Q60 20 89 34" stroke="#fff" stroke-width="5" fill="none"/>
+    <path d="M26 50 Q60 36 94 50" stroke="#a83232" stroke-width="9" fill="none" stroke-linecap="round"/>
+    <circle cx="60" cy="9" r="8" fill="#fff"/><circle cx="55" cy="6" r="4" fill="#fff"/><circle cx="65" cy="6" r="4" fill="#fff"/>
+    <g id="bea-brille-ski" style="display:none">
+      <path d="M30 40 Q60 30 90 40" stroke="#222" stroke-width="5" fill="none"/>
+      <rect x="40" y="31" width="40" height="13" rx="6.5" fill="#ff9f1c" stroke="#333" stroke-width="2"/>
+      <path d="M46 35 L56 35" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+    </g>
+  </g>
+  <g id="bea-nikolaus" style="display:none">
+    <path d="M36 80 Q34 104 60 110 Q86 104 84 80 Q74 92 60 90 Q46 92 36 80 Z" fill="#fff" stroke="#e9e9e9" stroke-width="1.5"/>
+    <path d="M44 84 Q52 88 60 86 Q68 88 76 84" stroke="#e5e5e5" stroke-width="2" fill="none"/>
+    <path d="M30 91 Q12 96 22 84" stroke="#ddd" stroke-width="1.2" fill="none"/>
+  </g>
+  <!-- Ohrringe -->
+  <circle cx="29" cy="72" r="3.6" fill="none" stroke="#d9c27a" stroke-width="1.8"/>
+  <circle cx="91" cy="72" r="3.6" fill="none" stroke="#d9c27a" stroke-width="1.8"/>
+  <!-- Gesicht -->
+  <path d="M41 50.5 Q48 46.5 55 49.5 M65 49.5 Q72 46.5 79 50.5" stroke="#b88c5a" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <g class="eye"><ellipse cx="48" cy="63" rx="4.3" ry="5.3" fill="#3a2418"/><circle cx="49.7" cy="61" r="1.7" fill="#fff"/><circle cx="46.7" cy="65.3" r=".8" fill="#fff" opacity=".85"/></g>
+  <g class="eye"><ellipse cx="72" cy="63" rx="4.3" ry="5.3" fill="#3a2418"/><circle cx="73.7" cy="61" r="1.7" fill="#fff"/><circle cx="70.7" cy="65.3" r=".8" fill="#fff" opacity=".85"/></g>
+  <path d="M43.6 59.6 l-2.3 -1.6 M44.6 58.2 l-1.6 -2.3 M76.4 59.6 l2.3 -1.6 M75.4 58.2 l1.6 -2.3" stroke="#3a2418" stroke-width="1.3" stroke-linecap="round"/>
+  <circle cx="48" cy="63" r="10.5" fill="rgba(255,255,255,.08)" stroke="#7a4a2a" stroke-width="1.9"/>
+  <circle cx="72" cy="63" r="10.5" fill="rgba(255,255,255,.08)" stroke="#7a4a2a" stroke-width="1.9"/>
+  <path d="M41.5 57 Q44 54.5 47.5 54.2 M65.5 57 Q68 54.5 71.5 54.2" stroke="#fff" stroke-width="1.2" fill="none" opacity=".7" stroke-linecap="round"/>
+  <path d="M58.5 62 Q60 60.4 61.5 62" stroke="#7a4a2a" stroke-width="1.8" fill="none"/>
+  <path d="M58.8 70 Q60.5 71.8 62.2 70" stroke="#e0a98a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <g id="bea-pads" style="display:none"><path d="M38 74 Q47 82 56 74 Q47 77 38 74 Z" fill="#9ee6bd" stroke="#7ccfa1"/><path d="M64 74 Q73 82 82 74 Q73 77 64 74 Z" fill="#9ee6bd" stroke="#7ccfa1"/></g>
+  <g id="bea-zu" style="display:none"><circle cx="48" cy="62" r="8.5" fill="#f8dcc4"/><circle cx="72" cy="62" r="8.5" fill="#f8dcc4"/>
+    <path d="M43 64 Q48 68 53 64 M67 64 Q72 68 77 64" stroke="#3b2416" stroke-width="2" fill="none" stroke-linecap="round"/></g>
+  <g id="bea-creme" style="display:none"><path d="M30 60 Q28 34 50 32 Q62 26 74 32 Q94 36 90 62 Q94 84 74 90 Q60 96 46 90 Q26 84 30 60 Z" fill="#fffdf8" stroke="#eee6da" stroke-width="2"/>
+    <path d="M44 50 q6 -4 12 0 M64 76 q6 4 12 0" stroke="#efe7dc" stroke-width="2" fill="none"/></g>
+  <g id="bea-cremegesicht" style="display:none"><circle cx="49" cy="62" r="2.6" fill="#b8ad9e"/><circle cx="71" cy="62" r="2.6" fill="#b8ad9e"/><path d="M50 76 Q60 84 70 76" stroke="#b8ad9e" stroke-width="2.4" fill="none" stroke-linecap="round"/></g>
+  <g id="bea-schnurrbart" style="display:none"><path d="M60 77 Q54 72 47 75 Q43 77 41 74 Q42 80 50 80 Q56 80 60 78 Q64 80 70 80 Q78 80 79 74 Q77 77 73 75 Q66 72 60 77 Z" fill="#cfc4b4" stroke="#b8ad9e" stroke-width="1"/><circle cx="49" cy="62" r="2.6" fill="#b8ad9e"/><circle cx="71" cy="62" r="2.6" fill="#b8ad9e"/></g>
+  <g id="bea-sonnenbrille" style="display:none"><ellipse cx="46" cy="64" rx="15" ry="12" fill="#1d1a1f"/><ellipse cx="74" cy="64" rx="15" ry="12" fill="#1d1a1f"/>
+    <path d="M58 62 L62 62" stroke="#1d1a1f" stroke-width="4"/><path d="M38 58 l8 -2 M66 58 l8 -2" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".6"/></g>
+  <ellipse cx="42" cy="79" rx="5" ry="3" fill="#ff9fa3" opacity=".42"/>
+  <ellipse cx="78" cy="79" rx="5" ry="3" fill="#ff9fa3" opacity=".42"/>
+  <path id="bea-mund" d="M54 77 Q60 84 66 77 Q60 79.2 54 77 Z" fill="#e2707c" stroke="#c4555f" stroke-width="1.1" stroke-linejoin="round"/>
+  <!-- rechter Arm (winkt) -->
+  <g id="arm-unten"><path class="aermel" d="M85 106 Q93 126 89 144" stroke="#3b2a22" stroke-width="13" fill="none" stroke-linecap="round"/>
+    <circle cx="89" cy="147" r="6" fill="#f3cdb0"/><circle cx="85.5" cy="151.5" r="1.6" fill="#b3122e"/><circle cx="89" cy="152.8" r="1.6" fill="#b3122e"/><circle cx="92.5" cy="151.5" r="1.6" fill="#b3122e"/></g>
+  <g class="wave" id="arm-winkt" style="display:none"><path class="aermel" d="M84 106 Q106 100 110 80" stroke="#3b2a22" stroke-width="13" fill="none" stroke-linecap="round"/>
+    <circle cx="111" cy="74" r="6.5" fill="#f3cdb0"/></g>
+</svg></div>
+<div id="monster"><svg viewBox="0 0 200 200" aria-label="Diabetesmonster">
+  <path d="M62 52 L54 22 L78 44 Z M138 52 L146 22 L122 44 Z" fill="#5b3f9e"/>
+  <path d="M40 120 C30 70 60 40 100 40 C140 40 172 70 160 120 C172 150 156 182 128 180 C116 192 84 192 72 180 C44 182 28 150 40 120 Z" fill="#8e6ad8"/>
+  <path d="M60 70 C70 56 84 52 96 54" stroke="#a98ae6" stroke-width="8" fill="none" stroke-linecap="round" opacity=".7"/>
+  <path d="M62 84 L90 94 M138 84 L110 94" stroke="#2d1f47" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="80" cy="104" r="11" fill="#fff"/><circle cx="120" cy="104" r="11" fill="#fff"/>
+  <circle cx="83" cy="106" r="5.5" fill="#2d1f47"/><circle cx="117" cy="106" r="5.5" fill="#2d1f47"/>
+  <path d="M74 132 Q100 148 126 132 Q100 140 74 132 Z" fill="#2d1f47"/>
+  <path d="M84 134 L88 142 L92 136 M108 136 L112 142 L116 134" fill="#fff"/>
+  <rect x="58" y="152" width="84" height="22" rx="11" fill="#fff" opacity=".9"/>
+  <text x="100" y="168" text-anchor="middle" font-family="Fredoka,sans-serif" font-weight="600" font-size="15" fill="#5b3f9e">DIABETES</text>
+  <g transform="rotate(-12 170 120)"><rect x="160" y="104" width="26" height="26" rx="4" fill="#fff" stroke="#ddd" stroke-width="2"/>
+  <circle cx="168" cy="112" r="1.6" fill="#ccc"/><circle cx="178" cy="120" r="1.6" fill="#ccc"/><circle cx="170" cy="124" r="1.6" fill="#ccc"/></g>
+  <path d="M156 128 Q166 126 168 118" stroke="#8e6ad8" stroke-width="10" fill="none" stroke-linecap="round"/>
+</svg></div>
+<div id="mbubble"></div>
+<div id="fight"><div class="spin">
+  <div class="puff" style="left:10%;top:25%;width:45%;height:45%"></div>
+  <div class="puff" style="left:40%;top:10%;width:50%;height:50%;animation-delay:.1s"></div>
+  <div class="puff" style="left:35%;top:45%;width:52%;height:48%;animation-delay:.2s"></div>
+  <div class="puff" style="left:5%;top:50%;width:40%;height:40%;animation-delay:.15s"></div>
+</div></div>
+<div id="bubble"></div>
+<div id="dusk"></div>
+<div id="endkarte">Frohe Weihnachten,<br>mein Salmi! ❤️</div>
+<div id="bye">Bis bald ☀️<small>Tippen für nochmal</small></div>
+<div class="tap" id="tap">Tipp mich an ☀️</div>
+
+<script>
+/* ================== HIER ANPASSEN ✏️ ================== */
+const KOSENAME = "Salmi";   // z. B. "Schatz" → „Guten Morgen, Schatz!“
+
+// Zweite Zeile unter dem Gruß – je nach Tageszeit wird zufällig eine gewählt
+const SPRUECHE = {
+  morgen: [
+    "Ich bin 150 Millionen Kilometer gereist, nur um dich zu wecken. Steh auf. 😤",
+    "Ich bin schon aufgegangen. Jetzt bist du dran.",
+    "Snoozetaste? Kenn ich nicht. Ich geh einfach auf.",
+    "Deine Haare sehen aus wie meine Strahlen. Steht dir. 😏",
+    "Erst Kaffee, dann Gefühle. ☕",
+    "Ich scheine hier nicht für mich selbst. Augen auf!",
+    "Fun Fact: Ich bin auch nicht gern früh wach. Aber ich mach's für dich."
+  ],
+  mittag: [
+    "Ich steh jetzt ganz oben. Genau wie dein Hunger. 🍝",
+    "Halbzeit! Ich bin übrigens auch nur noch zu 50 % motiviert.",
+    "Iss was. Und nein, Kaffee zählt nicht als Mahlzeit."
+  ],
+  nachmittag: [
+    "Nachmittagstief? Ich auch. Deshalb geh ich bald unter.",
+    "Du bist heißer als ich. Und ich hab 5.500 Grad. 🔥",
+    "Noch ein paar Stunden, dann darfst du wieder liegen. Ich glaub an dich."
+  ],
+  abend: [
+    "Ich geh jetzt unter. Du darfst aufs Sofa. Fairer Deal.",
+    "Ich bin raus. Der Mond übernimmt. Aber der ist nicht so süß wie ich. 🌙",
+    "Feierabend! Ich hab heute 12 Stunden geschuftet, du hoffentlich weniger."
+  ]
+};
+// Zusätzliche Sprüche je Jahreszeit (werden mit reingemischt)
+const SAISON_SPRUECHE = {
+  winter:   ["Mir ist kalt. Und ich bin die SONNE. 🥶","Ich arbeite gerade nur 8 Stunden am Tag. Teilzeitsonne. 🥱","Mütze auf! Ich hab auch eine, siehst du?"],
+  fruehling:["Ich bin zurück aus dem Winterurlaub! 😎","Heuschnupfen? Nicht meine Schuld. Okay, ein bisschen. 🤧"],
+  sommer:   ["Sorry für die 34 Grad. Ich hab mich hinreißen lassen. 🫠","Eincremen! Ich bin heute in Bestform und kenne keine Gnade. 🧴","Eis ist heute Pflicht. Ärztlich verordnet. 🍦"],
+  herbst:   ["Ich nehm mir jetzt öfter frei. Wolken übernehmen. ☁️","Kuschelwetter. Hab ich extra für dich bestellt. 🍂"]
+};
+// Beim Antippen
+const ANTIPPEN = ["Hey! Nicht anfassen, ich bin 5.500 Grad heiß! 🔥","Autsch. Nochmal! 😄","Kitzelt! 🙈","Was willst du? Ich arbeite hier!","Du bist ja anhänglich heute. 😏","Wenn du mich so anstarrst, werd ich rot. Oh, warte …","Noch einmal und ich geh unter!","Ich hab dich lieb. Jetzt lass mich hüpfen. 💛"];
+// Besondere Tage: "MM-TT": "Nachricht"  (Monat-Tag, mit führender Null)
+const BESONDERE_TAGE = {
+  "12-01": { szene:[
+               "<big>Überrrrasssschung!! 🎉</big>",
+               "Ich hab dir jemanden mitgebracht!! 👀",
+               "BEA",
+               "BEA:<big>Hallo! 👋</big>Wunderst du dich etwa, was hier los ist? 😏",
+               "BEA:Für die nächsten Tage bin ich als treue Weihnachtsbegleiterin auf deinem Handy dabei, natürlich mit meiner besten Freundin Sonni!!! ☀️💛"
+             ], beaReveal:true, konfetti:["🎉","💛","✨","🎄"] },
+  "12-06": { text:"Lausi Lausi Lausi ohhhh heute ist Nikolausi! 🎅<br>Einen wunderschönen Nikolaustag wünsche ich dir! 👢🍫",
+             outfit:["weihnachtsmuetze"], stiefel:true, beaKostuem:"nikolaus", konfetti:["🎅","👢","🍫","🍬","🎁"] },
+  "12-24": "Frohe Weihnachten! 🎄",
+  "12-31": "Letzter Tag im Jahr. Danke für alles mit dir! 🥂",
+  "01-01": "Frohes neues Jahr! 🎆 Auf ein Jahr voller Sonne mit dir.",
+  "02-14": "Happy Valentinstag! 💘",
+  // "06-15": "Happy Jahrestag! 💛",      ← eigene Daten hier eintragen
+  // "03-08": "Alles Gute zum Geburtstag! 🎂",
+};
+// Dezember: jeden Tag eine andere Kulisse 🎄
+// kulisse: berge, gondel, piste, see, geschenke, keksglas, sturm
+// bea: hut (Weihnachtsmütze), beanie, ski, schlittschuh  ·  sonne: Outfit(s) der Sonne
+const DEZ_THEMEN = {
+   1:{},
+   2:{kulisse:['geschenke'], sonne:['weihnachtsmuetze'], bea:'hut', spruch:["So viele Geschenke … sind die etwa alle für dich?! 🎁"]},
+   3:{kulisse:['berge','gondel'], bea:'beanie', spruch:["Heute geht's in die Berge! 🏔️","Gondelwetter! Ich fahr mit. 🚠"]},
+   4:{kulisse:['keksglas'], sonne:['schal'], bea:'hut', spruch:["Wer hat die Kekse gegessen?! 🍪👀","Ein Keks am Morgen vertreibt Kummer und Sorgen. 🍪"]},
+   5:{kulisse:['sturm'], sonne:['ohren','schal'], bea:'beanie', spruch:["SCHNEESTURM! Ich bin heute nur zu 20 % Sonne. 🥶","Bleib drinnen und kuschel dich ein! ❄️"]},
+   6:{},
+   7:{kulisse:['berge','piste','gondel'], bea:'ski', spruch:["Bahn frei! Mini Bea auf der Piste! ⛷️","Après Ski heute Abend? 😏"]},
+   8:{kulisse:['see'], bea:'schlittschuh', sonne:['ohren'], spruch:["Mini Bea übt für Olympia! ⛸️","Glatteiswarnung! Bea ist unterwegs! ⛸️"]},
+   9:{kulisse:['geschenke','keksglas'], sonne:['weihnachtsmuetze','schal'], bea:'hut', spruch:["Geschenke UND Kekse? Bester Tag! 🎁🍪"]},
+  10:{kulisse:['berge','sturm'], sonne:['bommelmuetze','schal'], bea:'beanie', spruch:["Sturm in den Bergen. Ich halt mich an meiner Mütze fest! 🌬️"]},
+  11:{kulisse:['berge','piste'], bea:'ski', spruch:["Schwarze Piste? Für Mini Bea kein Problem! ⛷️"]},
+  12:{kulisse:['see'], bea:'schlittschuh', sonne:['weihnachtsmuetze'], spruch:["Pirouette! Hast du das gesehen?! ⛸️✨"]},
+  13:{kulisse:['keksglas'], bea:'hut', sonne:['bommelmuetze'], spruch:["Plätzchenkontrolle! Glas noch voll? 🍪"]},
+  14:{kulisse:['berge','gondel'], sonne:['ohren','schal'], bea:'beanie', spruch:["Ab in die Gondel und nicht runtergucken! 🚠"]},
+  15:{kulisse:['geschenke'], sonne:['weihnachtsmuetze'], bea:'hut', spruch:["Der Geschenkestapel wird immer größer … 🎁👀"]},
+  16:{kulisse:['sturm'], sonne:['bommelmuetze','schal'], bea:'beanie', spruch:["Heute ist Kuscheltag wegen Schneesturm! ❄️"]},
+  17:{kulisse:['berge','piste','gondel'], bea:'ski', spruch:["Skiprofi Mini Bea im Anflug! ⛷️💨"]},
+  18:{kulisse:['see'], bea:'schlittschuh', sonne:['schal'], spruch:["Eiskunstlauffinale! Punktrichter? 10/10! ⛸️"]},
+  19:{kulisse:['keksglas','geschenke'], sonne:['weihnachtsmuetze'], bea:'hut', spruch:["Nur noch 5 Tage bis Weihnachten! 🎄"]},
+  20:{kulisse:['berge','gondel'], sonne:['ohren'], bea:'beanie', spruch:["Bergluft macht glücklich! 🏔️"]},
+  21:{kulisse:['sturm'], sonne:['bommelmuetze','schal'], bea:'beanie', spruch:["Längste Nacht des Jahres. Ab morgen wird's wieder heller. Dank mir. ☀️"]},
+  22:{kulisse:['berge','piste'], bea:'ski', spruch:["Letzte Abfahrt vor Weihnachten! ⛷️"]},
+  23:{kulisse:['geschenke','keksglas'], sonne:['weihnachtsmuetze','schal'], bea:'hut', spruch:["Morgen ist es soweit!!! 🎄🎁"]},
+  24:{kulisse:['geschenke','keksglas'], sonne:['weihnachtsmuetze'], bea:'hut'},
+  25:{kulisse:['geschenke'], sonne:['weihnachtsmuetze'], bea:'hut', spruch:["Frohe Weihnachten, Teil 2! 🎄"]},
+  26:{kulisse:['keksglas'], sonne:['schal'], bea:'hut', spruch:["Resteessen der Weihnachtskekse! 🍪"]},
+  27:{kulisse:['berge','piste'], bea:'ski', spruch:["Wintersport gegen die Weihnachtskilos! ⛷️😂"]},
+  28:{kulisse:['see'], bea:'schlittschuh', spruch:["Ein Runde Eislaufen? ⛸️"]},
+  29:{kulisse:['berge','gondel'], bea:'beanie', spruch:["Noch zwei Tage im alten Jahr! 🏔️"]},
+  30:{kulisse:['sturm'], sonne:['ohren','schal'], bea:'beanie', spruch:["Ich halte die Stellung, egal wie viel es schneit! ❄️"]},
+  31:{kulisse:['geschenke'], sonne:['weihnachtsmuetze'], bea:'hut'}
+};
+/* ===================================================== */
+
+const NS='http://www.w3.org/2000/svg';
+const now=new Date();
+const hash=location.hash.slice(1);   // Testmodus: #nikolaus #winter #weihnachten #fruehling #sommer #herbst #abend #besonders
+let month=now.getMonth(), hour=now.getHours();
+/* =====================================================================
+   SZENEN – Die Abenteuer von Mini Bea & Sonni (1.–24. Dezember)
+   ===================================================================== */
+const PROPS_SVG = {
+  koriander:`<svg viewBox="0 0 60 74"><rect x="8" y="16" width="44" height="54" rx="10" fill="#dff3e2" stroke="#9cc9a6" stroke-width="2"/><rect x="11" y="30" width="38" height="37" rx="7" fill="#6cbf62"/><rect x="6" y="6" width="48" height="13" rx="4" fill="#3f8f3f"/><rect x="13" y="36" width="34" height="20" rx="3" fill="#fff"/><text x="30" y="49" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="8.5" fill="#2f7d3a">Koriander</text><path d="M24 62 q6 -8 12 0 q-6 6 -12 0" fill="#2f7d3a"/></svg>`,
+  riegel:`<svg viewBox="0 0 100 34"><rect x="2" y="4" width="96" height="26" rx="6" fill="#fbf6ea" stroke="#d9cfb8" stroke-width="2"/><rect x="2" y="12" width="96" height="10" fill="#6b3f22"/><path d="M2 8 l4 -4 M98 8 l-4 -4 M2 26 l4 4 M98 26 l-4 4" stroke="#d9cfb8" stroke-width="2"/><text x="50" y="20.5" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="9" fill="#fff">KOKOS</text><circle cx="16" cy="17" r="6" fill="#8a5a33"/><circle cx="16" cy="17" r="3.5" fill="#fff"/></svg>`,
+  schneemann:`<svg viewBox="0 0 100 140"><circle cx="50" cy="108" r="30" fill="#fff" stroke="#dfe9f5" stroke-width="2"/><circle cx="50" cy="64" r="22" fill="#fff" stroke="#dfe9f5" stroke-width="2"/><circle cx="50" cy="28" r="17" fill="#fff" stroke="#dfe9f5" stroke-width="2"/><circle cx="44" cy="24" r="2.4" fill="#333"/><circle cx="56" cy="24" r="2.4" fill="#333"/><path d="M50 27 L66 30 L50 32 Z" fill="#ff8a3c"/><path class="sm-mund" d="M44 34 Q50 36 56 34" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/><path class="sm-grinsen" d="M41 32 Q50 42 59 32" stroke="#333" stroke-width="2.4" fill="none" stroke-linecap="round" style="display:none"/><circle cx="50" cy="58" r="2.4" fill="#333"/><circle cx="50" cy="68" r="2.4" fill="#333"/><path d="M28 60 L6 46 M72 60 L94 46 M12 50 l-6 -2 M88 50 l6 -2" stroke="#7a4a2a" stroke-width="3" stroke-linecap="round"/><path d="M34 44 Q50 52 66 44 L66 48 Q50 56 34 48 Z" fill="#e2483d"/><path d="M60 47 L64 62 L57 62 Z" fill="#e2483d"/></svg>`,
+  baum:`<svg viewBox="0 0 120 170"><rect x="52" y="148" width="16" height="20" fill="#6b4226"/><path d="M60 8 L104 150 L16 150 Z" fill="#2e7d5b" stroke="#2e7d5b" stroke-width="6" stroke-linejoin="round"/><path d="M60 8 L92 108 L28 108 Z" fill="#3a8f62"/><path d="M60 8 L80 66 L40 66 Z" fill="#46a06f"/><path d="M34 120 Q62 132 92 116 M40 82 Q62 92 84 78" stroke="#ffd84a" stroke-width="2.5" fill="none"/><circle cx="44" cy="96" r="5" fill="#e2483d"/><circle cx="74" cy="128" r="5.5" fill="#4a7bd0"/><circle cx="66" cy="58" r="4" fill="#ffd84a"/><circle cx="34" cy="136" r="5" fill="#ffd84a"/><circle cx="80" cy="100" r="4.5" fill="#ff8ad8"/><path d="M60 0 l3.5 7 7.5.8-5.6 5.1 1.5 7.4-6.9-3.9-6.9 3.9 1.5-7.4-5.6-5.1 7.5-.8z" fill="#ffd84a" stroke="#f0b400"/></svg>`,
+  struempfe:`<svg viewBox="0 0 60 60"><path d="M12 2 L22 2 L22 40 Q22 50 14 52 L6 52 Q2 50 4 46 L12 40 Z" fill="#1d1a1f"/><path d="M12 2 L22 2 L22 9 L12 9 Z" fill="#555" stroke="#888" stroke-dasharray="2 1.5"/><path d="M38 6 L48 6 L48 44 Q48 54 40 56 L32 56 Q28 54 30 50 L38 44 Z" fill="#1d1a1f"/><path d="M38 6 L48 6 L48 13 L38 13 Z" fill="#555" stroke="#888" stroke-dasharray="2 1.5"/></svg>`,
+  haufen:`<svg viewBox="0 0 140 100"><g class="winke-l"><path d="M44 52 L30 22" stroke="#ffb13d" stroke-width="8" stroke-linecap="round"/><circle cx="29" cy="19" r="6" fill="#ffb13d"/></g><g class="winke-r"><path d="M96 52 L110 22" stroke="#ffb13d" stroke-width="8" stroke-linecap="round"/><circle cx="111" cy="19" r="6" fill="#ffb13d"/></g><path d="M4 98 Q10 46 50 44 Q70 30 92 46 Q132 50 136 98 Z" fill="#fff" stroke="#dbe7f4" stroke-width="2"/><circle cx="40" cy="70" r="5" fill="#eef4fb"/><circle cx="90" cy="62" r="7" fill="#eef4fb"/></svg>`,
+  tisch:`<svg viewBox="0 0 140 70"><rect x="4" y="4" width="132" height="12" rx="4" fill="#a8693a"/><rect x="4" y="14" width="132" height="4" fill="#8a542c"/><rect x="14" y="18" width="9" height="50" fill="#8a542c"/><rect x="117" y="18" width="9" height="50" fill="#8a542c"/></svg>`,
+  schuessel:`<svg viewBox="0 0 80 46"><circle class="nuss" cx="22" cy="18" r="7" fill="#c98a4b"/><circle class="nuss" cx="36" cy="13" r="7.5" fill="#d9a15e"/><circle class="nuss" cx="50" cy="16" r="7" fill="#b8763c"/><circle class="nuss" cx="60" cy="21" r="6" fill="#d9a15e"/><circle cx="28" cy="20" r="6" fill="#b8763c"/><path d="M6 22 L74 22 Q70 44 40 44 Q10 44 6 22 Z" fill="#4a7bd0"/><path d="M12 28 L68 28" stroke="#7fa6e6" stroke-width="2"/></svg>`,
+  stiefel:`<svg viewBox="0 0 100 60"><g><path d="M8 8 L30 8 L30 38 Q48 38 48 50 Q48 58 40 58 L8 58 Z" fill="#d63b3b"/><rect x="5" y="2" width="28" height="10" rx="5" fill="#fff"/></g><g transform="translate(50 0)"><path d="M8 8 L30 8 L30 38 Q48 38 48 50 Q48 58 40 58 L8 58 Z" fill="#d63b3b"/><rect x="5" y="2" width="28" height="10" rx="5" fill="#fff"/></g></svg>`,
+  schokomann:`<svg viewBox="0 0 60 80"><g class="winke-r" style="transform-origin:42px 40px"><path d="M42 40 L54 22" stroke="#6b3a1e" stroke-width="7" stroke-linecap="round"/></g><path d="M18 40 L8 54" stroke="#6b3a1e" stroke-width="7" stroke-linecap="round"/><rect x="18" y="34" width="24" height="32" rx="10" fill="#7a4424"/><rect x="20" y="62" width="8" height="16" rx="4" fill="#6b3a1e"/><rect x="32" y="62" width="8" height="16" rx="4" fill="#6b3a1e"/><circle cx="30" cy="22" r="14" fill="#7a4424"/><circle cx="25" cy="20" r="2.2" fill="#fff"/><circle cx="35" cy="20" r="2.2" fill="#fff"/><path d="M24 27 Q30 32 36 27" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M22 44 h16 M22 50 h16" stroke="#9a5a32" stroke-width="2"/><path d="M16 10 Q30 -2 44 10 L40 12 Q30 6 20 12 Z" fill="#3f9b6b"/></svg>`,
+  topf:`<svg viewBox="0 0 90 70"><path class="dampf" d="M30 20 q-6 -8 0 -16 M45 18 q-6 -8 0 -16 M60 20 q-6 -8 0 -16" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/><rect x="10" y="26" width="70" height="42" rx="8" fill="#9aa6b2"/><rect x="6" y="22" width="78" height="8" rx="4" fill="#7b8794"/><rect x="0" y="34" width="12" height="6" rx="3" fill="#56606b"/><rect x="78" y="34" width="12" height="6" rx="3" fill="#56606b"/><path d="M20 40 h50" stroke="#b9c3cc" stroke-width="3"/></svg>`,
+  spaghetti:`<svg viewBox="0 0 110 50"><path d="M10 16 q10 -14 20 0 q10 -14 20 0 q10 -14 20 0 q10 -14 20 0" stroke="#f2c94c" stroke-width="4" fill="none"/><path d="M16 20 q10 -12 20 0 q10 -12 20 0 q10 -12 20 0 q10 -10 18 0" stroke="#e8b93a" stroke-width="4" fill="none"/><ellipse cx="55" cy="16" rx="18" ry="6" fill="#c0392b"/><path d="M4 20 L106 20 Q100 48 55 48 Q10 48 4 20 Z" fill="#fff" stroke="#e3e3e3" stroke-width="2"/><path d="M14 28 L96 28" stroke="#4a7bd0" stroke-width="3"/></svg>`,
+  cremetiegel:`<svg viewBox="0 0 60 40"><rect x="6" y="14" width="48" height="24" rx="6" fill="#fff" stroke="#ddd" stroke-width="2"/><rect x="4" y="6" width="52" height="10" rx="4" fill="#7fb8e6"/><text x="30" y="31" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="8" fill="#7fb8e6">CREME</text></svg>`,
+  liege:`<svg viewBox="0 0 160 60"><path d="M6 34 L120 34 L150 12" stroke="#7a4a2a" stroke-width="6" fill="none" stroke-linecap="round"/><rect x="6" y="26" width="118" height="10" rx="5" fill="#8fd3c7"/><path d="M118 30 L148 8" stroke="#8fd3c7" stroke-width="10" stroke-linecap="round"/><path d="M20 36 L14 58 M110 36 L116 58" stroke="#7a4a2a" stroke-width="5" stroke-linecap="round"/></svg>`,
+  mistel:`<svg viewBox="0 0 60 120"><path d="M30 0 L30 82" stroke="#c0392b" stroke-width="2"/><path d="M30 80 Q14 76 8 90 Q22 94 30 84 Q38 94 52 90 Q46 76 30 80" fill="#3f9b6b"/><path d="M30 84 Q20 96 22 110 Q32 100 30 86 Q40 98 38 110 Q28 100 30 84" fill="#2e7d5b"/><circle cx="26" cy="86" r="4" fill="#fff" stroke="#ddd"/><circle cx="34" cy="87" r="4" fill="#fff" stroke="#ddd"/><circle cx="30" cy="91" r="4" fill="#fff" stroke="#ddd"/><path d="M24 78 q6 -8 12 0" stroke="#e2483d" stroke-width="4" fill="none"/></svg>`,
+  schokohaus:`<svg viewBox="0 0 110 110"><rect x="16" y="50" width="78" height="58" fill="#7a4424"/><path d="M16 50 h78 M16 70 h78 M16 90 h78 M42 50 v58 M68 50 v58" stroke="#9a5a32" stroke-width="2"/><rect x="46" y="76" width="18" height="32" rx="2" fill="#5a3014"/><g transform="rotate(-9 55 40)"><path d="M4 54 L55 12 L106 54 Z" fill="#8a542c"/><path d="M18 42 L92 42 M30 32 L80 32" stroke="#a8693a" stroke-width="2"/></g><circle cx="80" cy="66" r="4" fill="#fff"/></svg>`,
+  truemmer:`<svg viewBox="0 0 130 50"><rect x="6" y="30" width="34" height="16" fill="#7a4424" transform="rotate(-12 23 38)"/><rect x="40" y="34" width="30" height="14" fill="#8a542c" transform="rotate(8 55 40)"/><rect x="70" y="28" width="36" height="18" fill="#7a4424" transform="rotate(-6 88 37)"/><rect x="30" y="18" width="26" height="14" fill="#8a542c" transform="rotate(22 43 25)"/><rect x="96" y="36" width="24" height="12" fill="#5a3014" transform="rotate(14 108 42)"/><path d="M50 18 L80 6 L100 22 Z" fill="#8a542c"/></svg>`,
+  duschgel:`<svg viewBox="0 0 40 90"><rect x="17" y="2" width="6" height="14" fill="#555"/><rect x="10" y="2" width="20" height="5" rx="2" fill="#555"/><rect x="11" y="14" width="18" height="10" rx="3" fill="#ddd"/><rect x="4" y="22" width="32" height="66" rx="10" fill="#3fb8b0"/><rect x="9" y="38" width="22" height="30" rx="4" fill="#fff"/><text x="20" y="56" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="7" fill="#3fb8b0">GEL</text></svg>`,
+  spinat:`<svg viewBox="0 0 90 40"><path d="M18 20 Q22 4 44 6 Q66 4 72 20 Z" fill="#3f8f3f"/><path d="M26 16 q8 -6 16 0 M46 14 q8 -6 16 0" stroke="#2e6b2e" stroke-width="2" fill="none"/><ellipse cx="45" cy="24" rx="42" ry="10" fill="#fff" stroke="#e3e3e3" stroke-width="2"/><ellipse cx="45" cy="22" rx="30" ry="5" fill="#3f8f3f"/></svg>`,
+  hantel:`<svg viewBox="0 0 80 30"><rect x="14" y="12" width="52" height="6" rx="3" fill="#888"/><rect x="4" y="3" width="12" height="24" rx="3" fill="#333"/><rect x="64" y="3" width="12" height="24" rx="3" fill="#333"/></svg>`,
+  anhaenger:`<svg viewBox="0 0 40 70"><circle cx="20" cy="10" r="8" fill="none" stroke="#c9c9c9" stroke-width="3"/><rect x="17" y="16" width="6" height="8" fill="#3f9b6b"/><path d="M12 30 Q12 22 20 22 Q28 22 28 30 L28 62 Q28 68 20 68 Q12 68 12 62 Z" fill="#e2483d"/><rect x="14" y="38" width="12" height="14" rx="2" fill="#fff"/><path d="M20 41 q-3 4 0 8 q3 -4 0 -8" fill="#3f9b6b"/></svg>`,
+  sofa:`<svg viewBox="0 0 240 110"><rect x="10" y="30" width="220" height="50" rx="18" fill="#4f8a8b"/><rect x="0" y="50" width="34" height="52" rx="14" fill="#3f7273"/><rect x="206" y="50" width="34" height="52" rx="14" fill="#3f7273"/><rect x="26" y="62" width="188" height="34" rx="10" fill="#5fa3a4"/><rect x="20" y="96" width="10" height="12" fill="#5a3014"/><rect x="210" y="96" width="10" height="12" fill="#5a3014"/></svg>`,
+  decke:`<svg viewBox="0 0 200 50"><path d="M4 8 Q100 -4 196 8 L190 46 Q100 54 10 46 Z" fill="#e2483d"/><path d="M20 10 L16 46 M60 6 L58 48 M100 4 L100 50 M140 6 L142 48 M180 10 L184 46" stroke="#f7c6c1" stroke-width="3"/><path d="M8 26 Q100 18 192 26" stroke="#f7c6c1" stroke-width="3" fill="none"/></svg>`,
+  teller:`<svg viewBox="0 0 130 44"><ellipse cx="65" cy="32" rx="62" ry="11" fill="#fff" stroke="#e3e3e3" stroke-width="2"/><g class="keks"><rect x="16" y="14" width="26" height="16" rx="3" fill="#c9843f"/><path d="M20 18 h18 M20 22 h18 M20 26 h18" stroke="#a86a2c" stroke-width="1"/></g><g class="keks"><rect x="38" y="8" width="26" height="16" rx="3" fill="#d4914a" transform="rotate(-8 51 16)"/></g><g class="keks"><rect x="58" y="14" width="26" height="16" rx="3" fill="#c9843f"/><path d="M62 18 h18 M62 22 h18 M62 26 h18" stroke="#a86a2c" stroke-width="1"/></g><g class="keks"><rect x="78" y="8" width="26" height="16" rx="3" fill="#d4914a" transform="rotate(10 91 16)"/></g><g class="keks"><rect x="92" y="16" width="24" height="14" rx="3" fill="#c9843f"/></g><circle class="kruemel" cx="64" cy="30" r="2" fill="#a86a2c" style="display:none"/></svg>`,
+  kiste:`<svg viewBox="0 0 100 80"><path d="M10 30 L-4 14 L28 14 L36 30 Z" fill="#d9a96a"/><path d="M90 30 L104 14 L72 14 L64 30 Z" fill="#d9a96a"/><rect x="10" y="30" width="80" height="48" fill="#c8924f"/><path d="M10 30 h80" stroke="#a87436" stroke-width="3"/><path d="M42 46 h16" stroke="#8a5a2b" stroke-width="3" stroke-linecap="round"/><text x="50" y="66" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="10" fill="#7a4a1e">KREMPEL</text></svg>`,
+  flasche:`<svg viewBox="0 0 30 60"><rect x="11" y="0" width="8" height="10" fill="#3f9b6b"/><path d="M6 20 Q6 10 15 10 Q24 10 24 20 L24 54 Q24 58 15 58 Q6 58 6 54 Z" fill="#e2483d"/><rect x="8" y="28" width="14" height="14" rx="2" fill="#fff"/></svg>`,
+  schluesselbund:`<svg viewBox="0 0 40 50"><circle cx="20" cy="8" r="7" fill="none" stroke="#b8b8b8" stroke-width="3"/><g transform="rotate(-15 20 14)"><rect x="10" y="14" width="6" height="22" rx="2" fill="#d4a017"/><circle cx="13" cy="16" r="6" fill="#d4a017"/><path d="M16 28 h4 M16 32 h3" stroke="#d4a017" stroke-width="2"/></g><g transform="rotate(18 20 14)"><rect x="23" y="14" width="6" height="24" rx="2" fill="#9aa6b2"/><circle cx="26" cy="16" r="6" fill="#9aa6b2"/><path d="M29 30 h4 M29 34 h3" stroke="#9aa6b2" stroke-width="2"/></g></svg>`,
+  auto:`<svg viewBox="0 0 210 85"><path d="M14 62 Q10 40 34 38 L60 36 Q70 22 92 22 L118 22 Q128 22 134 34 L176 38 Q200 40 200 58 L200 66 Q200 70 194 70 L18 70 Q12 70 14 62 Z" fill="#e2483d"/><path d="M134 34 L150 12 L156 12 L142 36" fill="none" stroke="#9fd3f5" stroke-width="5" stroke-linecap="round"/><path d="M20 52 H196" stroke="#c0392b" stroke-width="2"/><rect x="186" y="46" width="12" height="7" rx="3" fill="#fff6c2"/><rect x="12" y="48" width="8" height="6" rx="2" fill="#ff9a9a"/><circle cx="52" cy="70" r="14" fill="#2b2b2b"/><circle cx="52" cy="70" r="6" fill="#c9c9c9"/><circle cx="162" cy="70" r="14" fill="#2b2b2b"/><circle cx="162" cy="70" r="6" fill="#c9c9c9"/><path d="M60 44 h70" stroke="#fff" stroke-width="2" opacity=".5"/><text x="105" y="64" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="10" fill="#fff">SALMI 1</text></svg>`,
+  nikostiefel:`<svg viewBox="0 0 100 100"><ellipse cx="50" cy="96" rx="40" ry="4" fill="#000" opacity=".08"/><path d="M26 28 L58 28 L58 64 Q86 62 90 80 Q92 94 78 94 L30 94 Q24 94 24 88 Z" fill="#d63b3b"/><path d="M58 64 Q86 62 90 80" stroke="#b02a2a" stroke-width="2" fill="none"/><path d="M24 86 L86 86" stroke="#2b2420" stroke-width="7" stroke-linecap="round"/><rect x="50" y="81" width="12" height="10" rx="2" fill="none" stroke="#d4a017" stroke-width="2.5"/><g fill="#fff"><circle cx="24" cy="26" r="7"/><circle cx="33" cy="22" r="8"/><circle cx="43" cy="23" r="8"/><circle cx="53" cy="22" r="7.5"/><circle cx="60" cy="26" r="6.5"/><rect x="22" y="22" width="40" height="12" rx="6"/></g><path d="M32 46 l4 -6 4 6 -4 6z" fill="#ffd84a" opacity=".85"/><circle cx="44" cy="58" r="2" fill="#fff" opacity=".7"/><circle cx="36" cy="70" r="1.6" fill="#fff" opacity=".7"/></svg>`,
+  lebkuchen:`<svg viewBox="0 0 80 70"><defs><mask id="biss"><rect width="80" height="70" fill="#fff"/><circle id="bisskreis" cx="62" cy="14" r="0" fill="#000"/></mask></defs><g mask="url(#biss)"><path d="M40 64 C10 44 4 26 14 14 C24 2 38 8 40 18 C42 8 56 2 66 14 C76 26 70 44 40 64 Z" fill="#b5713a"/><path d="M40 58 C16 42 10 28 18 18 C26 9 37 14 40 22 C43 14 54 9 62 18 C70 28 64 42 40 58 Z" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="3 3"/><path id="srirachaherz" d="M40 48 C26 38 24 30 29 25 C34 20 39 24 40 28 C41 24 46 20 51 25 C56 30 54 38 40 48 Z" fill="none" stroke="#e2231a" stroke-width="4" stroke-linejoin="round" stroke-dasharray="90" stroke-dashoffset="90"/></g></svg>`
+};
+// Eigene HTML-Requisiten (Schilder, Stände, Vorhänge)
+const PROPS_HTML = {
+  tv:`<div class="tv"><div class="screen"><div class="assi">ASSI TV</div><div class="live">● LIVE</div><div class="drama">😱🤬💅</div></div><div class="fuss"></div></div>`,
+  hinweisschild:`<div class="hschild"><div class="brett2">Modernes<br>Wohnkonzept ✨</div><div class="stab"></div></div>`,
+  gutschein:`<div class="gutschein"><div class="g1">GUTSCHEIN</div><div class="g2">Museum 🚗</div><div class="g3">für Salmi ❤️</div></div>`,
+  banner:`<div class="banner"><div class="seil l"></div><div class="seil r"></div><div class="lichter"></div><div class="etikett"><div class="est">EST. 2026</div><div class="name">Salmis</div><div class="linie"></div><div class="dorf">WEIHNACHTSDORF</div><div class="klein">Einwohner: 1 Salmi + 2 Chaoten</div></div><div class="schleife">🎀</div></div>`,
+  schild:`<div class="schild"><div class="pfosten l"></div><div class="pfosten r"></div><div class="etikett"><div class="est">EST. 2026</div><div class="name">Salmis</div><div class="linie"></div><div class="dorf">WEIHNACHTSDORF</div><div class="klein">Einwohner: 1 Salmi + 2 Chaoten</div></div><div class="schleife">🎀</div></div>`,
+  waffelstand:`<div class="stand"><div class="markise"></div><div class="standschild">Sonnis Waffelstube</div><div class="theke"></div></div>`,
+  restaurant:`<div class="stand"><div class="markise gruen"></div><div class="standschild wende">Sonnis Sternerestaurant ⭐</div><div class="theke"></div></div>`,
+  vorhang:`<div class="vorhang"><div class="stange"></div><div class="tuch"></div></div>`,
+  laufsteg:`<div class="laufsteg"></div>`,
+  werkbank:`<div class="werkbank"><div class="platte"></div><div class="bein l"></div><div class="bein r"></div><div class="werkzeug">🔧🔨🪛</div></div>`,
+  krempel:`<div class="krempel"></div>`
+};
+
+let SZ_AKTIV=false;
+const prs={};
+function Prop(name, art, w, h, cx, bottom, z=3){
+  const d=document.createElement('div'); d.className='prop';
+  d.innerHTML = PROPS_SVG[art] || PROPS_HTML[art] || `<div class="emo">${art}</div>`;
+  d.style.width=w+'px'; d.style.height=h+'px'; d.style.zIndex=z;
+  if(!PROPS_SVG[art] && !PROPS_HTML[art]) d.style.fontSize=(h*.9)+'px';
+  document.body.appendChild(d);
+  const p={el:d,x:cx,y:bottom,w,h,rot:0,s:1,o:1,flip:1}; prs[name]=p; setP(p); return p;
+}
+function setP(p){ p.el.style.transform=`translate(${p.x-p.w/2}px,${p.y-p.h}px) rotate(${p.rot}deg) scale(${p.s*p.flip},${p.s})`; p.el.style.opacity=p.o; }
+function tw(dur,fn,ease=t=>t){return animiere(dur,t=>fn(ease(t)));}
+const ein=t=>1-Math.pow(1-t,3), rein3=t=>t*t;
+async function pop(p){ p.s=0; setP(p); await tw(380,t=>{p.s=t<.7?t/.7*1.15:1.15-(t-.7)/.3*.15; setP(p);}); }
+async function propTo(p,tx,ty,dur=600,arc=0,drehung=0){ const fx=p.x,fy=p.y,fr=p.rot;
+  await tw(dur,t=>{p.x=fx+(tx-fx)*t; p.y=fy+(ty-fy)*t-arc*4*t*(1-t); p.rot=fr+drehung*t; setP(p);}); }
+async function weg(p,dur=300){ const o=p.o; await tw(dur,t=>{p.o=o*(1-t); setP(p);}); p.el.style.display='none'; }
+async function wackel(p,n=3,deg=8){ await tw(140*n*2,t=>{p.rot=Math.sin(t*Math.PI*2*n)*deg; setP(p);}); p.rot=0; setP(p); }
+const zs=(id,an=true)=>{const e=document.getElementById(id); if(e) e.style.display=an?'':'none';};
+
+// Figuren
+let beaX=0, beaY=0, beaFlip=1, beaS=1, beaHub=0, sunHub=0, sunS=1;
+function setBea(){ bea.style.transform=`translate(${beaX}px,${beaY-beaH}px) rotate(${beaRot}deg) scale(${beaFlip*beaS},${beaS})`; }
+const bodenBea=()=>groundY()-beaHub;
+let beaId=0;
+async function beaTo(tx,h=H()*.08,dur=450,ty=null){ const id=++beaId, fx=beaX, fy=beaY, zy=ty??bodenBea(); dur*=1.12;
+  await tw(dur,t=>{ if(id!==beaId) return; const e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2; beaX=fx+(tx-fx)*e; beaY=fy+(zy-fy)*e-h*4*t*(1-t); setBea(); place();}); }
+let winkT; function beaWinkt(ms=2600){ document.getElementById('arm-winkt').style.display=''; document.getElementById('arm-unten').style.display='none'; clearTimeout(winkT); winkT=setTimeout(()=>{ document.getElementById('arm-winkt').style.display='none'; document.getElementById('arm-unten').style.display=''; },ms); }
+function beaJump(){ bea.classList.remove('jump'); void bea.offsetWidth; bea.classList.add('jump'); }
+async function sonniTo(tx,h=H()*.08,dur=450){ await hop(tx,h,dur); }
+const RAND=()=>(SZ&&SZ.ort==='buehne')?W()*.13:0;
+const L=()=>6+RAND(), R=()=>W()-size-6-RAND(), M=()=>(L()+beaW+R())/2;
+const beaMx=()=>beaX+beaW/2, sunMx=()=>x+size/2;
+const dauer=t=>Math.max(1900, t.replace(/<[^>]+>/g,'').length*55+600);
+let LEB_AUS=false;
+function lebendig(wer,t){
+  if(LEB_AUS) return;
+  if(wer==='sonne' && (rot!==0||sunS!==1)) return;
+  if(wer==='bea' && (Math.abs(beaRot)>20||beaS!==1)) return;
+  const txt=t.replace(/<[^>]+>/g,''), gross=(txt.match(/[A-ZÄÖÜ]/g)||[]).length, klein=(txt.match(/[a-zäöüß]/g)||[]).length;
+  const lacht=/HAHA/i.test(txt), laut=/!!/.test(txt)||(gross>4&&gross>klein), frage=/\?\s*\S*$/.test(txt)&&!laut;
+  if(wer==='sonne'){
+    if(lacht){ (async()=>{ for(let i=0;i<3;i++){ if(hopping) break; await hop(x,H()*.035,220);} })(); funken(sunMx(),y-size*.8,4,['😂','✨'],.8); }
+    else if(laut){ if(!hopping) hop(x,H()*.07,380); }
+    else if(frage){ (async()=>{ await tw(250,t=>{rot=-9*t; place();}); await sleep(700); await tw(250,t=>{rot=-9*(1-t); place();}); })(); }
+  } else {
+    if(lacht){ beaJump(); setTimeout(beaJump,450); funken(beaMx(),beaY-beaH*.9,4,['😂','✨'],.8); }
+    else if(laut){ beaJump(); }
+    else if(frage){ (async()=>{ await tw(250,t=>{beaRot=-8*t; setBea();}); await sleep(700); await tw(250,t=>{beaRot=-8*(1-t); setBea();}); })(); }
+  }
+}
+async function S(t){ sprecher='sonne'; say(t,0); if(SZ_AKTIV) lebendig('sonne',t); await sleep(dauer(t)); }
+async function B(t){ sprecher='bea'; say(t,0); place(); if(/hallo|hey!|guten morgen|tschüss|bis morgen/i.test(t)) beaWinkt(); if(SZ_AKTIV) lebendig('bea',t); await sleep(dauer(t)); }
+function still(){ bubble.classList.remove('show'); }
+const funken=(cx,cy,n,em,w=1)=>sparks(cx,cy,n,em,w);
+
+async function reinBeide(beaAuch=true){
+  x=W()+20; y=groundY()-sunHub; place();
+  beaX=-beaW-30; beaY=bodenBea(); setBea();
+  if(beaAuch){ bea.style.opacity='1'; beaWinkt(3200); }
+  const a=(async()=>{ await hop((W()+20+R())/2,H()*.09,420); await hop(R(),H()*.09,420); })();
+  const b=beaAuch?(async()=>{ await beaTo((L()-beaW-30)/2,H()*.09,420); await beaTo(L(),H()*.09,420); })():null;
+  await Promise.all([a,b]);
+}
+function spitzname(){ const d=dezTag||new Date().getDate(); return d%7===3 ? 'Michael J Jackson 🕺' : d%3===0 ? 'Salmönchen' : 'Salmi'; }
+async function gruss(){
+  const d=dezTag||new Date().getDate();
+  await S(d%4===2 ? `<big>Salami Aluminium, ${spitzname()} ☀️</big>` : `<big>Guten Morgen, ${spitzname()} ☀️</big>`);
+}
+async function szeneEnde(){
+  still(); await sleep(400);
+  SZ_AKTIV=false; sprecher='sonne';
+  setTimeout(()=>tap.classList.add('show'),800);
+  planeUntergang(2200);
+}
+
+/* ----------------------- Die 24 Abenteuer ----------------------- */
+const SZENEN = {
+ 1:{ort:'draussen', kulisse:['kraftdorf'], ohneSchneemann:true, himmel:'morgenrot', sonne:['bommelmuetze','schal'], async lauf(){
+    x=W()+20; place(); bea.style.opacity='0';
+    await hop((W()+R())/2,H()*.14,380); await hop(R(),H()*.14,380);
+    beaX=-beaW-30; beaY=bodenBea(); setBea(); bea.style.opacity='1';
+    beaTo((L()-beaW-30)/2,H()*.08,400).then(()=>beaTo(L(),H()*.08,400));
+    await S('<big>SALMIIII 🎉</big>');
+    await B('Halloooo 🥹');
+    for(const t of ['Also ich hab die Häuser gebastelt','und die Lichterkette und die Schleife','und das Schild und','und dann hab ich gedacht','und und und']){ sprecher='bea'; say(t,0); place(); beaJump(); await sleep(820); }
+    await S('Bea. Atmen. 😮‍💨');
+    await B('HAHAHA sorry');
+    const bw=W()*.78; document.documentElement.style.setProperty('--bw',bw+'px');
+    const sch=Prop('schild','banner',bw,bw*.52,W()/2,-bw,2); propTo(sch,W()/2,H()*.42,900,0);
+    await S('Wir wohnen jetzt hier!');
+    await B('Also nur 24 Tage');
+    still(); await hop(R()-size*.15,H()*.16,420); funken(W()*.78,H()*.55,6,['🏠','✨','💛']); await hop(R(),H()*.1,380);
+    await S('Ich hab mir schon ein Haus ausgesucht 🏠');
+    await B('Sonni, da sind Salmis Geschenke drin 🎁');
+    await S('Achso');
+    still(); await sleep(900);
+    await S('Und wo schlafen wir dann? 🤔');
+    await B('HAHAHAHA');
+    still(); const k=Prop('kor','koriander',size*.42,size*.52,beaMx()+beaW*.48,beaY-beaH*.28,5); await pop(k); funken(k.x,k.y-size*.3,6,['✨','🌿']);
+    await S('Ist das unser Frühstück? 😋');
+    await B('Nein ey, das ist für Salmi');
+    await S('Boah hier ist echt alles für Salmi 😤');
+    await szeneEnde();
+ }},
+ 2:{ort:'draussen', kulisse:['wald'], ohneSchneemann:true, bea:'hut', sonne:['schal'], async lauf(){
+    const sm=Prop('sm','schneemann',size*.8,size*1.1,M(),groundY()+4,3);
+    await reinBeide(); await gruss();
+    await hop(M()+size*.32,H()*.06,420);
+    await S('Bea guck mal, der hat voll Hunger 🥺');
+    await B('Alter Sonni, das ist ein Schneemann');
+    still(); const r=Prop('rg','riegel',size*.5,size*.17,sunMx()-size*.6,y-size*.22,5); await pop(r);
+    await propTo(r,M()+size*.04,groundY()-size*.76,450,size*.12); funken(M(),groundY()-size*.8,5,['😋','✨']);
+    await B('NEIN DER IST FÜR SALMI');
+    still(); sm.el.querySelector('.sm-mund').style.display='none'; sm.el.querySelector('.sm-grinsen').style.display='';
+    funken(M(),groundY()-size*.9,6,['✨','💛']); await sleep(700);
+    sm.el.style.transformOrigin='50% 100%';
+    await Promise.all([tw(800,t=>{sm.rot=-85*t; setP(sm);},rein3), propTo(r,M()-size*.55,groundY()-6,800,size*.1,-200)]);
+    funken(M()-size*.45,groundY()-10,12,['❄️','💨'],1.3);
+    await S('ups 😳');
+    await B('HAHAHA okay das erzählen wir ihm nicht');
+    await szeneEnde();
+ }},
+ 3:{ort:'draussen', kulisse:['berge','gondel'], bea:'hut', sonne:['weihnachtsmuetze'], async lauf(){
+    const bm=Prop('baum','baum',size*1.0,size*1.42,M(),groundY()+6,2);
+    await reinBeide(); await gruss();
+    still(); const st=Prop('st','struempfe',size*.34,size*.34,sunMx()-size*.6,y-size*.15,5); await pop(st);
+    await hop(M()+size*.35,H()*.12,450);
+    await propTo(st,M()+size*.16,groundY()-size*.55,450,size*.25); funken(st.x,st.y-size*.2,4,['✨']);
+    await hop(R(),H()*.08,400);
+    await B('Sonni was machst du da 😳');
+    await S('Dekorieren ✨');
+    await B('Mit DEN Strümpfen?? HAHAHA');
+    wackel(st,3,8);
+    await S('Sind doch Weihnachtsstrümpfe 🧦');
+    await B('Ähm nein, die sind für Salmi 🤭');
+    still(); await hop(M()+size*.4,H()*.05,400); await sleep(600);
+    await S('Soll ich die Unterwäsche auch noch dranhängen? 👀');
+    await B('SONNI NEIN HAHAHA');
+    still(); await beaTo(M()-size*.2-beaW*.6); await propTo(st,beaMx(),beaY-beaH*.4,350,size*.1); weg(st,200); await beaTo(L());
+    await szeneEnde();
+ }},
+ 4:{ort:'draussen', kulisse:['berge','piste'], bea:'beanie', sonne:['ohren','schal'], async lauf(){
+    await reinBeide(); await gruss();
+    still(); const sb=Prop('sb','⚪',size*.18,size*.18,sunMx()-size*.6,y-size*.25,5);
+    await propTo(sb,beaMx(),beaY-beaH*.82,550,size*.4); weg(sb,100); funken(beaMx(),beaY-beaH*.82,10,['❄️','💥']);
+    await B('HEY!');
+    await S('hihi 🤭');
+    still(); const gb=Prop('gb','⚪',size*.85,size*.85,beaMx()+beaW*.45,beaY-beaH*.35,5); gb.el.querySelector('.emo').style.filter='drop-shadow(0 4px 0 #dbe7f4)';
+    gb.s=.15; setP(gb); await tw(1100,t=>{gb.s=.15+.85*t; setP(gb);}); funken(gb.x,gb.y-size*.5,6,['❄️']);
+    await S('Bea, der ist bisschen groß');
+    await B('Findest du? 😇');
+    actor.style.filter='brightness(1.25) saturate(1.4)'; funken(sunMx(),y-size*.6,8,['🔥','✨']);
+    await S('Egal, ich bin eine Sonne, ich schmelz den eh 😎');
+    still(); actor.style.filter='';
+    await propTo(gb,sunMx(),y+size*.1,700,size*.7,-120);
+    actor.style.opacity='0'; weg(gb,150);
+    const hf=Prop('hf','haufen',size*1.2,size*.9,sunMx(),groundY()+4,4); hf.el.classList.add('wink');
+    funken(sunMx(),groundY()-size*.4,16,['❄️','💨'],1.4); await sleep(700);
+    await S('hat nicht geklappt');
+    await B('HAHAHAHA');
+    still(); for(let i=0;i<5;i++){ funken(sunMx(),groundY()-size*.5,3,['💨','💧'],.8); hf.s=1-i*.15; setP(hf); await sleep(220); }
+    await weg(hf,250); actor.style.opacity='1'; funken(sunMx(),y-size*.5,10,['💧','✨']);
+    await hop(R(),H()*.15,450);
+    await szeneEnde();
+ }},
+ 5:{ort:'drinnen', raum:'wohnzimmer', bea:'hut', sonne:[], async lauf(){
+    const ti=Prop('ti','tisch',size*1.05,size*.52,M(),groundY()+2,2);
+    await reinBeide(); await gruss();
+    await beaTo(M()-size*.35-beaW*.6);
+    const sch=Prop('sch','schuessel',size*.6,size*.34,M(),groundY()-size*.47,3); await pop(sch);
+    await beaTo(L(),H()*.05,450);
+    const tv=Prop('tv','tv',size*1.05,size*.75,W()*.5,groundY()-size*1.85,1); await pop(tv);
+    await B('Samstag heißt Assi TV 📺');
+    await S('JAAA endlich 🤩');
+    await B('Sonni, die sind für Salmi 🥜');
+    await S('Jaja');
+    still(); beaFlip=-1; setBea(); await sleep(400);
+    await hop(M()+size*.1,H()*.08,380); funken(M(),groundY()-size*.6,4,['🥜']); await hop(R(),H()*.08,380);
+    beaFlip=1; setBea(); await sleep(300);
+    await B('Hast du grad einen gegessen? 🤨');
+    let kau=true; (async()=>{ while(kau){ await tw(260,t=>{sunS=1+Math.sin(t*Math.PI)*.05; place();}); } sunS=1; place(); })();
+    await S('Nein');
+    await B('Du kaust');
+    await S('Ich kau manchmal einfach so 😇');
+    kau=false;
+    await B('HAHAHA');
+    still(); const kr=Prop('kr','🟤',size*.07,size*.07,sunMx()-size*.05,y-size*.38,6);
+    await propTo(kr,sunMx()-size*.12,groundY(),500); await sleep(300);
+    await S('Beweismittel vernichten 🕵️');
+    funken(sunMx()-size*.2,groundY()-10,5,['💨'],1); await propTo(kr,-40,groundY()-size*.3,600,size*.2,360);
+    await szeneEnde();
+ }},
+ 6:{ort:'draussen', kulisse:['dorf'], himmel:'morgenrot', bea:'hut', sonne:['weihnachtsmuetze'], async lauf(){
+    const sf=Prop('sf','nikostiefel',size*.62,size*.62,M(),groundY()+2,3);
+    const sk=Prop('sk','schokomann',size*.32,size*.42,M(),groundY()-size*.2,2); sk.o=0; setP(sk);
+    await reinBeide();
+    await S('<big>LAUSI LAUSI LAUSI OHHHH HEUTE IST NIKOLAUSI 🎅</big>');
+    await B('HAHAHA guten Morgen');
+    await S('Der Nikolaus war da!!');
+    still(); await Promise.all([beaTo(M()-size*.32-beaW*.7), hop(M()+size*.36,H()*.08,450)]);
+    sk.o=1; await propTo(sk,M(),groundY()-size*.38,500,size*.12); sk.el.classList.add('wink'); funken(M(),groundY()-size*.7,8,['🍫','✨']);
+    await B('Omg was ist das denn 😱');
+    await S('Der Nikolaus?');
+    await B('Der ist aber voll klein geworden');
+    await S('Bestimmt zu heiß gewaschen 🧺');
+    await B('HAHAHA');
+    await szeneEnde();
+ }},
+ 7:{ort:'draussen', kulisse:['markt'], ohneSchneemann:true, bea:'beanie', sonne:['kochmuetze'], async lauf(){
+    const st=Prop('stand','waffelstand',size*1.3,size*1.1,M()+size*.1,groundY()+4,2);
+    await reinBeide(); await hop(M()+size*.15,H()*.08,420); await gruss();
+    await B('Seit wann hast du einen Waffelstand??');
+    await S('Seit acht Minuten 😎');
+    await B('HAHAHA und läufts?');
+    const ws=[0,1,2].map(i=>{const p=Prop('w'+i,'🧇',size*.26,size*.26,M()-size*.08+i*size*.12,groundY()-size*.56-i*size*.05,4); return p;});
+    for(const w of ws){ await pop(w); }
+    await S('Hab schon drei verkauft 🧇🧇🧇');
+    await B('An wen?');
+    for(const w of ws){ propTo(w,sunMx(),y-size*.45,350,size*.1); await sleep(180); weg(w,150); }
+    funken(sunMx(),y-size*.5,4,['😋']);
+    await S('An mich 😋');
+    await B('Sonni…');
+    await B('Okay, ich nehm auch eine');
+    const w4=Prop('w4','🧇',size*.26,size*.26,M(),groundY()-size*.56,4); await pop(w4);
+    await S('Vier Euro bitte 💶');
+    await B('VIER EURO??');
+    await S('Inflation, Bea 🤷');
+    still(); await propTo(w4,sunMx()-size*.1,y-size*.45,450,size*.15); weg(w4,150); funken(sunMx(),y-size*1.0,4,['😋','🧇'],.7);
+    await B('SONNI DAS WAR MEINE');
+    await szeneEnde();
+ }},
+ 8:{ort:'drinnen', raum:'kueche', bea:'hut', sonne:[], async lauf(){
+    const tp=Prop('tp','topf',size*.5,size*.4,L()+beaW+size*.12,groundY()+2,3); tp.el.classList.add('dampfend');
+    const sp=Prop('sp','spaghetti',size*.8,size*.36,M()+size*.25,groundY()+2,5);
+    await reinBeide(); await gruss();
+    const to=Prop('to','🍅',size*.26,size*.26,beaX+beaW+size*.12,groundY()-size*.02,5); await pop(to);
+    document.getElementById('arm-winkt').style.display=''; document.getElementById('arm-unten').style.display='none'; document.getElementById('arm-winkt').classList.add('hack');
+    for(const t of ['Tomate','Tomate','TOMATE 🔪']){ sprecher='bea'; say(t,0); place(); funken(to.x,to.y-size*.15,4,['🍅','💦'],.7); await sleep(750); }
+    document.getElementById('arm-winkt').classList.remove('hack'); document.getElementById('arm-winkt').style.display='none'; document.getElementById('arm-unten').style.display='';
+    weg(to,200);
+    await S('OMG Spaghetti 🍝');
+    await S('Darf ich probieren?');
+    await B('Ja, warte kurz');
+    still(); actor.style.zIndex='4';
+    await hop(M()+size*.25-size/2,H()*.28,700,true); sunHub=size*.06;
+    await tw(250,t=>{sunS=1-.35*t; y=groundY()-size*.08; place();}); funken(sunMx(),groundY()-size*.3,12,['🍝','💦'],1.2);
+    await B('HAHAHA SONNI');
+    zs('o-nudeln'); await S('Ich probier doch nur');
+    await tw(250,t=>{sunS=.65+.35*t; place();}); sunHub=0; await hop(R(),H()*.12,450);
+    sp.el.querySelectorAll('path').forEach((e,i)=>{ if(i<2) e.style.display='none'; }); sp.el.querySelector('ellipse').style.display='none';
+    await S('War lecker 😋');
+    await S('Wir brauchen glaub neue Nudeln');
+    zs('o-nudeln',false); await szeneEnde();
+ }},
+ 9:{ort:'drinnen', raum:'bad', bea:null, sonne:[], async lauf(){
+    await reinBeide(); await gruss();
+    const ct=Prop('ct','cremetiegel',size*.34,size*.24,L()+beaW+size*.14,groundY()+2,3); await pop(ct);
+    await S('Bea, machst du mich auch hübsch? 🥹');
+    await B('JAAAA, natürlich!');
+    still(); await beaTo(R()-beaW*.75,H()*.06,500);
+    const kl=Prop('kl','⚪',size*.22,size*.22,beaMx()+beaW*.5,beaY-beaH*.3,6); await pop(kl);
+    await S('Ähm … ist das nicht bisschen viel? 😳');
+    await B('Neee, vertrau mir!');
+    still(); await propTo(kl,sunMx()-size*.15,y-size*.55,350); weg(kl,120); zs('o-creme1'); funken(sunMx(),y-size*1.05,3,['🫧'],.6);
+    for(let i=0;i<3;i++){ beaJump(); await sleep(260); }
+    zs('o-creme2'); zs('o-creme1',false); funken(sunMx(),y-size*1.05,5,['🫧','✨'],.7); await sleep(400);
+    await S('Bea?');
+    await B('Ja?');
+    await S('Ich seh nix mehr 😶');
+    still(); await beaTo(L(),H()*.05,500);
+    await B('HAHAHAHA DU SIEHST AUS WIE EIN SCHNEEMANN');
+    still(); await hop(W()*.5-size*.5,H()*.08,500); funken(W()*.5,H()*.22,4,['🪞','✨']); await sleep(700);
+    await S('Ich wollte eigentlich nur bisschen frischer aussehen …');
+    for(let i=0;i<3;i++){ beaJump(); funken(beaMx(),beaY-beaH*1.05,2,['😂'],.7); await sleep(380); }
+    zs('o-creme2',false); funken(sunMx(),y-size*1.05,6,['✨','🫧']);
+    await szeneEnde();
+ }},
+ 10:{ort:'drinnen', raum:'bad', bea:null, sonne:[], async lauf(){
+    zs('bea-pads');
+    const lg=Prop('lg','liege',size*1.7,size*.5,W()*.5,groundY()+2,2);
+    await reinBeide(); await gruss();
+    // Bea legt sich hin
+    still(); await beaTo(W()*.5-size*.55-beaW/2,H()*.1,450);
+    await tw(400,t=>{beaRot=-88*t; beaY=groundY()-size*.05*t; setBea();}); zs('bea-zu');
+    const liegend=()=>{ beaX=W()*.5-size*.55-beaW/2; };
+    await S('Was machst du?');
+    await B('Wellness');
+    await S('Und was macht man da?');
+    await B('Nix');
+    still(); await sleep(800);
+    await S('Das kann ich gut');
+    still(); await hop(W()*.5+size*.05,H()*.1,450); await tw(400,t=>{rot=90*t; place();}); zs('o-schlaf');
+    for(let i=0;i<4;i++){ funken(beaMx()-beaW*.2,groundY()-size*.6,1,['💤'],.6); funken(sunMx()+size*.2,groundY()-size*.6,1,['💤'],.6); await sleep(500); }
+    const r=Prop('rg','riegel',size*.42,size*.14,W()*.5-size*.05,-50,6); await propTo(r,W()*.5-size*.05,groundY()-size*.28,600,0,360); funken(r.x,r.y,4,['✨']);
+    await sleep(500); zs('o-schlaf',false);
+    await S('Wer hat Essen bestellt? 😴');
+    await tw(400,t=>{rot=90*(1-t); beaRot=-88*(1-t); setBea(); place();}); zs('bea-zu',false); zs('bea-pads',false);
+    await szeneEnde();
+ }},
+ 11:{ort:'drinnen', raum:'wohnzimmer', bea:null, sonne:[], async lauf(){
+    const ls=Prop('ls','laufsteg',size*1.7,size*.12,M(),groundY()+6,1);
+    const vh=Prop('vh','vorhang',size*.75,size*1.3,M()-size*.3,groundY()+2,4);
+    x=W()+20; place(); await hop((W()+R())/2,H()*.1,400); await hop(R(),H()*.1,400);
+    beaX=M()-size*.3-beaW/2; beaY=bodenBea(); bea.style.opacity='0'; setBea();
+    for(const t of ['🎶 Was zieht Bea heute an? 🎶','🎶 Was zieht Bea heute annnn? 🎶']){ sprecher='sonne'; say(t,0); place(); for(let i=0;i<4;i++){ funken(sunMx(),y-size*.9,2,['🎵','🎶'],.8); hop(x,H()*.03,200); await sleep(380);} }
+    sprecher='bea'; say('MODENSCHAUUU 💃',0); funken(M()-size*.3,groundY()-size*1.1,6,['✨','💃']); await sleep(1800);
+    still(); for(let i=0;i<4;i++){ funken(sunMx(),y-size*.8,2,['🎵','🎶'],.8); await sleep(250); }
+    zs('bea-mode'); zs('bea-sonnenbrille'); bea.style.opacity='1';
+    await beaTo(M()+size*.42-beaW/2,H()*.03,700);
+    await S('OHHHHH 🤩');
+    for(let i=0;i<3;i++){ funken(sunMx(),y-size*.6,3,['👏','✨']); hop(x,H()*.05,280); await sleep(320); }
+    await S('NOCHMAL NOCHMAL');
+    still(); await tw(500,t=>{beaFlip=Math.cos(t*Math.PI*2); setBea();}); beaFlip=1;
+    beaRot=-16; setBea(); await sleep(160); beaRot=12; setBea(); await sleep(160); beaRot=-6; setBea(); await sleep(140); beaRot=0; setBea();
+    await B('Das war Absicht 😎');
+    await S('Klar 😌');
+    await beaTo(L(),H()*.05); zs('bea-mode',false); zs('bea-sonnenbrille',false);
+    await szeneEnde();
+ }},
+ 12:{ort:'draussen', kulisse:['see','wald'], ohneSchneemann:true, bea:'beanie', sonne:['kochmuetze'], async lauf(){
+    const st=Prop('stand','restaurant',size*1.35,size*1.1,M()+size*.1,groundY()+4,2);
+    await reinBeide(); await hop(M()+size*.15,H()*.08,420);
+    const pg=Prop('pg','🫑',size*.3,size*.3,M()-size*.05,groundY()-size*.54,4); await pop(pg);
+    await B('Ohaa, was gibts heute?');
+    await S('Proteinaufstrich mit Paprika 🫑');
+    await B('Und als Hauptgang?');
+    await S('Proteinaufstrich mit Paprika');
+    await B('Nachtisch?');
+    await S('Proteinaufstrich mit Paprika');
+    await B('HAHAHA');
+    still(); const sc=st.el.querySelector('.standschild'); sc.classList.add('dreh');
+    await sleep(350); sc.textContent='AUSVERKAUFT ❌'; sc.classList.add('rot'); weg(pg,300); await sleep(400);
+    zs('o-kruemel'); await S('Hab alles selber gegessen 😋');
+    zs('o-kruemel',false); await szeneEnde();
+ }},
+ 13:{ort:'drinnen', raum:'kueche', bea:'hut', sonne:[], async lauf(){
+    const hs=Prop('hs','schokohaus',size*.85,size*.85,M(),groundY()+2,2);
+    await reinBeide(); await gruss();
+    await S('Bea, das Dach ist schief 🧐');
+    await B('Das ist Design 😎');
+    still(); await wackel(hs,3,7); await weg(hs,150);
+    const tr=Prop('tr','truemmer',size*1.05,size*.4,M(),groundY()+2,2); funken(M(),groundY()-size*.3,14,['🍫','💥'],1.3);
+    await sleep(500); funken(M(),groundY()-size*.7,2,['👀']); await sleep(900);
+    await S('Offenes Wohnkonzept?');
+    const hsch=Prop('hsch','hinweisschild',size*.55,size*.55,M()+size*.38,groundY()+2,2); await pop(hsch);
+    await B('HAHAHAHA');
+    await beaTo(M()-size*.35-beaW*.4); funken(beaMx(),beaY-beaH*1.05,4,['🍫']);
+    await B('Ein kleines Knusperchen geht trotzdem 🤏😋');
+    await szeneEnde();
+ }},
+ 14:{ort:'drinnen', raum:'bad', bea:null, sonne:['armseite'], async lauf(){
+    const dg=Prop('dg','duschgel',size*.28,size*.6,R()-size*.02,groundY()+2,5);
+    await reinBeide(); await gruss();
+    await S('Wie viel Duschgel soll ich nehmen? 🧴');
+    await B('Nach Gefühl');
+    still(); const sch=document.createElement('div'); sch.className='schaum'; document.body.appendChild(sch);
+    const schaumH=f=>(H()-groundY()+size*f)+'px';
+    for(let i=0;i<3;i++){ dg.s=.9; setP(dg); await sleep(120); dg.s=1; setP(dg); funken(dg.x,dg.y-size*.6,4,['🫧'],.8); await sleep(150); }
+    sch.style.height=schaumH(.05);
+    await B('Und was sagt dein Gefühl?');
+    await S('Dass wir gleich ein Problem haben 😬');
+    sch.style.height=schaumH(.45); for(let i=0;i<8;i++) funken(rnd(0,W()),groundY()-rnd(0,60),2,['🫧'],.6);
+    await B('HAHAHA SONNI');
+    sch.style.height=schaumH(.8);
+    await S('Hab ich doch gesagt!!');
+    still(); sch.style.height=schaumH(1.7); for(let i=0;i<10;i++){ funken(rnd(0,W()),H()*.6,2,['🫧'],.8); await sleep(140); }
+    await sleep(600);
+    await S('Bea?');
+    await B('Ja?');
+    const d2=Prop('dg2','duschgel',size*.3,size*.64,sunMx(),groundY()-size*.95,8); d2.y=groundY()-size*.4; setP(d2);
+    await propTo(d2,sunMx(),groundY()-size*1.05,500,0); wackel(d2,2,10);
+    await S('Ich hab noch eine Flasche 😇');
+    weg(d2,300); sch.style.height='0'; await sleep(1200);
+    await szeneEnde();
+ }},
+ 15:{ort:'drinnen', raum:'kueche', bea:'hut', sonne:[], async lauf(){
+    const ti=Prop('ti','tisch',size*1.05,size*.52,M(),groundY()+2,2);
+    const sp=Prop('sp','spinat',size*.6,size*.27,M(),groundY()-size*.47,3);
+    await reinBeide(); await gruss();
+    await hop(M()+size*.32,H()*.05,400);
+    await S('Boah ist das grün 🤢');
+    await B('Ist halt Spinat');
+    await S('Macht der echt stark?');
+    await B('Probiers halt');
+    still(); funken(M(),groundY()-size*.65,4,['💚','😋']); await sleep(600);
+    zs('o-muskeln'); funken(sunMx(),y-size*.5,12,['💪','✨'],1.2); actor.style.zIndex='5';
+    await S('BEA GUCK MAL 💪');
+    await B('HAHAHA WAS');
+    still(); await Promise.all([propTo(ti,sunMx(),y-size*.88,600,size*.1), propTo(sp,sunMx(),y-size*1.35,600,size*.1)]);
+    await B('Okay, dann trägst du morgen die Einkäufe 🛍️');
+    still(); await Promise.all([propTo(ti,M(),groundY()+2,500), propTo(sp,M(),groundY()-size*.47,500)]);
+    zs('o-muskeln',false); zs('o-arme');
+    await S('Ähm ich glaub, die Wirkung lässt nach 😅');
+    zs('o-arme',false); await szeneEnde();
+ }},
+ 16:{ort:'drinnen', raum:'gym', bea:null, sonne:['arme'], async lauf(){
+    const ht=Prop('ht','hantel',size*.55,size*.2,0,0,6);
+    const hoch=()=>{ ht.x=x+size/2; ht.y=y-size*.92; setP(ht); };
+    await reinBeide(); hoch();
+    let pump=true; (async()=>{ while(pump){ await tw(450,t=>{ ht.y=y-size*.92+Math.sin(t*Math.PI)*size*.12; setP(ht);}); } })();
+    await B('KOMM SONNI NOCH EINE');
+    await S('ICH KANN NICHT MEHR 😩');
+    await B('Denk an dein Ziel!!');
+    pump=false; still(); await propTo(ht,x+size*.5,groundY()+2,350); funken(sunMx(),groundY(),8,['💥']);
+    zs('o-arme',false);
+    await S('Mein Ziel war ein Proteinriegel');
+    const r=Prop('rg','riegel',size*.46,size*.16,beaMx(),beaY-beaH*1.05,6); await pop(r); funken(r.x,r.y-10,4,['✨']);
+    await B('Ach soooo 💡');
+    await hop(L()+beaW+size*.05,H()*.12,500);
+    await S('Können wir jetzt essen? 🥺');
+    await szeneEnde();
+ }},
+ 17:{ort:'draussen', kulisse:['wald'], ohneSchneemann:true, bea:'hut', sonne:[], async lauf(){
+    x=W()+20; place(); await hop((W()+R())/2,H()*.1,400); await hop(R(),H()*.1,400);
+    beaX=-beaW-30; beaY=bodenBea(); setBea(); bea.style.opacity='1';
+    const fl=Prop('fl','flasche',size*.17,size*.34,0,0,6); const halten=()=>{fl.x=beaMx()+beaW*.45; fl.y=beaY-beaH*.3; setP(fl);};
+    const hi=setInterval(halten,16);
+    await beaTo((L()-beaW-30)/2,H()*.08,400); await beaTo(L(),H()*.08,400);
+    clearInterval(hi); await propTo(fl,beaMx()+beaW*.4,beaY-beaH*1.05,350); funken(fl.x,fl.y-size*.3,10,['✨','🌶️']);
+    await B('SONNI GUCK MAL, WAS ENDLICH DA IST!!');
+    await S('OHHHH, die berühmte Soße!');
+    await S('Darf ich probieren?');
+    await B('Aber wirklich nur bisschen!');
+    still(); await propTo(fl,sunMx()-size*.15,y-size*.45,500,size*.2);
+    await tw(700,t=>{fl.rot=-130*t; setP(fl);}); funken(sunMx(),y-size*.4,4,['💦']); await sleep(300);
+    await tw(300,t=>{fl.rot=-130*(1-t); setP(fl);}); await propTo(fl,beaMx()+beaW*.45,beaY-beaH*.3,450,size*.15);
+    await S('Schmeckt doch voll gu…');
+    document.querySelectorAll('#rays path').forEach((p,i)=>{p.dataset.f=p.getAttribute('fill'); p.setAttribute('fill',i%2?'#ff5a1f':'#ff2d1a');});
+    document.getElementById('rays').classList.add('flammen'); actor.style.filter='saturate(1.7) hue-rotate(-12deg)'; zs('o-schock');
+    let feuer=true; (async()=>{ while(feuer){ funken(sunMx()+rnd(-size*.4,size*.4),y-size*rnd(.6,1),1,['🔥'],.7); await sleep(150);} })();
+    await S('OH.');
+    await B('HAHAHAHAHA');
+    still(); for(let i=0;i<2;i++){ await hop(W()*.35,H()*.1,330); await hop(R(),H()*.1,330); }
+    sprecher='sonne'; say('BEA, ICH GLÜHE!!',0); place(); await hop(W()*.35,H()*.1,330); await hop(R(),H()*.1,330); await sleep(500);
+    await B('DU BIST EINE SONNE!!');
+    await S('JA, ABER NORMALERWEISE NICHT VON INNEN!!');
+    still(); const hf=Prop('hf','haufen',size*1.2,size*.85,W()*.62,groundY()+6,4); hf.el.querySelectorAll('.winke-l,.winke-r').forEach(e=>e.style.display='none'); await pop(hf);
+    await hop(W()*.62-size/2,H()*.25,600); actor.style.opacity='0'; feuer=false;
+    for(let i=0;i<6;i++){ const d=document.createElement('div'); d.className='dampf'; const w=size*rnd(.6,1.1); d.style.width=d.style.height=w+'px'; d.style.left=(W()*.62-w/2+rnd(-30,30))+'px'; d.style.top=(groundY()-size*.8-w/2)+'px'; document.body.appendChild(d); setTimeout(()=>d.remove(),1900); await sleep(160); }
+    document.querySelectorAll('#rays path').forEach(p=>p.setAttribute('fill',p.dataset.f)); document.getElementById('rays').classList.remove('flammen'); actor.style.filter=''; zs('o-schock',false);
+    await sleep(900); actor.style.opacity='1'; await weg(hf,300); funken(sunMx(),y-size,6,['💧','✨']); await hop(R(),H()*.1,450);
+    await S('Puh 😮‍💨');
+    weg(fl,200); await szeneEnde();
+ }},
+ 18:{ort:'drinnen', raum:'wohnzimmer', bea:'hut', sonne:['armseite'], async lauf(){
+    const ms=Prop('ms','mistel',size*.5,size*1.0,M(),groundY()-beaH*.92,6);
+    await reinBeide();
+    await Promise.all([beaTo(M()-beaW-size*.02,H()*.08,450), hop(M()-size*.05,H()*.08,450)]);
+    await S('Bea, guck mal über uns 🌿');
+    await B('Ohhh 😍');
+    still(); const lb=Prop('lb','💄',size*.2,size*.2,beaMx()+beaW*.2,beaY-beaH*.52,6); await pop(lb); await wackel(lb,2,15); weg(lb,200);
+    await S('Krieg ich jetzt einen Kuss? 😘');
+    still(); zs('o-schlaf'); funken(sunMx()-size*.2,y-size*.45,3,['💋'],.5); await sleep(700);
+    const hand=()=>[x+size/2+size*.37, y-size*.22];
+    const r=Prop('rg','riegel',size*.42,size*.14,beaMx()+beaW*.3,beaY-beaH*.4,6); await pop(r);
+    await propTo(r,hand()[0],hand()[1]+size*.06,500,size*.1); zs('o-schlaf',false);
+    await S('Hä? 😳');
+    await B('Der Kuss ist für Salmi 💋');
+    await S('Und der Riegel?');
+    await propTo(r,beaMx()+beaW*.3,beaY-beaH*.4,500,size*.15);
+    await B('Auch für Salmi 😇');
+    await S('Boah 😤');
+    weg(r,200); await szeneEnde();
+ }},
+ 19:{ort:'buehne', bea:'hut', sonne:['armseite'], async lauf(){
+    await reinBeide();
+    await S('Bea, ich mach jetzt auch Comedy 🎤');
+    await B('HAHAHA okay, leg los');
+    still(); const mk=Prop('mk','🎤',size*.3,size*.3,W()/2,-60,6);
+    await hop(W()/2-size/2,H()*.1,450);
+    const hand=()=>[x+size/2+size*.37, y-size*.18];
+    await propTo(mk,hand()[0],hand()[1],500,0);
+    const sp=document.createElement('div'); sp.className='spot'; sp.style.left=(sunMx()-W()*.22)+'px'; sp.style.width=W()*.44+'px'; document.body.appendChild(sp);
+    await S('Was macht eine Sonne im Fitnessstudio? 😏');
+    await B('Keine Ahnung?');
+    await S('<big>STRAHLENDE LEISTUNG</big> 🤩');
+    still(); const gr=Prop('gr','🦗',size*.28,size*.28,W()*.75,groundY()+2,6); await pop(gr); await wackel(gr,3,10); await sleep(900); weg(gr,300);
+    const tk=Prop('tk','🎟️',size*.34,size*.34,beaMx()+beaW*.4,beaY-beaH*.55,6); await pop(tk);
+    await B('Gut, dass wir Tickets für richtige Comedians haben 🎟️');
+    sp.remove(); weg(mk,200); await szeneEnde();
+ }},
+ 20:{ort:'drinnen', raum:'werkstatt', bea:'hut', sonne:['schutzbrille'], async lauf(){
+    const wb=Prop('wb','werkbank',size*1.0,size*.55,M(),groundY()+2,2);
+    await reinBeide();
+    funken(M(),groundY()-size*.6,8,['⚙️','🔧','✨']);
+    await B('FERTIG 🛠️');
+    await S('Was ist das?');
+    await B('Sriracha für unterwegs!');
+    still(); const an=Prop('an','anhaenger',size*.16,size*.27,beaMx()+beaW*.4,beaY-beaH*.95,6); await pop(an);
+    sprecher='bea'; say('<big>TADAAAA 🎺</big>',0); place(); for(let i=0;i<3;i++){ funken(an.x,an.y-size*.3,4,['✨','🎺','⭐'],.9); await tw(350,t=>{an.s=1+Math.sin(t*Math.PI)*.7; setP(an);}); }
+    await S('Und wo ist der Rest? 🧐');
+    await B('Das ist alles');
+    still(); await hop(M()+size*.1,H()*.05,400); await sleep(500);
+    await S('HAHAHA Bea, du bist ein Genie');
+    await tw(500,t=>{beaRot=Math.sin(t*Math.PI)*18; setBea();});
+    await B('Danke danke 🙇');
+    await szeneEnde();
+ }},
+ 21:{ort:'drinnen', raum:'wohnzimmer', bea:null, sonne:['pads'], async lauf(){
+    zs('bea-pads');
+    const sfW=Math.min(W()*.95,size*2.6);
+    const sf=Prop('sf','sofa',sfW,size*1.1,W()/2,groundY()+6,2);
+    await reinBeide();
+    beaHub=size*.42; sunHub=size*.42;
+    await Promise.all([ beaTo(W()/2-sfW*.36,H()*.12,550), hop(W()/2+sfW*.36-size,H()*.12,550) ]);
+    await S('Bea, unser Wellnesshotel ist richtig schön 🥹');
+    await B('Sonni, das ist unser Wohnzimmer');
+    await S('Ja, aber mit Augenpads 😌');
+    await B('HAHAHA');
+    still(); const de=Prop('de','decke',Math.min(W()*.82,size*2.2),size*.5,W()/2,-80,6);
+    await Promise.all([ propTo(de,W()/2,groundY()-size*.1,600,0), beaTo(beaX+sfW*.06,H()*.03,500), hop(x-sfW*.06,H()*.03,500) ]);
+    funken(W()/2,groundY()-size*.6,6,['💛','✨']);
+    await S('Bea … kraulst du mir den Kopf? 🥺');
+    await B('Na gut');
+    still(); document.getElementById('arm-winkt').style.display=''; document.getElementById('arm-unten').style.display='none';
+    zs('o-schlaf'); for(let i=0;i<5;i++){ funken(sunMx(),y-size*1.0,1,['💛','✨'],.5); await tw(260,t=>{rot=Math.sin(t*Math.PI)*-6; place();}); }
+    document.getElementById('arm-winkt').style.display='none'; document.getElementById('arm-unten').style.display='';
+    await S('Okay, jetzt versteh ich, warum du das bei Salmi so liebst 😌');
+    zs('o-schlaf',false);
+    await S('Gibts hier Zimmerservice?');
+    await B('Nö');
+    still(); const r=Prop('rg','riegel',size*.45,size*.15,W()/2,-60,7); await propTo(r,W()/2,groundY()-size*.35,700,0,540); funken(W()/2,groundY()-size*.5,6,['✨','🥥']);
+    await S('DOCH 🤩');
+    for(let i=0;i<4;i++){ beaJump(); funken(beaMx(),beaY-beaH*1.05,2,['🎶','✨'],.7); if(i===0){ sprecher='bea'; say('chip chip chippi chip 🎶',0); place(); } await sleep(450); }
+    weg(de); zs('bea-pads',false);
+    beaHub=0; sunHub=0; await Promise.all([ beaTo(L(),H()*.08,500), hop(R(),H()*.08,500) ]);
+    await szeneEnde();
+ }},
+ 22:{ort:'drinnen', raum:'wohnzimmer', bea:'hut', sonne:['detektiv','kruemel'], async lauf(){
+    const ti=Prop('ti','tisch',size*1.05,size*.52,M(),groundY()+2,2);
+    const tl=Prop('tl','teller',size*.8,size*.28,M(),groundY()-size*.47,3);
+    tl.el.querySelectorAll('.keks').forEach(k=>k.style.display='none'); tl.el.querySelector('.kruemel').style.display='';
+    const spuren=[0,1,2,3].map(i=>Prop('f'+i,'🟡',size*.07,size*.07,M()+size*.2+i*size*.17,groundY()+size*.04,1));
+    await reinBeide();
+    await B('SONNI?! WO SIND DIE GANZEN SPEKULATIUS HIN?! 😱');
+    const lu=Prop('lu','🔍',size*.3,size*.3,sunMx()-size*.4,y-size*.35,6); await pop(lu);
+    await S('Keine Sorge. Ich ermittle bereits 🕵️');
+    still(); await propTo(lu,M(),groundY()-size*.55,500,size*.1); await wackel(lu,2,12);
+    await propTo(lu,M()+size*.3,groundY()-size*.1,500,size*.1); await propTo(lu,sunMx()-size*.3,groundY()-size*.1,500); 
+    await B('Aha. Und?');
+    await S('Der Täter war definitiv hungrig 🧐');
+    await B('Sonni, du hast Krümel im Gesicht');
+    await S('… Interessant.');
+    still(); const sp=Prop('sp','🪞',size*.34,size*.34,sunMx()-size*.45,y-size*.45,6); await pop(sp); await sleep(700); weg(sp,200);
+    const mk=Prop('mk','🚨',size*.3,size*.3,sunMx()-size*.4,y-size*.4,6); await pop(mk); await wackel(mk,2,15);
+    await S('ICH HAB DEN TÄTER GEFUNDEN!');
+    await B('HAHAHAHAHA');
+    weg(lu,200); weg(mk,200); spuren.forEach(p=>weg(p,200));
+    await szeneEnde();
+ }},
+ 23:{ort:'drinnen', raum:'wohnzimmer', bea:'hut', sonne:[], async lauf(){
+    const dinge=['🧦','🔋','📎','🧸','🔑','🧩','🪀','🖊️','🧤','🎧'];
+    const it=dinge.map((d,i)=>Prop('k'+i,d,size*.2,size*.2,M()+rnd(-size*.35,size*.35),groundY()-(i%4)*size*.12,3));
+    await reinBeide(); await gruss();
+    await S('Bea, was ist das alles? 😳');
+    await B('Salmis Sachen');
+    await S('Braucht er das?');
+    await B('Anscheinend 🤷');
+    still(); const ki=Prop('ki','kiste',size*.6,size*.48,M(),groundY()+2,4); await pop(ki);
+    for(let i=0;i<it.length;i++){ const p=it[i]; propTo(p,ki.x+rnd(-size*.12,size*.12),ki.y-size*.25,420,size*.4,rnd(-180,180)); (i%2?beaJump:()=>hop(x,H()*.04,220))(); await sleep(260); }
+    await sleep(500); it.forEach(p=>weg(p,200));
+    await S('Und der Rest?');
+    await B('Welcher Rest?');
+    // riesiger Krempelberg hinter ihnen
+    still(); const berg=document.createElement('div'); berg.className='krempelberg'; document.body.appendChild(berg);
+    const viele=['🧦','🔋','📎','🧸','🔑','🧩','🪀','🖊️','🧤','🎧','📦','🎮','🧴','🕶️','📚','🧲','🔦','🪥','🧢','⚽','🎒','📱','💡','🧻','🪴'];
+    for(let i=0;i<80;i++){ const e=document.createElement('span'); e.textContent=viele[i%viele.length];
+      const fx=rnd(0,100), fy=Math.pow(rnd(0,1),.7); e.style.left=fx+'%'; e.style.bottom=(fy*(100-Math.abs(fx-50)*1.4))+'%'; e.style.fontSize=rnd(20,38)+'px'; e.style.transform=`rotate(${rnd(-40,40)}deg)`;
+      e.style.animationDelay=(i*12)+'ms'; berg.appendChild(e); }
+    await sleep(1600);
+    await B('MARCEL BITTE 😩');
+    const r=Prop('rg','riegel',size*.45,size*.15,W()*.6,H()*.45,8); await pop(r); await propTo(r,sunMx(),y-size*.6,600,size*.2);
+    await S('Oh guck, ein Riegel 🥥');
+    weg(r,200); await szeneEnde();
+ }},
+ 24:{ort:'nacht', kulisse:['kraftdorf'], bea:'hut', sonne:['weihnachtsmuetze'], async lauf(){
+    // Mit dem Cabrio angebraust
+    sunS=.62; beaS=.62; const auto=Prop('auto','auto',size*2.1,size*.85,-size*1.3,groundY()+6,6);
+    const imAuto=()=>{ x=auto.x+size*.05-size/2; y=groundY()-size*.18; beaX=auto.x-size*.62-beaW/2; beaY=groundY()-size*.2; setBea(); place(); };
+    bea.style.opacity='1'; imAuto();
+    await tw(1600,t=>{ auto.x=-size*1.3+(W()*.55+size*1.3)*t; auto.rot=Math.sin(t*30)*1.5; setP(auto); imAuto(); });
+    sprecher='bea'; say('SONNI BREMSEN',0); 
+    await tw(1000,t=>{ auto.x=W()*.55+W()*.08*t; setP(auto); imAuto(); }); 
+    await S('WIE GEHT BREMSEN');
+    still(); auto.rot=-8; setP(auto); imAuto(); funken(auto.x+size*.9,groundY()-10,10,['💨','💥','⭐'],1.2); await sleep(200); auto.rot=4; setP(auto); await sleep(150); auto.rot=0; setP(auto); imAuto();
+    // aussteigen
+    sunS=1; beaS=1; await Promise.all([ beaTo(L(),H()*.16,550), hop(R(),H()*.18,550) ]);
+    await B('HAHAHA du fährst nie wieder');
+    await S('Fand ich eigentlich gut 😎');
+    const gs=Prop('gs','gutschein',size*.85,size*.5,beaMx()+beaW*.6,beaY-beaH*.45,7); await pop(gs); funken(gs.x,gs.y-size*.4,10,['✨','🎁']);
+    await S('Ohh, gehen wir ins Museum?');
+    await B('Nee, der Gutschein ist für Salmi 🎁');
+    await S('Gut, ich brauch eh erst mal eine Fahrstunde 🚗');
+    for(let i=0;i<3;i++){ funken(W()/2,groundY()-size*.8,3,['😂','💛']); beaJump(); hop(x,H()*.05,250); await sleep(350); }
+    weg(gs,300); weg(auto,500); still();
+    // ruhiger Moment
+    await Promise.all([hop(W()/2-size*.1,H()*.06,600), beaTo(W()/2-size*.1-beaW*.95,H()*.06,600)]);
+    await sleep(800);
+    await S('Bea?');
+    await B('Mhm?');
+    await S('Jetzt sind wir schon fertig');
+    await B('Jaa 🥹');
+    still(); await sleep(1100);
+    await S('Meinst du, Salmönchen hat sich gefreut?');
+    await B('Ich hoffs');
+    await S('Safe. Du hast dir so viel Mühe gegeben 💛');
+    await B('Ich hab ihn halt ziemlich lieb');
+    await S('Merkt man 💛');
+    still(); await hop(x-size*.18,H()*.03,600);
+    const ende=document.getElementById('endkarte'); ende.classList.add('show');
+    for(let i=0;i<16;i++){ funken(rnd(20,W()-20),rnd(H()*.15,H()*.5),2,['✨','⭐','❤️'],.7); await sleep(260); }
+    SZ_AKTIV=false;
+ }}
+};
+
+// VORSCHAU: bis einschließlich 29.11.2026 zeigt die Seite ohne #-Zusatz einen zufälligen Dezembertag.
+const VORSCHAU_BIS = new Date(2026,10,30);
+const VORSCHAU_FEST = null;   // ← zum Testen fester Tag; null = zufälliger Tag
+const vorschauTag = (!hash && now < VORSCHAU_BIS) ? (VORSCHAU_FEST || (a=>a[Math.floor(Math.random()*a.length)])([...Array(24)].map((_,i)=>i+1))) : null;
+const dezTest = vorschauTag ? [null,String(vorschauTag)] : hash.match(/^dez-?(\d{1,2})$/);
+const testMonat={winter:0,weihnachten:11,nikolaus:11,fruehling:3,sommer:6,herbst:9}[hash];
+if(testMonat!==undefined) month=testMonat;
+if(dezTest) month=11;
+hour = hash==='abend' ? 20 : 8;   // Die Sonne kommt morgens – also immer „Guten Morgen“
+const saison = [11,0,1].includes(month)?'winter':[2,3,4].includes(month)?'fruehling':[5,6,7].includes(month)?'sommer':'herbst';
+const mmdd=String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+const dezTag = dezTest ? +dezTest[1] : hash==='nikolaus' ? 6 : (now.getMonth()===11 && testMonat===undefined ? now.getDate() : null);
+const heuteKey = dezTest ? '12-'+String(dezTag).padStart(2,'0') : hash==='nikolaus' ? '12-06' : mmdd;
+let besondersRaw = hash==='besonders' ? "Heute ist ein besonderer Tag! 💛" : BESONDERE_TAGE[heuteKey];
+let besonders = besondersRaw && (typeof besondersRaw==='string' ? {text:besondersRaw} : besondersRaw);
+let thema = (month===11 && dezTag) ? (DEZ_THEMEN[dezTag]||{}) : {};
+const SZ = (month===11 && dezTag && hash!=='diabetes') ? (SZENEN[dezTag]||null) : null;
+if(SZ){ besonders=null; thema={sonne:SZ.sonne, bea:SZ.bea, kulisse:SZ.kulisse||[]}; }
+if(SZ && SZ.himmel==='morgenrot') document.addEventListener('DOMContentLoaded',()=>{});
+const hat = k => (thema.kulisse||[]).includes(k);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const rnd=(a,b)=>a+Math.random()*(b-a);
+
+/* ---------- Jahreszeiten-Kulisse ---------- */
+const THEMES={
+  winter:{sky:'linear-gradient(180deg,#a9cdee 0%,#d8e8f7 60%,#f2f7fc 100%)', particles:['❄','•','❄'], pcolor:'#fff', psize:[8,18]},
+  fruehling:{sky:'linear-gradient(180deg,#8fd3ff 0%,#c6ecff 60%,#f1fbff 100%)', particles:['🌸','🦋','🌸'], psize:[14,22]},
+  sommer:{sky:'linear-gradient(180deg,#4fc3ff 0%,#a8e3ff 55%,#fff1c9 100%)', particles:[], psize:[14,20]},
+  herbst:{sky:'linear-gradient(180deg,#ffbf86 0%,#ffd9b3 55%,#fff0de 100%)', particles:['🍂','🍁','🍂'], psize:[16,24]}
+};
+const T=THEMES[saison];
+document.body.style.background=T.sky;
+const scene=document.getElementById('scene');
+const add=(tag,attrs,parent=scene)=>{const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);parent.appendChild(e);return e;};
+
+function tanne(x,y,s,deko,farbe='#2e7d5b'){
+  add('rect',{x:x-3*s,y:y-10*s,width:6*s,height:11*s,fill:'#6b4226',rx:1.5*s});
+  const tiers=[[38,8,20],[29,20,18],[20,31,17]];
+  tiers.forEach(([w,b,h])=>{
+    w*=s; const base=y-b*s, top=base-h*s;
+    add('path',{d:`M${x} ${top} L${x+w/2} ${base} L${x-w/2} ${base} Z`,fill:farbe,stroke:farbe,'stroke-width':3*s,'stroke-linejoin':'round'});
+    const d=h*s*.4, hw=w/2*.4, y1=top+d;
+    add('path',{d:`M${x} ${top-1.5*s} L${x+hw} ${y1} Q${x+hw*.5} ${y1+3*s} ${x} ${y1-1*s} Q${x-hw*.5} ${y1+3*s} ${x-hw} ${y1} Z`,fill:'#fff',stroke:'#fff','stroke-width':2*s,'stroke-linejoin':'round'});
+  });
+  if(deko){
+    [[14,26],[25,14]].forEach(([b,w])=>add('path',{d:`M${x-w/2*s} ${y-(b+4)*s} Q${x} ${y-(b-3)*s} ${x+w/2*s} ${y-(b+6)*s}`,stroke:'#ffd84a','stroke-width':1.6*s,fill:'none'}));
+    const cols=['#ff5a5a','#ffd84a','#5ab0ff','#ff8ad8'];
+    [[-12,12],[-4,10],[6,11],[13,9],[-8,22],[2,21],[9,23],[-3,33]].forEach(([dx,dy],i)=>add('circle',{cx:x+dx*s,cy:y-dy*s,r:2*s,fill:cols[i%4]}));
+    add('path',{d:`M${x} ${y-58*s} l2.6 5.3 5.8.6-4.3 4 1.1 5.8-5.2-2.9-5.2 2.9 1.1-5.8-4.3-4 5.8-.6z`,fill:'#ffd84a',stroke:'#f0b400','stroke-width':1});
+  }
+}
+function stiefel(x,y,s){
+  add('text',{x:x-14*s,y:y-44*s,'font-size':16*s}).textContent='🍭';
+  add('text',{x:x-2*s,y:y-42*s,'font-size':14*s}).textContent='🍫';
+  add('text',{x:x-10*s,y:y-36*s,'font-size':12*s}).textContent='🍊';
+  add('path',{d:`M${x-12*s} ${y-44*s} L${x+8*s} ${y-44*s} L${x+8*s} ${y-16*s} Q${x+30*s} ${y-16*s} ${x+30*s} ${y-5*s} Q${x+30*s} ${y} ${x+24*s} ${y} L${x-12*s} ${y} Z`,fill:'#d63b3b',stroke:'#a92a2a','stroke-width':1.5*s,'stroke-linejoin':'round'});
+  add('rect',{x:x-14*s,y:y-50*s,width:24*s,height:10*s,rx:5*s,fill:'#fff'});
+  add('ellipse',{cx:x+9*s,cy:y+1*s,rx:24*s,ry:3*s,fill:'#000',opacity:.06});
+}
+function berge(){
+  add('path',{d:'M-20 120 L60 28 L118 92 L182 16 L252 98 L322 32 L420 112 V240 H-20Z',fill:'#a9bed8'});
+  [[60,28],[182,16],[322,32]].forEach(([px,py])=>add('path',{d:`M${px-19} ${py+22} L${px} ${py} L${px+19} ${py+22} L${px+9} ${py+17} L${px+2} ${py+25} L${px-7} ${py+17} Z`,fill:'#fff'}));
+  add('path',{d:'M-20 130 L30 80 L80 120 L140 70 L200 118 L270 72 L330 120 L400 82 L420 130 V240 H-20Z',fill:'#c3d4e8'});
+}
+function piste(){
+  add('path',{d:'M320 36 Q302 58 284 70 Q262 84 250 100 L272 100 Q282 86 296 76 Q312 62 326 42 Z',fill:'#f6faff'});
+  [[300,62,'#e2483d'],[283,76,'#1f6fd1'],[268,88,'#e2483d']].forEach(([fx,fy,c])=>{
+    add('path',{d:`M${fx} ${fy} L${fx} ${fy-9}`,stroke:'#555','stroke-width':.8});
+    add('path',{d:`M${fx} ${fy-9} L${fx+6} ${fy-7} L${fx} ${fy-5} Z`,fill:c});
+  });
+}
+function gondel(){
+  add('path',{d:'M-10 22 L410 64',stroke:'#4b5563','stroke-width':.9});
+  [0,-9].forEach(begin=>{
+    const g=add('g',{});
+    add('path',{d:'M0 0 L0 6',stroke:'#4b5563','stroke-width':1},g);
+    add('rect',{x:-7,y:6,width:14,height:11,rx:2.5,fill:'#e2483d'},g);
+    add('rect',{x:-5,y:8,width:10,height:5,rx:1,fill:'#cfe8ff'},g);
+    const am=add('animateMotion',{path:'M-10 22 L410 64',dur:'20s',begin:begin+'s',repeatCount:'indefinite'},g);
+  });
+}
+function see(){
+  add('ellipse',{cx:200,cy:150,rx:150,ry:24,fill:'#cfe9f7',stroke:'#b2d6ec','stroke-width':2});
+  add('path',{d:'M110 146 L150 141 M230 158 L280 153 M90 156 L108 154',stroke:'#fff','stroke-width':2,'stroke-linecap':'round',opacity:.9});
+  add('path',{d:'M130 152 Q200 132 270 148',stroke:'#a5cbe3','stroke-width':1,fill:'none','stroke-dasharray':'3 3'});
+}
+function geschenke(x,y,s){
+  const box=(bx,by,w,h,c,r)=>{add('rect',{x:bx,y:by,width:w,height:h,rx:1.5,fill:c});
+    add('rect',{x:bx+w/2-2,y:by,width:4,height:h,fill:r});add('rect',{x:bx,y:by+h/2-2,width:w,height:4,fill:r});};
+  box(x-22*s,y-20*s,34*s,20*s,'#e2483d','#ffd84a');
+  box(x+14*s,y-14*s,18*s,14*s,'#3f9b6b','#fff');
+  box(x-17*s,y-36*s,24*s,16*s,'#4a7bd0','#ffd84a');
+  box(x-12*s,y-48*s,14*s,12*s,'#b48cff','#fff');
+  add('path',{d:`M${x-5*s} ${y-48*s} q-6 -7 -1 -8 q3 0 1 8 q2 -8 5 -8 q5 1 -5 8`,fill:'none',stroke:'#fff','stroke-width':1.8*s});
+}
+function keksglas(x,y,s){
+  add('rect',{x:x-16*s,y:y-38*s,width:32*s,height:38*s,rx:8*s,fill:'rgba(225,242,255,.7)',stroke:'#9fc3dd','stroke-width':1.8});
+  [[-7,-8],[6,-9],[0,-18],[-8,-26],[7,-27]].forEach(([dx,dy])=>{
+    add('circle',{cx:x+dx*s,cy:y+dy*s,r:6.5*s,fill:'#d99a5a',stroke:'#b8783e','stroke-width':1});
+    add('circle',{cx:x+(dx-2)*s,cy:y+(dy-1)*s,r:1.2*s,fill:'#5a3014'});add('circle',{cx:x+(dx+2)*s,cy:y+(dy+2)*s,r:1.2*s,fill:'#5a3014'});
+  });
+  add('rect',{x:x-18*s,y:y-44*s,width:36*s,height:8*s,rx:3*s,fill:'#c0562b'});
+  add('rect',{x:x-10*s,y:y-16*s-12*s,width:20*s,height:0,fill:'none'});
+  add('path',{d:`M${x-11*s} ${y-34*s} L${x-11*s} ${y-12*s}`,stroke:'#fff','stroke-width':2.5*s,'stroke-linecap':'round',opacity:.7});
+  add('circle',{cx:x+26*s,cy:y-4*s,r:6*s,fill:'#d99a5a',stroke:'#b8783e','stroke-width':1});
+  add('circle',{cx:x+31*s,cy:y-8*s,r:3*s,fill:'#f7fbff'}); // angebissen
+}
+function kraftdorf(B1,B2,nacht){
+  // Häuschen wie im echten Adventskalender: Packpapier, Treppengiebel, weiße Kritzel-Fenster, Lichterkette
+  const papier=nacht?'#b89566':'#dcbf93', kante=nacht?'#9c7b50':'#c4a273', dach=nacht?'#6f6a66':'#8f8a85';
+  const glas=nacht?'#ffd36a':'#4a3426';
+  const hs=[[60,46,104,'treppe'],[100,42,88,'spitz'],[142,48,124,'rund'],[182,38,80,'spitz'],[222,42,96,'treppe'],[262,48,118,'spitz'],[302,42,98,'rund'],[340,44,86,'treppe']];
+  const punkte=[];
+  hs.forEach(([hx,w,h,typ],i)=>{
+    const Hh=hx<200?B1:B2, base=hillY(hx,...Hh)+16, top=base-h, l=hx-w/2, r=hx+w/2;
+    let d;
+    if(typ==='treppe'){ const st=w/6; d=`M${l} ${base} V${top+14} H${l+st} V${top+9} H${l+2*st} V${top+4} H${l+2.5*st} V${top} H${r-2.5*st} V${top+4} H${r-2*st} V${top+9} H${r-st} V${top+14} H${r} V${base} Z`; }
+    else if(typ==='rund'){ d=`M${l} ${base} V${top+12} Q${l} ${top+5} ${l+5} ${top+5} Q${hx} ${top-6} ${r-5} ${top+5} Q${r} ${top+5} ${r} ${top+12} V${base} Z`; }
+    else { d=`M${l} ${base} V${top+14} L${hx} ${top-2} L${r} ${top+14} V${base} Z`; }
+    add('path',{d,fill:papier,stroke:kante,'stroke-width':1.2});
+    if(typ==='spitz'){ add('path',{d:`M${l-3} ${top+15} L${hx} ${top-4} L${r+3} ${top+15} Z`,fill:dach});
+      for(let k=1;k<4;k++) add('path',{d:`M${hx-k*4.5} ${top-1+k*4.6} q2.2 -1.8 4.5 0 q2.2 -1.8 4.5 0`.replace(/q2.2 -1.8 4.5 0 q2.2 -1.8 4.5 0/, ' '+[...Array(k)].map(()=>'q2.25 -1.8 4.5 0 q2.25 -1.8 4.5 0').join(' ')),stroke:'#fff','stroke-width':.7,fill:'none',opacity:.85}); }
+    // Fenster: weiße Kritzel-Rahmen und ausgeschnittene Fenster
+    const fw=w*.26, fh=h*.18;
+    if(i%2===0){
+      add('path',{d:`M${hx-fw/2} ${top+18+fh} V${top+18+fh*.35} Q${hx-fw/2} ${top+18} ${hx} ${top+18} Q${hx+fw/2} ${top+18} ${hx+fw/2} ${top+18+fh*.35} V${top+18+fh} Z`,fill:glas,opacity:nacht?1:.9});
+      if(nacht) add('circle',{cx:hx,cy:top+18+fh*.6,r:fw,fill:'#ffcf6a',opacity:.35});
+    } else {
+      [[-1],[1]].forEach(([sg])=>{ const wx=hx+sg*w*.2-fw/2, wy=top+20;
+        add('rect',{x:wx,y:wy,width:fw,height:fh,fill:nacht?'#ffe29a':'none',stroke:'#fff','stroke-width':1});
+        add('path',{d:`M${wx+fw/2} ${wy} V${wy+fh} M${wx} ${wy+fh/2} H${wx+fw}`,stroke:'#fff','stroke-width':.7}); });
+    }
+    if(h>90){ [[-1],[1]].forEach(([sg])=>{ const wx=hx+sg*w*.2-fw/2, wy=top+20+fh+14;
+        add('rect',{x:wx,y:wy,width:fw,height:fh*.9,fill:nacht?'#ffe29a':'none',stroke:'#fff','stroke-width':1});
+        add('path',{d:`M${wx+fw/2} ${wy} V${wy+fh*.9}`,stroke:'#fff','stroke-width':.7}); }); }
+    // Tür, Herz, Wellenlinie
+    add('rect',{x:hx-w*.13,y:base-h*.24,width:w*.26,height:h*.24,rx:1.5,fill:'none',stroke:'#fff','stroke-width':1});
+    if(i%3===1) add('path',{d:`M${hx} ${top+12} c-2 -2 -4 0 -2 2 l2 2 l2 -2 c2 -2 0 -4 -2 -2z`,fill:'#d8434a'});
+    add('path',{d:`M${l+2} ${base-h*.36} q2 -1.5 4 0 q2 -1.5 4 0 q2 -1.5 4 0 q2 -1.5 4 0 q2 -1.5 4 0 q2 -1.5 4 0 q2 -1.5 4 0`,stroke:'#fff','stroke-width':.6,fill:'none',opacity:.7,'clip-path':''});
+    // kleiner roter Anhänger
+    if(i%2===1){ add('path',{d:`M${r-4} ${top+16} q4 6 2 12`,stroke:'#c0392b','stroke-width':1,fill:'none'}); add('rect',{x:r-5,y:top+27,width:7,height:5,rx:1,fill:'#e8d3b0',stroke:'#c0392b','stroke-width':.6}); }
+    punkte.push([l,base-h*.55],[hx,base-h*.42],[r,base-h*.6]);
+  });
+  // Warme Lichterkette über die Häuser
+  punkte.sort((a,b)=>a[0]-b[0]);
+  add('path',{d:'M'+punkte.map(p=>p.join(' ')).join(' L'),stroke:'#a38a5a','stroke-width':.8,fill:'none'});
+  punkte.forEach(([px,py],k)=>{ add('circle',{cx:px,cy:py,r:4,fill:'#ffe9a8',opacity:.3,class:'birne',style:`animation-delay:${-k*.35}s`}); add('circle',{cx:px,cy:py,r:1.5,fill:'#fff6d0'}); });
+  // Große rote Schleife oben auf dem mittleren Haus
+  const sx=142, sy=hillY(142,...B1)+16-124;
+  add('path',{d:`M${sx} ${sy} q-12 -8 -14 2 q2 8 14 -2 q12 -8 14 2 q-2 8 -14 -2 M${sx} ${sy} l-6 12 M${sx} ${sy} l6 12`,fill:'#d8434a',stroke:'#b8323a','stroke-width':1.2});
+}
+function dorf(B1,B2){
+  [[70,'#e2483d'],[104,'#4a7bd0'],[140,'#ffb13d'],[262,'#3f9b6b'],[298,'#b48cff'],[334,'#e2483d']].forEach(([hx,c],i)=>{
+    const Hh=hx<200?B1:B2, base=hillY(hx,...Hh)+8, w=22+(i%2)*6, h=16+(i%3)*3;
+    add('rect',{x:hx-w/2,y:base-h,width:w,height:h,fill:c});
+    add('rect',{x:hx+w*.18,y:base-h-12,width:5,height:10,fill:'#7a4a2a'});
+    [0,1,2].forEach(k=>add('circle',{cx:hx+w*.18+2.5+k*2,cy:base-h-16-k*6,r:2.5+k,fill:'#fff',opacity:.7-k*.2,class:'rauch',style:`animation-delay:${-k*.6}s`}));
+    add('path',{d:`M${hx-w/2-4} ${base-h} L${hx} ${base-h-14} L${hx+w/2+4} ${base-h} Z`,fill:'#f7fbff',stroke:'#dfe9f5'});
+    add('rect',{x:hx-w*.32,y:base-h+5,width:6,height:6,fill:'#ffd84a',rx:1});add('rect',{x:hx+w*.08,y:base-h+5,width:6,height:6,fill:'#ffd84a',rx:1});
+    add('rect',{x:hx-3,y:base-8,width:6,height:8,fill:'#5a3014'});
+  });
+  // Kirche
+  const kx=200, kb=hillY(kx,...B1)+4;
+  add('rect',{x:kx-9,y:kb-40,width:18,height:40,fill:'#f2e6d6'}); add('path',{d:`M${kx-12} ${kb-40} L${kx} ${kb-62} L${kx+12} ${kb-40}Z`,fill:'#c0392b'});
+  add('path',{d:`M${kx} ${kb-62} v-8 M${kx-3} ${kb-67} h6`,stroke:'#ffd84a','stroke-width':1.6});
+  add('circle',{cx:kx,cy:kb-30,r:4,fill:'#ffd84a'}); add('path',{d:`M${kx-4} ${kb} v-9 a4 4 0 0 1 8 0 v9`,fill:'#7a4a2a'});
+  add('path',{d:`M${kx-12} ${kb-40} L${kx} ${kb-62} L${kx+12} ${kb-40}`,stroke:'#fff','stroke-width':2,fill:'none'});
+}
+function wald(B1,B2){
+  for(let i=0;i<16;i++){ const tx=62+i*18+Math.sin(i*2.1)*6, Hh=tx<200?B1:B2;
+    tanne(tx,hillY(tx,...Hh)+6,.45+((i*37)%10)/28,false,i%2?'#4f8f74':'#5f9a86'); }
+}
+function markt(B1,B2){
+  [[82,'#e2483d'],[132,'#3f9b6b'],[268,'#4a7bd0'],[318,'#e2483d']].forEach(([mx,c],i)=>{
+    const Hh=mx<200?B1:B2, base=hillY(mx,...Hh)+10;
+    add('rect',{x:mx-18,y:base-20,width:36,height:20,fill:'#a8693a'}); add('rect',{x:mx-18,y:base-12,width:36,height:4,fill:'#8a542c'});
+    add('path',{d:`M${mx-23} ${base-20} L${mx} ${base-36} L${mx+23} ${base-20} Z`,fill:c});
+    add('path',{d:`M${mx-23} ${base-20} L${mx} ${base-36} L${mx+23} ${base-20}`,stroke:'#fff','stroke-width':2.5,fill:'none'});
+    for(let k=0;k<6;k++) add('circle',{cx:mx-16+k*6.4,cy:base-18+Math.sin(k)*1.5,r:1.4,fill:['#ffd84a','#ff5a5a','#fff'][k%3],class:'birne',style:`animation-delay:${-k*.3}s`});
+    add('text',{x:mx,y:base-2,'font-size':9,'text-anchor':'middle'}).textContent=['🥨','🍷','🍪','🎁'][i];
+  });
+  tanne(200,hillY(200,...B1)+6,.9,true);
+}
+function hillY(x,cx,cy,rx,ry){const t=(x-cx)/rx;return cy-ry*Math.sqrt(Math.max(0,1-t*t));}
+function baum(x,y,s,farben){
+  add('rect',{x:x-3*s,y:y-22*s,width:6*s,height:24*s,fill:'#7a4a2a'});
+  [[-8,-30,14],[8,-30,14],[0,-40,16]].forEach(([dx,dy,r])=>add('circle',{cx:x+dx*s,cy:y+dy*s,r:r*s,fill:pick(farben)}));
+}
+function blume(x,y){
+  add('path',{d:`M${x} ${y} L${x} ${y-12}`,stroke:'#3f8f3f','stroke-width':2});
+  const c=pick(['#ff7aa8','#ffd23f','#ffffff','#b48cff','#ff8a5c']);
+  for(let i=0;i<5;i++){const a=i*72*Math.PI/180;add('circle',{cx:x+Math.cos(a)*3.5,cy:y-12+Math.sin(a)*3.5,r:3,fill:c});}
+  add('circle',{cx:x,cy:y-12,r:2.2,fill:'#ffb400'});
+}
+function palme(x,y,s){
+  add('path',{d:`M${x} ${y} Q${x+6*s} ${y-30*s} ${x+16*s} ${y-62*s}`,stroke:'#9a6a3a','stroke-width':6*s,fill:'none','stroke-linecap':'round'});
+  const tx=x+16*s,ty=y-62*s;
+  [[-38,-4],[-20,-20],[6,-24],[30,-10],[36,8],[-30,12]].forEach(([dx,dy])=>
+    add('path',{d:`M${tx} ${ty} Q${tx+dx*.5*s} ${ty+dy*s-10*s} ${tx+dx*s} ${ty+dy*s+8*s}`,stroke:'#3aa060','stroke-width':6*s,fill:'none','stroke-linecap':'round'}));
+  add('circle',{cx:tx-2*s,cy:ty+4*s,r:3.5*s,fill:'#7a4a2a'});add('circle',{cx:tx+4*s,cy:ty+5*s,r:3.5*s,fill:'#7a4a2a'});
+}
+
+if(saison==='winter' && !(SZ && SZ.ort!=='draussen' && SZ.ort!=='nacht')){
+  const deko = month===11;
+  const B1=[90,175,210,100], B2=[330,180,170,98], F=[200,300,330,165];
+  if(hat('berge')||hat('piste')||hat('gondel')) berge();
+  if(hat('piste')) piste();
+  if(hat('gondel')) gondel();
+  add('ellipse',{cx:B1[0],cy:B1[1],rx:B1[2],ry:B1[3],fill:(SZ&&SZ.ort==='nacht')?'#8e9cc9':'#d6e4f4'});
+  add('ellipse',{cx:B2[0],cy:B2[1],rx:B2[2],ry:B2[3],fill:(SZ&&SZ.ort==='nacht')?'#97a5d1':'#dde9f6'});
+  [[78,.55],[100,.45],[122,.6],[300,.5],[322,.6]].forEach(([x,sc])=>{
+    const H=x<200?B1:B2; tanne(x,hillY(x,...H)+2,sc,false,'#7aa79a');
+  });
+  if(!document.getElementById('weichzeichner')){ const sv=document.getElementById('scene'); const df=document.createElementNS(NS,'defs'); sv.insertBefore(df,sv.firstChild); const f=document.createElementNS(NS,'filter'); f.id='weichzeichner'; f.setAttribute('x','-1');f.setAttribute('y','-1');f.setAttribute('width','3');f.setAttribute('height','3'); const g=document.createElementNS(NS,'feGaussianBlur'); g.setAttribute('stdDeviation','2.5'); f.appendChild(g); df.appendChild(f); }
+  if(hat('kraftdorf')) kraftdorf(B1,B2,SZ&&SZ.ort==='nacht');
+  if(hat('dorf')) dorf(B1,B2); if(hat('wald')) wald(B1,B2); if(hat('markt')) markt(B1,B2);
+  add('ellipse',{cx:F[0],cy:F[1],rx:F[2],ry:F[3],fill:(SZ&&SZ.ort==='nacht')?'#c9d3ee':'#f7fbff'});
+  if(hat('see')) see();
+  // Vordergrund: unterhalb der Füße, damit niemand "im Baum" steht
+  tanne(80,230,1.05,deko);
+  tanne(322,224,.9,false);
+  tanne(344,236,.7,false);
+  // Schneemann
+  if(!(SZ&&SZ.ohneSchneemann)){
+  const sx=258, sy=216;
+  add('ellipse',{cx:sx,cy:sy,rx:15,ry:13,fill:'#fff',stroke:'#dfe9f5','stroke-width':1.5});
+  add('circle',{cx:sx,cy:sy-21,r:10,fill:'#fff',stroke:'#dfe9f5','stroke-width':1.5});
+  add('path',{d:`M${sx} ${sy-21} l9 2 -9 2z`,fill:'#ff8a3c'});
+  add('circle',{cx:sx-3.5,cy:sy-24,r:1.3,fill:'#333'});add('circle',{cx:sx+3.5,cy:sy-24,r:1.3,fill:'#333'});
+  add('path',{d:`M${sx-9} ${sy-13} Q${sx} ${sy-9} ${sx+9} ${sy-13}`,stroke:'#d64545','stroke-width':3,fill:'none','stroke-linecap':'round'});
+  }
+  if(besonders && besonders.stiefel) stiefel(140,hillY(140,...F)+42,1.15);
+  if(hat('geschenke')) geschenke(112,172,1.6);
+  if(hat('keksglas')) keksglas(268,166,1.5);
+}
+if(saison==='fruehling'){
+  add('path',{d:'M0 90 Q100 55 210 85 T400 75 V240 H0Z',fill:'#9fd66d'});
+  [[85,98,.9],[315,95,1]].forEach(([x,y,s])=>baum(x,y,s,['#ffc3d8','#ffd6e5','#ffb0cb']));
+  add('path',{d:'M0 125 Q120 95 230 118 T400 110 V240 H0Z',fill:'#7cc35a'});
+  for(let i=0;i<30;i++) blume(rnd(65,335),rnd(132,235));
+}
+if(saison==='sommer'){
+  add('rect',{x:0,y:80,width:400,height:60,fill:'#36b3e3'});
+  for(let i=0;i<6;i++) add('path',{d:`M${i*70+10} ${95+i%2*18} q8 -5 16 0`,stroke:'#fff','stroke-width':2,fill:'none',opacity:.8});
+  add('path',{d:'M0 125 Q140 108 260 122 T400 116 V240 H0Z',fill:'#ffe0a3'});
+  palme(72,195,1.05); palme(282,190,.95);
+  add('path',{d:'M108 182 a20 20 0 0 1 40 0 z',fill:'#ff6b6b'}); // Sonnenschirm
+  add('path',{d:'M128 182 L128 217',stroke:'#7a4a2a','stroke-width':2.5});
+  add('text',{x:225,y:212,'font-size':16},).textContent='🐚';
+  add('text',{x:180,y:228,'font-size':14}).textContent='⭐';
+}
+if(saison==='herbst'){
+  add('path',{d:'M0 88 Q110 55 220 82 T400 72 V240 H0Z',fill:'#e0a35a'});
+  [[85,100,1],[125,92,.7],[305,96,1.05]].forEach(([x,y,s])=>baum(x,y,s,['#e8622c','#f2a03d','#d2452f','#f7c843']));
+  add('path',{d:'M0 125 Q120 98 230 120 T400 112 V240 H0Z',fill:'#c98845'});
+  [[82,170,1.1],[322,165,1.05]].forEach(([x,y,s])=>baum(x,y,s,['#e8622c','#f2a03d','#d2452f']));
+  add('text',{x:245,y:200,'font-size':18}).textContent='🍄';
+  add('text',{x:140,y:218,'font-size':16}).textContent='🎃';
+}
+
+// Partikel & Wolken
+// Auf breiten Bildschirmen (Laptop, iPad quer) zeigen wir die Szene wie ein Handybild in der Mitte
+const BREIT = innerWidth > innerHeight*0.75;
+if(BREIT) document.body.classList.add('stage');
+const W=()=> BREIT ? Math.round(innerHeight*0.6) : innerWidth, H=()=>innerHeight;
+/* ---------- Liebevolle Innenräume ---------- */
+function raumZeichnen(typ){
+  const W0=W(), H0=H(), G=H0*.8, U=Math.min(W0,560)/400;
+  const sv=document.createElementNS(NS,'svg'); sv.id='raum';
+  sv.setAttribute('viewBox',`0 0 ${W0} ${H0}`); sv.setAttribute('width',W0); sv.setAttribute('height',H0);
+  document.body.appendChild(sv);
+  const bd=document.createElementNS(NS,'svg'); bd.id='raumboden'; bd.setAttribute('viewBox',`0 0 ${W0} ${H0}`); bd.setAttribute('width',W0); bd.setAttribute('height',H0); document.body.appendChild(bd);
+  let P=sv; const r=(tag,a,par)=>add(tag,a,par||P);
+  const defs=r('defs',{});
+  const grad=(id,stops,x2=0,y2=1)=>{const g=r('linearGradient',{id,x1:0,y1:0,x2,y2},defs);stops.forEach(([o,c])=>r('stop',{offset:o,'stop-color':c},g));};
+  const pat=(id,w,h,fn)=>{const p=r('pattern',{id,width:w,height:h,patternUnits:'userSpaceOnUse'},defs);fn(p);};
+  const glow=r('filter',{id:'glow',x:'-50%',y:'-50%',width:'200%',height:'200%'},defs); r('feGaussianBlur',{stdDeviation:3*U},glow);
+
+  // ---- Grundfarben je Raum ----
+  const wand={wohnzimmer:['#f9e3c9','#f0cfae'],kueche:['#fbeedd','#f4dcc0'],bad:['#dff1f6','#c9e6ee'],gym:['#e8eef6','#d4dde9'],werkstatt:['#e6cfae','#d4b58c'],buehne:['#5a1d24','#2d0d12']}[typ];
+  grad('wandG',[[0,wand[0]],[1,wand[1]]]); r('rect',{x:0,y:0,width:W0,height:G,fill:'url(#wandG)'});
+
+  if(typ==='wohnzimmer'){
+    pat('tapete',44*U,44*U,p=>{ r('path',{d:`M${22*U} ${8*U} l${2.4*U} ${5*U} ${5.4*U} ${.6*U} -${4*U} ${3.7*U} ${1*U} ${5.3*U} -${4.8*U} -${2.7*U} -${4.8*U} ${2.7*U} ${1*U} -${5.3*U} -${4*U} -${3.7*U} ${5.4*U} -${.6*U}z`,fill:'#fff',opacity:.35},p);
+      r('circle',{cx:4*U,cy:34*U,r:1.6*U,fill:'#fff',opacity:.4},p); });
+    r('rect',{x:0,y:0,width:W0,height:G,fill:'url(#tapete)'});
+  }
+  if(typ==='werkstatt'){ for(let i=0;i<W0/(36*U);i++) r('rect',{x:i*36*U,y:0,width:34*U,height:G,fill:i%2?'#dcbf97':'#d2b285'}); }
+  if(typ==='bad'||typ==='kueche'){
+    pat('kachel',28*U,28*U,p=>{ r('rect',{x:0,y:0,width:28*U,height:28*U,fill:typ==='bad'?'#bfe3ee':'#ffffff'},p);
+      r('rect',{x:1*U,y:1*U,width:26*U,height:26*U,rx:2*U,fill:typ==='bad'?'#d6f0f6':'#eef7f6'},p);
+      if(typ==='kueche') r('path',{d:`M${8*U} ${14*U} q${6*U} -${6*U} ${12*U} 0`,stroke:'#7cc4bd','stroke-width':1.5*U,fill:'none'},p); });
+    const kTop = typ==='bad' ? G-H0*.42 : G-H0*.2;
+    r('rect',{x:0,y:kTop,width:W0,height:G-kTop,fill:'url(#kachel)'});
+  }
+
+  // ---- Lichterkette oben (alle Innenräume außer Bühne) ----
+  if(typ!=='buehne'){
+    const yk=H0*.05, n=Math.round(W0/(30*U));
+    r('path',{d:`M-10 ${yk} `+[...Array(4)].map((_,i)=>`Q${W0*(i*.25+.125)} ${yk+26*U} ${W0*(i+1)*.25} ${yk}`).join(' '),stroke:'#2f5a3a','stroke-width':2*U,fill:'none'});
+    for(let i=0;i<n;i++){ const t=(i+.5)/n, seg=t*4%1, cx=t*W0, cy=yk+26*U*2*seg*(1-seg)*2*.5+2*U;
+      const c=['#ff5a5a','#ffd84a','#5ab0ff','#7be07b','#ff8ad8'][i%5];
+      r('circle',{cx,cy:cy+6*U,r:7*U,fill:c,opacity:.3,class:'birne',style:`animation-delay:${-(i%5)*.4}s`});
+      r('ellipse',{cx,cy:cy+6*U,rx:3.6*U,ry:5*U,fill:c});
+      r('rect',{x:cx-2*U,y:cy-1*U,width:4*U,height:3*U,fill:'#2f5a3a'}); }
+  }
+
+  // ---- Fenster mit Vorhängen & Schneefall ----
+  const fenster=(fx,fy,fw,fh,nacht=false)=>{
+    const cid='fclip'+Math.round(fx);
+    const cp=r('clipPath',{id:cid},defs); r('rect',{x:fx,y:fy,width:fw,height:fh,rx:4*U},cp);
+    grad('himmel'+cid,nacht?[[0,'#1f2a66'],[1,'#5a63a8']]:[[0,'#8fc3ee'],[1,'#dbeefb']]);
+    const g=r('g',{'clip-path':`url(#${cid})`});
+    r('rect',{x:fx,y:fy,width:fw,height:fh,fill:`url(#himmel${cid})`},g);
+    r('ellipse',{cx:fx+fw*.3,cy:fy+fh*1.05,rx:fw*.7,ry:fh*.35,fill:'#f4f8ff'},g);
+    r('ellipse',{cx:fx+fw*.85,cy:fy+fh*1.1,rx:fw*.5,ry:fh*.3,fill:'#e6eef9'},g);
+    [[.2,.78],[.62,.72],[.82,.8]].forEach(([a,b])=>{ const tx=fx+fw*a, ty=fy+fh*b;
+      r('path',{d:`M${tx} ${ty-fh*.22} L${tx+fw*.07} ${ty} L${tx-fw*.07} ${ty} Z`,fill:'#4f8f74'},g); });
+    for(let i=0;i<14;i++) r('circle',{cx:fx+Math.random()*fw,cy:fy,r:(1+Math.random()*1.5)*U,fill:'#fff',class:'flocke',style:`--fh:${fh}px;animation-duration:${3+Math.random()*4}s;animation-delay:${-Math.random()*6}s`},g);
+    r('rect',{x:fx,y:fy,width:fw,height:fh,rx:4*U,fill:'none',stroke:'#fff','stroke-width':7*U});
+    r('path',{d:`M${fx+fw/2} ${fy} V${fy+fh} M${fx} ${fy+fh*.45} H${fx+fw}`,stroke:'#fff','stroke-width':5*U});
+    r('rect',{x:fx-10*U,y:fy+fh,width:fw+20*U,height:9*U,rx:3*U,fill:'#fff'});
+    // Vorhänge
+    const vc=typ==='bad'?'#7fc6d6':'#c0392b';
+    r('path',{d:`M${fx-16*U} ${fy-14*U} Q${fx+fw*.12} ${fy+fh*.5} ${fx-4*U} ${fy+fh+30*U} L${fx-26*U} ${fy+fh+30*U} L${fx-26*U} ${fy-14*U} Z`,fill:vc});
+    r('path',{d:`M${fx+fw+16*U} ${fy-14*U} Q${fx+fw*.88} ${fy+fh*.5} ${fx+fw+4*U} ${fy+fh+30*U} L${fx+fw+26*U} ${fy+fh+30*U} L${fx+fw+26*U} ${fy-14*U} Z`,fill:vc});
+    r('rect',{x:fx-34*U,y:fy-20*U,width:fw+68*U,height:7*U,rx:3.5*U,fill:'#8a542c'});
+    r('circle',{cx:fx-34*U,cy:fy-16.5*U,r:6*U,fill:'#8a542c'}); r('circle',{cx:fx+fw+34*U,cy:fy-16.5*U,r:6*U,fill:'#8a542c'});
+    return {fx,fy,fw,fh};
+  };
+
+  // ---- Tannenbaum mit Lichtern & Geschenken ----
+  const tanne=(tx,base,th)=>{
+    r('rect',{x:tx-th*.05,y:base-th*.1,width:th*.1,height:th*.1,fill:'#6b4226'});
+    r('path',{d:`M${tx-th*.1} ${base-th*.02} L${tx+th*.1} ${base-th*.02} L${tx+th*.08} ${base+th*.05} L${tx-th*.08} ${base+th*.05}Z`,fill:'#c0392b'});
+    [[.36,.08,.42],[.3,.36,.34],[.22,.6,.3]].forEach(([w,b,h],i)=>{
+      const bb=base-th*b, tp=bb-th*h;
+      r('path',{d:`M${tx} ${tp} L${tx+th*w} ${bb} Q${tx} ${bb+th*.05} ${tx-th*w} ${bb} Z`,fill:['#2e7d5b','#3a8f62','#46a06f'][i]});
+    });
+    for(let i=0;i<16;i++){ const f=Math.random(), yy=base-th*(.12+f*.76), ww=th*.34*(1-f*.8)*(Math.random()*1.6-.8);
+      const c=['#ff5a5a','#ffd84a','#5ab0ff','#ff8ad8','#fff'][i%5];
+      r('circle',{cx:tx+ww,cy:yy,r:4*U,fill:c,opacity:.5,class:'birne',style:`animation-delay:${-i*.3}s`}); r('circle',{cx:tx+ww,cy:yy,r:2.4*U,fill:c}); }
+    [[.42,.27],[.66,.17]].forEach(([f,w])=>r('path',{d:`M${tx-th*w} ${base-th*f+th*.03} Q${tx} ${base-th*f+th*.09} ${tx+th*w} ${base-th*f-th*.01}`,stroke:'#ffd84a','stroke-width':2*U,fill:'none'}));
+    r('path',{d:`M${tx} ${base-th*.98} l${th*.03} ${th*.06} ${th*.065} ${th*.006}-${th*.048} ${th*.044} ${th*.013} ${th*.064}-${th*.06} -${th*.033}-${th*.06} ${th*.033} ${th*.013} -${th*.064}-${th*.048} -${th*.044} ${th*.065} -${th*.006}z`,fill:'#ffd84a'});
+    r('path',{d:`M${tx} ${base-th*.98} l${th*.03} ${th*.06} ${th*.065} ${th*.006}-${th*.048} ${th*.044} ${th*.013} ${th*.064}-${th*.06} -${th*.033}-${th*.06} ${th*.033} ${th*.013} -${th*.064}-${th*.048} -${th*.044} ${th*.065} -${th*.006}z`,fill:'#ffe680'});
+    const gesch=(gx,gw,gh,c,b)=>{ r('rect',{x:gx,y:base-gh,width:gw,height:gh,rx:2*U,fill:c}); r('rect',{x:gx+gw/2-2*U,y:base-gh,width:4*U,height:gh,fill:b}); r('rect',{x:gx,y:base-gh*.6,width:gw,height:4*U,fill:b}); };
+    gesch(tx-th*.3,th*.16,th*.11,'#4a7bd0','#ffd84a'); gesch(tx+th*.12,th*.14,th*.09,'#e2483d','#fff'); gesch(tx-th*.1,th*.1,th*.07,'#b48cff','#fff');
+  };
+
+  // ---- Boden ----
+  P=bd;
+  if(typ==='kueche'||typ==='bad'){
+    pat('boden',30*U,30*U,p=>{ r('rect',{x:0,y:0,width:30*U,height:30*U,fill:typ==='bad'?'#e9f2f5':'#f3ead8'},p);
+      r('rect',{x:0,y:0,width:15*U,height:15*U,fill:typ==='bad'?'#cfe2e8':'#d9c7a8'},p); r('rect',{x:15*U,y:15*U,width:15*U,height:15*U,fill:typ==='bad'?'#cfe2e8':'#d9c7a8'},p); });
+    r('rect',{x:0,y:G,width:W0,height:H0-G,fill:'url(#boden)'});
+  } else if(typ==='gym'){
+    r('rect',{x:0,y:G,width:W0,height:H0-G,fill:'#5b6b82'});
+    r('rect',{x:W0*.08,y:G+8*U,width:W0*.84,height:H0*.08,rx:6*U,fill:'#3f7bd1'}); r('rect',{x:W0*.08,y:G+8*U,width:W0*.84,height:5*U,rx:2*U,fill:'#5b95e6'});
+  } else {
+    grad('dieleG',[[0,typ==='buehne'?'#7a4426':'#c98d5a'],[1,typ==='buehne'?'#4a2614':'#a86f40']]);
+    r('rect',{x:0,y:G,width:W0,height:H0-G,fill:'url(#dieleG)'});
+    for(let i=0;i<6;i++) r('path',{d:`M0 ${G+(H0-G)*(i/6)} H${W0}`,stroke:'rgba(0,0,0,.08)','stroke-width':1.5*U});
+    for(let i=0;i<20;i++){ const row=i%6; r('path',{d:`M${(i*97)%W0} ${G+(H0-G)*(row/6)} v${(H0-G)/6}`,stroke:'rgba(0,0,0,.08)','stroke-width':1.5*U}); }
+  }
+  // Fußleiste
+  if(typ!=='buehne') r('rect',{x:0,y:G-7*U,width:W0,height:9*U,fill:typ==='bad'?'#fff':'#fff6ea',stroke:'rgba(0,0,0,.06)'});
+
+  P=sv;
+  // ---- Räume ----
+  if(typ==='wohnzimmer'){
+    // Wandvertäfelung
+    r('rect',{x:0,y:G-H0*.12,width:W0,height:H0*.12-7*U,fill:'#f6dcbf'});
+    r('rect',{x:0,y:G-H0*.12-5*U,width:W0,height:5*U,fill:'#fff6ea'});
+    for(let i=0;i<W0/(70*U);i++) r('rect',{x:i*70*U+8*U,y:G-H0*.12+8*U,width:54*U,height:H0*.12-24*U,rx:4*U,fill:'none',stroke:'#ecc9a3','stroke-width':2*U});
+    fenster(W0*.56,H0*.13,W0*.34,H0*.17);
+    // Kerzen & Pflanze auf dem Fensterbrett
+    const fb=H0*.30; 
+    [[W0*.6,'#fff3c4'],[W0*.64,'#ffe0e0']].forEach(([kx,c],i)=>{ r('rect',{x:kx,y:fb-16*U+i*4*U,width:9*U,height:16*U-i*4*U,rx:2*U,fill:c});
+      r('ellipse',{cx:kx+4.5*U,cy:fb-21*U+i*4*U,rx:5*U,ry:8*U,fill:'#ffb347',opacity:.5,class:'flamme'}); r('ellipse',{cx:kx+4.5*U,cy:fb-20*U+i*4*U,rx:2.2*U,ry:4*U,fill:'#ffcf4a',class:'flamme'}); });
+    r('path',{d:`M${W0*.84} ${fb} l${4*U} -${14*U} h${12*U} l${4*U} ${14*U}z`,fill:'#c8692f'});
+    [-8,0,8].forEach(d=>r('ellipse',{cx:W0*.84+10*U+d*U,cy:fb-20*U-Math.abs(d)*-.3*U,rx:4*U,ry:9*U,fill:'#4f9a5b',transform:`rotate(${d*3} ${W0*.84+10*U} ${fb-14*U})`}));
+    // Bilderrahmen mit Herz & Sonne
+    const bx=W0*.12, by=H0*.15, bw=W0*.2, bh=W0*.16;
+    r('rect',{x:bx,y:by,width:bw,height:bh,rx:3*U,fill:'#fff8ee',stroke:'#b8860b','stroke-width':5*U});
+    r('circle',{cx:bx+bw*.32,cy:by+bh*.45,r:bw*.13,fill:'#ffc94a'}); 
+    for(let i=0;i<8;i++){const a=i*Math.PI/4; r('path',{d:`M${bx+bw*.32+Math.cos(a)*bw*.17} ${by+bh*.45+Math.sin(a)*bw*.17} l${Math.cos(a)*bw*.06} ${Math.sin(a)*bw*.06}`,stroke:'#ffb13d','stroke-width':2*U,'stroke-linecap':'round'});}
+    r('path',{d:`M${bx+bw*.7} ${by+bh*.68} c-${bw*.18} -${bh*.14} -${bw*.14} -${bh*.36} 0 -${bh*.24} c${bw*.14} -${bh*.12} ${bw*.18} ${bh*.1} 0 ${bh*.24}z`,fill:'#e2483d'});
+    r('path',{d:`M${bx+bw*.5} ${by-14*U} L${bx+bw*.15} ${by} M${bx+bw*.5} ${by-14*U} L${bx+bw*.85} ${by}`,stroke:'#b8860b','stroke-width':1.5*U});
+    // Regal mit Büchern & Schneekugel
+    const rx=W0*.06, ry=H0*.4, rw=W0*.42;
+    r('rect',{x:rx,y:ry,width:rw,height:6*U,rx:2*U,fill:'#8a542c'});
+    let bxx=rx+6*U; ['#e2483d','#3f9b6b','#4a7bd0','#ffd84a','#b48cff'].forEach((c,i)=>{const bh2=(22+i%3*5)*U; r('rect',{x:bxx,y:ry-bh2,width:7*U,height:bh2,rx:1.5*U,fill:c}); bxx+=8*U;});
+    r('circle',{cx:rx+rw*.88,cy:ry-12*U,r:11*U,fill:'#dff1ff',stroke:'#fff','stroke-width':1.5*U}); r('rect',{x:rx+rw*.88-10*U,y:ry-4*U,width:20*U,height:5*U,rx:2*U,fill:'#7a4a2a'});
+    r('path',{d:`M${rx+rw*.88} ${ry-19*U} l${5*U} ${10*U} h-${10*U}z`,fill:'#3f8f5f'});
+    // Papiersterne von der Decke
+    [[W0*.42,H0*.13,'#ffd84a'],[W0*.5,H0*.2,'#ff8ad8'],[W0*.36,H0*.24,'#fff']].forEach(([sx,sy,c])=>{ r('path',{d:`M${sx} 0 V${sy}`,stroke:'#c9a36a','stroke-width':1*U});
+      const s=9*U; r('path',{d:`M${sx} ${sy-s} L${sx+s*.3} ${sy-s*.3} L${sx+s} ${sy-s*.2} L${sx+s*.45} ${sy+s*.25} L${sx+s*.6} ${sy+s} L${sx} ${sy+s*.6} L${sx-s*.6} ${sy+s} L${sx-s*.45} ${sy+s*.25} L${sx-s} ${sy-s*.2} L${sx-s*.3} ${sy-s*.3}Z`,fill:c,class:'pendel',style:`transform-origin:${sx}px 0px`}); });
+    // Tannenbaum in der Ecke
+    // kleiner Tannenbaum aufs Regal (der Boden bleibt frei für Bea & Sonni)
+    tanne(rx+rw*.42,ry-1*U,Math.min(H0*.13,W0*.22));
+    // Teppich
+    P=bd;
+    r('ellipse',{cx:W0*.5,cy:G+H0*.07,rx:W0*.46,ry:H0*.055,fill:'#b83a3a'});
+    r('ellipse',{cx:W0*.5,cy:G+H0*.07,rx:W0*.4,ry:H0*.042,fill:'none',stroke:'#f3d27a','stroke-width':3*U,'stroke-dasharray':`${8*U} ${5*U}`});
+    r('ellipse',{cx:W0*.5,cy:G+H0*.07,rx:W0*.3,ry:H0*.028,fill:'#c95050'});
+  }
+  if(typ==='kueche'){
+    fenster(W0*.36,H0*.1,W0*.28,H0*.14);
+    // Hängeschränke
+    [[W0*.02,W0*.28],[W0*.7,W0*.28]].forEach(([sx,sw])=>{ r('rect',{x:sx,y:H0*.1,width:sw,height:H0*.15,rx:4*U,fill:'#7fb8a8'});
+      r('rect',{x:sx+6*U,y:H0*.1+6*U,width:sw/2-9*U,height:H0*.15-12*U,rx:3*U,fill:'none',stroke:'#a8d4c7','stroke-width':2*U});
+      r('rect',{x:sx+sw/2+3*U,y:H0*.1+6*U,width:sw/2-9*U,height:H0*.15-12*U,rx:3*U,fill:'none',stroke:'#a8d4c7','stroke-width':2*U});
+      r('circle',{cx:sx+sw/2-8*U,cy:H0*.24-14*U,r:2.5*U,fill:'#fff'}); r('circle',{cx:sx+sw/2+8*U,cy:H0*.24-14*U,r:2.5*U,fill:'#fff'}); });
+    // Regal mit Gläsern & Gewürzen
+    const ry=H0*.34; r('rect',{x:W0*.05,y:ry,width:W0*.9,height:6*U,rx:2*U,fill:'#a8693a'});
+    [['#e2483d','Paprika'],['#6cbf62','Koriander'],['#f2c94c','Curry'],['#8a542c','Zimt'],['#ff8a5c','Chili']].forEach(([c,l],i)=>{ const jx=W0*.08+i*W0*.18;
+      r('rect',{x:jx,y:ry-26*U,width:18*U,height:26*U,rx:4*U,fill:'#f4fbff',stroke:'#cde','stroke-width':1.5*U}); r('rect',{x:jx+2*U,y:ry-16*U,width:14*U,height:14*U,rx:2*U,fill:c}); r('rect',{x:jx-1*U,y:ry-30*U,width:20*U,height:6*U,rx:2*U,fill:'#a8693a'}); });
+    // Utensilien an der Leiste
+    r('rect',{x:W0*.3,y:H0*.42,width:W0*.4,height:4*U,rx:2*U,fill:'#9aa6b2'});
+    [['🥄',.35],['🍴',.45],['🧁',.55],['🥣',.65]].forEach(([e,f])=>{const t=r('text',{x:W0*f,y:H0*.42+20*U,'font-size':18*U,'text-anchor':'middle'});t.textContent=e;});
+    // Arbeitsplatte hinten
+    r('rect',{x:0,y:G-H0*.1,width:W0,height:H0*.1-7*U,fill:'#7fb8a8'});
+    r('rect',{x:0,y:G-H0*.1-8*U,width:W0,height:9*U,fill:'#e9e2d6'});
+    for(let i=0;i<W0/(60*U);i++) r('rect',{x:i*60*U+6*U,y:G-H0*.1+6*U,width:48*U,height:H0*.1-26*U,rx:3*U,fill:'none',stroke:'#a8d4c7','stroke-width':2*U});
+    // Plätzchendose & Mixer auf der Platte
+    r('rect',{x:W0*.82,y:G-H0*.1-30*U,width:28*U,height:22*U,rx:5*U,fill:'#e2483d'}); r('rect',{x:W0*.82-2*U,y:G-H0*.1-34*U,width:32*U,height:6*U,rx:3*U,fill:'#c0392b'});
+    const t2=r('text',{x:W0*.82+14*U,y:G-H0*.1-13*U,'font-size':11*U,'text-anchor':'middle',fill:'#fff','font-weight':600}); t2.textContent='🍪';
+  }
+  if(typ==='bad'){
+    // Spiegel & Handtücher
+    r('rect',{x:W0*.36,y:H0*.1,width:W0*.28,height:H0*.17,rx:40*U,fill:'#eaf7fb',stroke:'#fff','stroke-width':6*U});
+    r('path',{d:`M${W0*.42} ${H0*.14} l${18*U} -${10*U} M${W0*.44} ${H0*.17} l${24*U} -${14*U}`,stroke:'#fff','stroke-width':4*U,'stroke-linecap':'round'});
+    r('rect',{x:W0*.06,y:H0*.32,width:W0*.22,height:4*U,rx:2*U,fill:'#9aa6b2'});
+    r('rect',{x:W0*.08,y:H0*.32,width:W0*.08,height:H0*.08,rx:3*U,fill:'#ff8ab3'}); r('rect',{x:W0*.18,y:H0*.32,width:W0*.08,height:H0*.1,rx:3*U,fill:'#ffd84a'});
+    // Badewanne mit Entchen
+    const wx=W0*.62, wy=G-H0*.1;
+    r('path',{d:`M${wx} ${wy} H${W0+20} V${G-10*U} Q${W0} ${G} ${W0-20*U} ${G} H${wx+20*U} Q${wx} ${G} ${wx} ${G-20*U}Z`,fill:'#fff',stroke:'#dbe7ef','stroke-width':2*U});
+    r('rect',{x:wx-6*U,y:wy-6*U,width:W0,height:9*U,rx:4*U,fill:'#f4f8fb'});
+    for(let i=0;i<6;i++) r('circle',{cx:wx+20*U+i*16*U,cy:wy-6*U-Math.random()*6*U,r:(6+Math.random()*5)*U,fill:'#fff',stroke:'#e3eef5'});
+    const ente=r('text',{x:wx+60*U,y:wy-8*U,'font-size':22*U});ente.textContent='🦆';
+    // Pflanze
+    const pl=r('text',{x:W0*.04,y:G-10*U,'font-size':34*U});pl.textContent='🪴';
+  }
+  if(typ==='gym'){
+    // Spiegelwand & Sprossenwand & Poster
+    r('rect',{x:W0*.3,y:H0*.12,width:W0*.4,height:G-H0*.12-20*U,rx:6*U,fill:'#f4f8fd',stroke:'#c8d3e2','stroke-width':4*U});
+    r('path',{d:`M${W0*.36} ${H0*.2} l${40*U} -${30*U} M${W0*.38} ${H0*.28} l${60*U} -${46*U}`,stroke:'#fff','stroke-width':6*U,'stroke-linecap':'round'});
+    for(let i=0;i<9;i++) r('rect',{x:W0*.03,y:H0*.12+i*(G-H0*.14)/9,width:W0*.18,height:5*U,rx:2*U,fill:'#c8924f'});
+    r('rect',{x:W0*.03,y:H0*.12,width:6*U,height:G-H0*.12,fill:'#a8693a'}); r('rect',{x:W0*.21-6*U,y:H0*.12,width:6*U,height:G-H0*.12,fill:'#a8693a'});
+    r('rect',{x:W0*.76,y:H0*.14,width:W0*.2,height:H0*.14,rx:4*U,fill:'#ffd84a'});
+    const p1=r('text',{x:W0*.86,y:H0*.19,'font-size':12*U,'text-anchor':'middle','font-weight':600,fill:'#7a4a1e'});p1.textContent='WEIHNACHTS';
+    const p2=r('text',{x:W0*.86,y:H0*.215,'font-size':12*U,'text-anchor':'middle','font-weight':600,fill:'#7a4a1e'});p2.textContent='WORKOUT';
+    const p3=r('text',{x:W0*.86,y:H0*.26,'font-size':22*U,'text-anchor':'middle'});p3.textContent='💪🎄';
+    // Gymnastikball & Hantelablage
+    r('circle',{cx:W0*.9,cy:G-24*U,r:24*U,fill:'#ff6b9a'}); r('path',{d:`M${W0*.9-20*U} ${G-34*U} q${20*U} ${-10*U} ${40*U} 0`,stroke:'#ffa3c2','stroke-width':3*U,fill:'none'});
+  }
+  if(typ==='werkstatt'){
+    // Lochwand mit Werkzeug
+    const lx=W0*.12, ly=H0*.12, lw=W0*.76, lh=H0*.22;
+    r('rect',{x:lx,y:ly,width:lw,height:lh,rx:5*U,fill:'#c8a06c',stroke:'#8a542c','stroke-width':4*U});
+    for(let i=0;i<lw/(14*U);i++) for(let j=0;j<lh/(14*U);j++) r('circle',{cx:lx+8*U+i*14*U,cy:ly+8*U+j*14*U,r:1.6*U,fill:'#8a6a40'});
+    [['🔨',.15],['🔧',.32],['🪛',.48],['🪚',.66],['📏',.84]].forEach(([e,f])=>{const t=r('text',{x:lx+lw*f,y:ly+lh*.65,'font-size':30*U,'text-anchor':'middle'});t.textContent=e;});
+    // Lampe
+    r('path',{d:`M${W0*.5} 0 V${H0*.04}`,stroke:'#333','stroke-width':2*U}); r('path',{d:`M${W0*.5-24*U} ${H0*.04+18*U} L${W0*.5-10*U} ${H0*.04} H${W0*.5+10*U} L${W0*.5+24*U} ${H0*.04+18*U}Z`,fill:'#3f9b6b'});
+    r('path',{d:`M${W0*.5-24*U} ${H0*.04+18*U} L${W0*.2} ${H0*.45} H${W0*.8} L${W0*.5+24*U} ${H0*.04+18*U}Z`,fill:'#fff7c2',opacity:.25});
+    // Kisten
+    [[W0*.04,'#c8924f'],[W0*.82,'#b8823f']].forEach(([kx,c])=>{ r('rect',{x:kx,y:G-40*U,width:50*U,height:40*U,fill:c}); r('path',{d:`M${kx} ${G-40*U} l${50*U} ${40*U} M${kx+50*U} ${G-40*U} l-${50*U} ${40*U}`,stroke:'#8a5a2b','stroke-width':2*U}); });
+  }
+  if(typ==='buehne'){
+    // Scheinwerferkegel, Sternchen-Vorhang hinten, Publikum vorne
+    for(let i=0;i<30;i++) r('circle',{cx:Math.random()*W0,cy:Math.random()*G*.8,r:(1+Math.random()*1.5)*U,fill:'#ffd84a',opacity:.6,class:'birne',style:`animation-delay:${-Math.random()*3}s`});
+    grad('kegel',[[0,'rgba(255,240,180,.55)'],[1,'rgba(255,240,180,0)']]);
+    [[.25,.5],[.75,.5]].forEach(([a,b])=>r('path',{d:`M${W0*a-10*U} 0 H${W0*a+10*U} L${W0*b+W0*.3} ${G} H${W0*b-W0*.3}Z`,fill:'url(#kegel)'}));
+    r('rect',{x:0,y:G-4*U,width:W0,height:8*U,fill:'#d4a017'});
+    P=bd; const pub=r('g',{});
+    for(let i=0;i<9;i++){ const px=(i+.5)*W0/9, py=H0+6*U; r('circle',{cx:px,cy:py-46*U,r:16*U,fill:'#1d0f12'},pub); r('ellipse',{cx:px,cy:py,rx:26*U,ry:34*U,fill:'#1d0f12'},pub); }
+    const mk=r('text',{x:W0*.5,y:G-H0*.02,'font-size':0}); 
+  }
+  P=sv;
+  // Warme Vignette
+  const vg=r('radialGradient',{id:'vig',cx:'50%',cy:'45%',r:'75%'},defs); r('stop',{offset:'60%','stop-color':'#000','stop-opacity':0},vg); r('stop',{offset:'100%','stop-color':typ==='buehne'?'#000':'#6b3a10','stop-opacity':typ==='buehne'?.5:.18},vg);
+  r('rect',{x:0,y:0,width:W0,height:H0,fill:'url(#vig)','pointer-events':'none'});
+}
+
+if(SZ && (SZ.ort==='drinnen'||SZ.ort==='buehne')){
+  document.body.style.background='#f0d2b5';
+  raumZeichnen(SZ.ort==='buehne'?'buehne':(SZ.raum||'wohnzimmer'));
+  if(SZ.ort==='buehne'){
+    ['l','r'].forEach(sd=>{const v=document.createElement('div'); v.className='vorhang-seite'; v.style[sd==='l'?'left':'right']=0; document.body.appendChild(v);});
+    const o=document.createElement('div'); o.className='vorhang-oben'; document.body.appendChild(o);
+  }
+}
+if(SZ && SZ.ort==='nacht'){
+  document.body.style.background='linear-gradient(180deg,#0c1638 0%,#1f2a66 60%,#3b3f86 100%)';
+  for(let i=0;i<40;i++){const st=document.createElement('div');st.className='stern';st.style.left=rnd(0,100)+'%';st.style.top=rnd(0,45)+'vh';st.style.animationDelay=(-rnd(0,3))+'s';document.body.appendChild(st);}
+}
+const drinnen = SZ && (SZ.ort==='drinnen'||SZ.ort==='buehne');
+if(SZ && SZ.himmel==='morgenrot') document.body.style.background='linear-gradient(180deg,#ffa98a 0%,#ffcfae 40%,#fde9dc 75%,#f3f6fb 100%)';
+const sturm=hat('sturm');
+if(sturm) document.body.style.background='linear-gradient(180deg,#9fb3c8 0%,#c9d6e3 60%,#e9eff5 100%)';
+for(let i=0;i<(drinnen?0:sturm?140:saison==='winter'?36:T.particles.length?12:0);i++){
+  const p=document.createElement('div');p.className='particle';p.textContent=pick(T.particles);
+  if(T.pcolor)p.style.color=T.pcolor;
+  p.style.left=rnd(0,100)+'%';p.style.fontSize=rnd(T.psize[0],T.psize[1])+'px';
+  p.style.animationDuration=(sturm?rnd(1.6,3.2):rnd(7,16))+'s';p.style.animationDelay=(-rnd(0,16))+'s';
+  p.style.setProperty('--drift',(sturm?rnd(-320,-160):rnd(-60,60))+'px');p.style.setProperty('--rot',rnd(-200,200)+'deg');
+  p.style.opacity=rnd(.6,.95);document.body.appendChild(p);
+}
+(drinnen||(SZ&&SZ.ort==='nacht')?[]:[[10,.22,30],[30,.16,38]]).forEach(([top,w,dur])=>{
+  const c=document.createElement('div');c.className='cloud';c.style.top=top+'%';
+  c.style.width=(W()*w+60)+'px';c.style.height=(W()*w*.35+22)+'px';
+  c.style.animationDuration=dur+'s';c.style.animationDelay=(-rnd(0,dur))+'s';document.body.appendChild(c);
+});
+
+/* ---------- Sonne & Outfit ---------- */
+const rays=document.getElementById('rays');
+for(let i=0;i<12;i++) add('path',{d:'M100 8 C115 22 113 40 100 54 C87 40 85 22 100 8Z',fill:i%2?'#ffd86b':'#ffa94d',transform:`rotate(${i*30} 100 100)`},rays);
+const kranz=document.getElementById('o-blumen');
+for(let i=0;i<9;i++){const a=(200+i*17.5)*Math.PI/180, cx=100+Math.cos(a)*54, cy=100+Math.sin(a)*54;
+  const c=['#ff7aa8','#fff','#ffd23f','#b48cff'][i%4];
+  for(let j=0;j<5;j++){const b=j*72*Math.PI/180;add('circle',{cx:cx+Math.cos(b)*5,cy:cy+Math.sin(b)*5,r:4.5,fill:c},kranz);}
+  add('circle',{cx,cy,r:3.5,fill:'#ffa500'},kranz);}
+
+const OUTFITS={
+  winter: month===11 ? [['weihnachtsmuetze'],['weihnachtsmuetze','schal'],['bommelmuetze','schal'],['ohren','schal']]
+                     : [['bommelmuetze','schal'],['ohren','schal'],['bommelmuetze']],
+  fruehling:[['blumen'],['blumen'],['brille']],
+  sommer:[['brille'],['strohhut'],['strohhut','brille']],
+  herbst:[['schal'],['bommelmuetze','schal'],['ohren']]
+};
+const schalFarbe={winter:'#d64545',fruehling:'#7cc35a',sommer:'#36b3e3',herbst:'#c0562b'}[saison];
+document.documentElement.style.setProperty('--schal',schalFarbe);
+((besonders&&besonders.outfit)||thema.sonne||pick(OUTFITS[saison])).forEach(o=>document.getElementById('o-'+o).style.display='');
+
+/* ---------- Bewegung ---------- */
+let size=190, beaH=0, beaW=0;
+function updateSize(){
+  size=Math.max(64,Math.min(W()*(SZ?.37:.42),H()*(SZ?.27:.3),SZ?175:190));
+  document.documentElement.style.setProperty('--size',size+'px');
+  { beaH=size*1.05; beaW=beaH*.6;
+    document.documentElement.style.setProperty('--beah',beaH+'px');document.documentElement.style.setProperty('--beaw',beaW+'px'); }
+}
+updateSize();
+const actor=document.getElementById('actor'), body=document.getElementById('body');
+const bubble=document.getElementById('bubble'), tap=document.getElementById('tap');
+const groundY=()=>H()*.80;
+const bea=document.getElementById('bea');
+updateSize();
+const spur=[];
+if(besonders && besonders.beaReveal) bea.style.opacity='0';
+if(besonders && besonders.beaKostuem==='nikolaus'){
+  document.getElementById('bea-nikolaus').style.display='';
+  document.getElementById('bea-hut').style.display='';
+  bea.querySelectorAll('.reif').forEach(e=>e.style.display='none');
+  bea.querySelectorAll('.jacke').forEach(e=>e.setAttribute('fill','#e2483d'));
+  bea.querySelectorAll('.aermel').forEach(e=>e.setAttribute('stroke','#e2483d'));
+  bea.querySelectorAll('.cardigan').forEach(e=>e.setAttribute('fill','#fff'));
+  document.getElementById('bea-mund').style.display='none';
+}
+const zeige=id=>document.getElementById(id).style.display='';
+const ohneReif=()=>bea.querySelectorAll('.reif').forEach(e=>e.style.display='none');
+if(!(besonders&&besonders.beaKostuem)){
+  if(thema.bea==='hut'){zeige('bea-hut');ohneReif();}
+  if(['beanie','ski','schlittschuh'].includes(thema.bea)){zeige('bea-beanie');ohneReif();}
+  if(thema.bea==='ski'){zeige('bea-ski');zeige('bea-brille-ski');}
+  if(thema.bea==='schlittschuh') zeige('bea-skates');
+}
+// Beas Klamotten wechseln jeden Tag 👕
+const BEA_DRAUSSEN=['leder','puffer','teddy','hoodie-rot','puffer','teddy','hoodie-gruen'];
+const BEA_DRINNEN=['hoodie-rot','hoodie-gruen','teddy','hoodie-rot','hoodie-gruen'];
+function beaOutfit(tag, drinnen){
+  const liste = drinnen?BEA_DRINNEN:BEA_DRAUSSEN;
+  const o = tag===1 ? 'leder' : liste[tag%liste.length];
+  const sleeve={ 'hoodie-rot':'#d64545','hoodie-gruen':'#3f8f5a','teddy':'#f4efe6','puffer':'#1f1f22' }[o];
+  if(o.startsWith('hoodie')){ zeige('bea-top-hoodie'); const c=o==='hoodie-rot'?['#d64545','#a83232']:['#3f8f5a','#2e6b43'];
+    bea.querySelectorAll('.top-farbe').forEach(e=>e.setAttribute('fill',c[0])); bea.querySelectorAll('.top-dunkel').forEach(e=>e.setAttribute('fill',c[1])); }
+  if(o==='teddy') zeige('bea-top-teddy');
+  if(o==='puffer') zeige('bea-top-puffer');
+  if(sleeve) bea.querySelectorAll('.aermel').forEach(e=>e.setAttribute('stroke',sleeve));
+  const schuh = tag%2 ? '#6b4226' : '#151212';
+  bea.querySelectorAll('.schuh').forEach(e=>e.setAttribute('fill',schuh)); zeige('bea-sohle');
+}
+if(month===11 && dezTag && !(besonders&&besonders.beaKostuem)) beaOutfit(dezTag, !!(SZ && SZ.ort!=='draussen' && SZ.ort!=='nacht'));
+let beaModus = (thema.bea==='ski'||thema.bea==='schlittschuh') ? 'auftritt' : 'folgen';
+if(beaModus==='auftritt') bea.style.opacity='0';
+let beaRot=0;
+function folgen(now){
+  spur.push({t:now,x,y}); while(spur.length>2&&spur[1].t<now-260) spur.shift();
+  const p=spur[0];
+  if(beaModus==='folgen'){ beaX=p.x-beaW*.78; beaY=p.y; bea.style.transform=`translate(${beaX}px,${beaY-beaH}px)`; }
+  else if(beaModus==='frei') setBea();
+  requestAnimationFrame(folgen);
+}
+requestAnimationFrame(folgen);
+bea.addEventListener('pointerdown',()=>{
+  if(untergegangen||SZ_AKTIV) return;
+  bea.classList.remove('jump'); void bea.offsetWidth; bea.classList.add('jump');
+  sprecher='bea'; setTimeout(()=>sprecher='sonne',2300);
+  say(pick(['Hehe, das bin ich! 💛','Mini Bea sagt Hallo! 👋','Ich hab dich lieb! 💛','Ich bin immer bei dir, in klein. 🤏']),2200);
+  planeUntergang(5000);
+});
+let x=-size, y=groundY(), hopping=false, rot=0, bubbleTimer, sprecher='sonne';
+
+function place(){
+  actor.style.transform=`translate(${x}px,${y-size}px) rotate(${rot}deg)`+(sunS!==1?` scale(${sunS})`:'');
+  const bw=bubble.offsetWidth,bh=bubble.offsetHeight;
+  const ax = sprecher==='bea' ? beaX+beaW/2 : x+size/2;
+  const top = sprecher==='bea' ? beaY-beaH*1.28 : y-size*sunS;
+  let bx=Math.max(10,Math.min(W()-bw-10,ax-bw/2));
+  bubble.style.left=bx+'px'; bubble.style.top=Math.max(10,top-bh-8)+'px';
+  bubble.style.setProperty('--tail',Math.max(24,Math.min(bw-24,ax-bx))+'px');
+}
+let hopId=0;
+const weich=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+function hop(toX,height=H()*.2,dur=620,salto=false){
+  return new Promise(res=>{
+    const id=++hopId; hopping=true; body.className='stretch';
+    const fx=x,fy=y,boden=groundY()-sunHub,t0=performance.now();
+    dur*=1.12;
+    (function step(now){
+      if(id!==hopId) return res();
+      const t=Math.min(1,(now-t0)/dur), e=weich(t);
+      x=fx+(toX-fx)*e; y=fy+(boden-fy)*e-height*4*t*(1-t); rot=salto?360*e*(toX<fx?-1:1):0;
+      place();
+      if(t<1) requestAnimationFrame(step);
+      else{ rot=0; body.className='squash'; if(height>H()*.05) sparks(x+size/2,y,3,['✨']);
+        setTimeout(()=>{ if(id===hopId){ body.className=''; hopping=false; } res(); },150); }
+    })(t0);
+  });
+}
+function say(html,ms){
+  clearTimeout(bubbleTimer); bubble.innerHTML=html; bubble.dataset.wer=sprecher; bubble.dataset.name=SZ_AKTIV?(sprecher==='bea'?'Bea':'Sonni'):''; bubble.classList.add('show'); place();
+  if(ms) bubbleTimer=setTimeout(()=>bubble.classList.remove('show'),ms);
+}
+function sparks(cx,cy,n,emojis=['✨','💛','⭐','☀️'],weit=1){
+  // nichts vor die Gesichter: Funken, die im Gesicht starten würden, beginnen über dem Kopf
+  if(cx>x-10 && cx<x+size+10 && cy>y-size*1.05 && cy<y-size*.15) cy=y-size*1.05;
+  if(typeof beaX!=='undefined' && cx>beaX-10 && cx<beaX+beaW+10 && cy>beaY-beaH*1.02 && cy<beaY-beaH*.45) cy=beaY-beaH*1.02;
+  for(let i=0;i<n;i++){
+    const s=document.createElement('div');s.className='spark';s.textContent=pick(emojis);
+    s.style.left=cx+'px';s.style.top=(cy-20)+'px';
+    s.style.setProperty('--dx',rnd(-90,90)*weit+'px');s.style.setProperty('--dy',(-rnd(40,130)*weit)+'px');
+    s.style.setProperty('--rot',rnd(-180,180)+'deg');
+    document.body.appendChild(s);setTimeout(()=>s.remove(),1100);
+  }
+}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const mitte=()=>W()/2-size/2;
+
+const KONFETTI={winter:(besonders&&besonders.konfetti)||['❄️','✨','🎄','⭐'],fruehling:['🌸','🌷','🦋','✨'],sommer:['🍦','🌴','🏖️','✨'],herbst:['🍁','🍂','✨','🌰']};
+const AKTIONEN={
+  konfetti: async()=>{ for(let i=0;i<3;i++){sparks(x+size/2,y-size/2,10,KONFETTI[saison],1.6);await sleep(250);} },
+  tanzen:   async()=>{ body.className='dance'; await sleep(2000); body.className=''; },
+  salto:    async()=>{ await hop(x,H()*.3,800,true); sparks(x+size/2,y-size/2,10); },
+  herzen:   async()=>{ for(let i=0;i<4;i++){sparks(x+size/2,y-size/2,5,['💛','🧡','❤️','💕'],1.3);await sleep(300);} }
+};
+
+async function auftritt(){
+  place(); await sleep(400);
+  const ziel=mitte(), n=4;
+  for(let i=1;i<=n;i++) await hop(-size+(ziel+size)*i/n, H()*(.10+.04*i), 520);
+  await hop(ziel,H()*.26,750);
+  sparks(x+size/2,y-size/2,14);
+  const gruss = hour<11?'Guten Morgen':hour<14?'Mahlzeit':hour<18?'Hallo':'Guten Abend';
+  const slot  = hour<11?'morgen':hour<14?'mittag':hour<18?'nachmittag':'abend';
+  const name  = KOSENAME?', '+KOSENAME:'';
+  if(besonders && besonders.szene){
+    for(const zeile of besonders.szene){
+      if(zeile==='BEA'){
+        bubble.classList.remove('show'); await sleep(300);
+        bea.style.transition='opacity .3s'; bea.style.opacity='1';
+        bea.classList.remove('jump'); void bea.offsetWidth; bea.classList.add('jump');
+        sparks(x-size*.3,y-size*.5,16,['🎉','💛','✨']);
+        await sleep(700); continue;
+      }
+      const istBea=zeile.startsWith('BEA:');
+      sprecher = istBea ? 'bea' : 'sonne';
+      say(istBea?zeile.slice(4):zeile,0);
+      if(istBea){ bea.classList.remove('jump'); void bea.offsetWidth; bea.classList.add('jump'); } else AKTIONEN.konfetti();
+      await sleep(Math.max(2600, zeile.length*55));
+    }
+    sprecher='sonne';
+    setTimeout(()=>tap.classList.add('show'),1000);
+    planeUntergang(3000); return;
+  }
+  if(besonders){
+    say(`<big>${gruss}${name}! ☀️</big>${besonders.text}`,0);
+    if(beaModus==='auftritt'){ beaAuftritt(); }
+    AKTIONEN.konfetti(); setTimeout(()=>AKTIONEN.herzen(),900);
+  } else {
+    const zeile = (thema.spruch && Math.random()<.75) ? pick(thema.spruch) : Math.random()<.35 ? pick(SAISON_SPRUECHE[saison]) : pick(SPRUECHE[slot]);
+    say(`<big>${gruss}${name}! ☀️</big>${zeile}`,0);
+    await sleep(900);
+    if(beaModus==='auftritt'){ await sleep(1500); await beaAuftritt(); }
+    await pick(Object.values(AKTIONEN))();
+  }
+  setTimeout(()=>tap.classList.add('show'),2500);
+  planeUntergang(7000);
+}
+async function beaAuftritt(){
+  const zx=()=>x-beaW*.78, zy=()=>y;
+  bea.style.opacity='1';
+  if(thema.bea==='ski'){
+    const sx=-beaW*1.2, sy=groundY()-H()*.32;
+    await new Promise(res=>{const t0=performance.now();(function st(n){
+      const t=Math.min(1,(n-t0)/2300), e=1-Math.pow(1-t,2);
+      const bx=sx+(zx()-sx)*e, by=sy+(zy()-sy)*e - Math.sin(t*Math.PI*3)*8*(1-t);
+      bea.style.transform=`translate(${bx}px,${by-beaH}px) rotate(${14*(1-t)}deg)`;
+      if(Math.random()<.25) sparks(bx+beaW*.2,by,1,['❄️','💨'],.5);
+      t<1?requestAnimationFrame(st):res();})(t0);});
+    sprecher='bea'; say('Bahn freeei! ⛷️',1800); setTimeout(()=>sprecher='sonne',1900);
+  } else {
+    const sx=-beaW*1.2;
+    await new Promise(res=>{const t0=performance.now();(function st(n){
+      const t=Math.min(1,(n-t0)/2600), e=1-Math.pow(1-t,3);
+      const bx=sx+(zx()-sx)*e, rot=Math.sin(t*Math.PI*4)*8*(1-t);
+      bea.style.transform=`translate(${bx}px,${zy()-beaH}px) rotate(${rot}deg)`;
+      t<1?requestAnimationFrame(st):res();})(t0);});
+    // Pirouette
+    await new Promise(res=>{const t0=performance.now();(function st(n){
+      const t=Math.min(1,(n-t0)/900);
+      bea.style.transform=`translate(${zx()}px,${zy()-beaH}px) scaleX(${Math.cos(t*Math.PI*4)})`;
+      t<1?requestAnimationFrame(st):res();})(t0);});
+    sparks(zx()+beaW/2,zy()-beaH/2,8,['✨','⛸️','⭐']);
+    sprecher='bea'; say('Pirouette! ✨',1800); setTimeout(()=>sprecher='sonne',1900);
+  }
+  beaModus='folgen';
+}
+let untergegangen=false, untergangTimer;
+function planeUntergang(ms){ clearTimeout(untergangTimer); untergangTimer=setTimeout(untergehen,ms); }
+async function untergehen(){
+  if(hopping){ return planeUntergang(800); }
+  untergegangen=true; tap.classList.remove('show');
+  say(pick([`Bis morgen, ${typeof spitzname==='function'?spitzname().replace(' 🕺',''):'Salmi'} 💛`,'Hab einen wunderschönen Tag ☀️','Wir sehen uns morgen 👋💛','Hab dich lieb, bis morgen 💛']),2200); beaWinkt(4500);
+  await sleep(2300);
+  if(!SZ) await hop(mitte(),H()*.12,520);
+  actor.style.zIndex='0'; bea.style.zIndex='0'; document.getElementById('scene').style.zIndex='3';
+  const rbd=document.getElementById('raumboden'); if(rbd) rbd.style.zIndex='3';
+  document.getElementById('dusk').style.opacity='1';
+  const y0=y,by0=beaY,t0=performance.now(),dur=2600;
+  await new Promise(res=>{(function step(now){
+    const t=Math.min(1,(now-t0)/dur), e=t*t;
+    y=y0+(H()*.32+size)*e; rot=Math.sin(t*12)*4; place();
+    if(beaModus==='frei'){ beaY=by0+(H()*.32+beaH)*e; beaRot=-Math.sin(t*12)*4; setBea(); }
+    t<1?requestAnimationFrame(step):res();
+  })(t0);});
+  document.getElementById('bye').classList.add('show');
+}
+actor.addEventListener('pointerdown',async()=>{
+  if(hopping||untergegangen||SZ_AKTIV) return;
+  planeUntergang(5000);
+  tap.classList.remove('show');
+  say(pick(ANTIPPEN),2200);
+  if(Math.random()<.3) await AKTIONEN.salto(); else { await hop(x,H()*.26,600); sparks(x+size/2,y-size/2,8); }
+});
+addEventListener('resize',()=>{updateSize(); if(!hopping&&!untergegangen){y=groundY();x=Math.min(x,W()-size);} place();});
+addEventListener('hashchange',()=>location.reload());
+document.getElementById('bye').addEventListener('click',()=>location.reload());
+
+/* ---------- Diabetes-Kampf (#diabetes) ---------- */
+const KAMPF_SPRUECHE_MONSTER=["Hehehe … ich bin's, DIABETES! 😈","Na? Hast du mich vermisst? 😈","Ich hab Zucker mitgebracht! 😈🍬"];
+const KAMPF_SPRUECHE_SONNE=["DU schon wieder?! 😤","Nicht mit uns, Freundchen!","Bea, halt meine Mütze!"];
+const KAMPF_SIEG=["Und bleib weg! 💪","Werte gecheckt ✅ Monster verprügelt ✅","Gut gemacht, du Held! 💪","Team Sonne gewinnt! 🏆","Wir passen auf dich auf! 💛"];
+const BOOMS=["POW!","BAM!","ZACK!","KLATSCH!","BONK!","WUMMS!"];
+const monster=document.getElementById('monster'), mbubble=document.getElementById('mbubble'), fight=document.getElementById('fight');
+let mx=0,my=0,mrot=0,mscale=1;
+const msize=()=>size*.95;
+function placeMonster(){
+  document.documentElement.style.setProperty('--msize',msize()+'px');
+  monster.style.transform=`translate(${mx}px,${my-msize()}px) rotate(${mrot}deg) scale(${mscale})`;
+  const bw=mbubble.offsetWidth,bh=mbubble.offsetHeight;
+  mbubble.style.left=Math.max(10,Math.min(W()-bw-10,mx+msize()/2-bw/2))+'px';
+  mbubble.style.top=Math.max(10,my-msize()-bh-10)+'px';
+}
+function animiere(dur,fn){return new Promise(res=>{const t0=performance.now();(function st(n){const t=Math.min(1,(n-t0)/dur);fn(t);t<1?requestAnimationFrame(st):res();})(t0);});}
+async function monsterHop(toX,h=H()*.1,dur=480){const fx=mx;await animiere(dur,t=>{mx=fx+(toX-fx)*t;my=groundY()-h*4*t*(1-t);placeMonster();});}
+function boom(cx,cy){const b=document.createElement('div');b.className='boom';b.textContent=pick(BOOMS);
+  b.style.left=Math.max(8,Math.min(W()-170,cx+rnd(-90,20)))+'px';b.style.top=(cy+rnd(-90,10))+'px';b.style.setProperty('--r',rnd(-20,20)+'deg');
+  document.body.appendChild(b);setTimeout(()=>b.remove(),750);}
+async function kampf(){
+  place(); monster.style.display='block';mx=W()+20;my=groundY();placeMonster();
+  await sleep(400);
+  const mZiel=W()-msize()-W()*.06;
+  await monsterHop(W()-msize()*.6,H()*.08);await monsterHop(mZiel,H()*.08);
+  mbubble.textContent=pick(KAMPF_SPRUECHE_MONSTER);mbubble.classList.add('show');placeMonster();
+  await sleep(1600);
+  // Sonne + Bea kommen
+  for(let i=1;i<=2;i++) await hop(-size+(W()*.08+size)*i/2,H()*.14,480);
+  mbubble.classList.remove('show');
+  say(`<big>${pick(KAMPF_SPRUECHE_SONNE)}</big>`,1500);
+  await sleep(1500);
+  // Angriff!
+  await hop(mZiel-size*.45,H()*.22,520);
+  const fs=Math.max(size,msize())*1.9; document.documentElement.style.setProperty('--fsize',fs+'px');
+  fight.style.left=(mZiel+msize()/2-fs/2-size*.2)+'px'; fight.style.top=(groundY()-fs*.8)+'px'; fight.style.display='block';
+  actor.style.opacity=0; bea.style.opacity=0; monster.style.opacity=0;
+  const fx=mZiel+msize()/2-size*.2, fy=groundY()-fs*.45;
+  for(let i=0;i<9;i++){ boom(fx,fy); sparks(fx,fy,3,['⭐','💥','🦶','✊','💫'],1.4); await sleep(260); }
+  fight.style.display='none'; actor.style.opacity=1; bea.style.opacity=1; monster.style.opacity=1;
+  // Monster fliegt weg
+  mbubble.textContent='ARGHHHH! 😵';mbubble.classList.add('show');
+  x=mZiel-size*1.05; y=groundY(); place();
+  const sx=mx,sy=my;
+  await animiere(1100,t=>{mx=sx+W()*.5*t;my=sy-H()*.75*t+H()*.15*t*t;mrot=900*t;mscale=1-.75*t;placeMonster();});
+  mbubble.classList.remove('show'); monster.style.display='none';
+  sparks(W()-40,H()*.15,6,['✨','⭐']);
+  // Sieg
+  await hop(mitte(),H()*.26,700);
+  sparks(x+size/2,y-size/2,14,['🏆','💪','✨','💛']);
+  say(`<big>${pick(KAMPF_SIEG)}</big>`,0);
+  bea.classList.remove('jump'); void bea.offsetWidth; bea.classList.add('jump');
+  setTimeout(()=>tap.classList.add('show'),2000);
+  planeUntergang(6000);
+}
+(async()=>{ for(let i=0;i<50 && (W()<120||H()<200);i++) await new Promise(r=>setTimeout(r,100));
+  updateSize(); x=-size*1.6; y=groundY();
+  if(SZ){
+    SZ_AKTIV=true; beaModus='frei'; actor.style.transformOrigin='50% 100%';
+    try{ await SZ.lauf(); }catch(e){ console.error(e); SZ_AKTIV=false; beaModus='folgen'; planeUntergang(3000); }
+  } else (hash==='diabetes'?kampf:auftritt)(); })();
+</script>
+</body>
+</html>
